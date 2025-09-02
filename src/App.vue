@@ -1,26 +1,9 @@
 <script setup lang="ts">
-import { ConfigProvider } from 'ant-design-vue'
-import { useThemeStore } from '@/store'
-const theme = useThemeStore()
 
-watch(
-  () => theme.themeColor,
-  (newValue) => {
-    ConfigProvider.config({
-      theme: {
-        primaryColor: newValue
-      }
-    })
-  }
-)
 </script>
 
 <template>
-  <a-config-provider>
-    <Welcome />
-    <RouterView />
-    <ThemeSetting />
-  </a-config-provider>
+  <RouterView/>
 </template>
 
 <style>
