@@ -1,4 +1,4 @@
-import type { Plugin } from "vite";
+import type {Plugin} from "vite";
 import vue from "@vitejs/plugin-vue";
 import Components from "unplugin-vue-components/vite";
 import AutoImport from "unplugin-auto-import/vite";
@@ -6,7 +6,8 @@ import Icons from "unplugin-icons/vite";
 import IconsResolver from "unplugin-icons/resolver";
 import Unocss from "unocss/vite";
 
-import { AntDesignVueResolver } from "unplugin-vue-components/resolvers";
+import {AntDesignVueResolver} from "unplugin-vue-components/resolvers";
+
 export function createVitePlugins(viteEnv, isDev: boolean) {
   const vitePlugins: Plugin | Plugin[] = [
     vue({
@@ -23,7 +24,9 @@ export function createVitePlugins(viteEnv, isDev: boolean) {
         IconsResolver({
           prefix: "Icon",
         }),
-        AntDesignVueResolver(),
+        AntDesignVueResolver({
+          importStyle: false
+        }),
       ],
       dts: "src/types/components.d.ts",
     }),

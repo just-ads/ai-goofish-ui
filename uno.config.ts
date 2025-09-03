@@ -1,12 +1,11 @@
+import {presetWind3} from "@unocss/preset-wind3";
 import {
   defineConfig,
   presetAttributify,
-  presetUno,
   transformerDirectives
 } from 'unocss'
 
 export default defineConfig({
-  exclude: ['node_modules', '.git', './stats.html'],
   shortcuts: {
     'wh-full': 'w-full h-full',
     'flex-center': 'flex justify-center items-center',
@@ -43,6 +42,6 @@ export default defineConfig({
     'ellipsis-text': 'nowrap-hidden text-ellipsis',
     'transition-base': 'transition-all duration-300 ease-in-out'
   },
-  presets: [presetUno(), presetAttributify()],
+  presets: [presetWind3(), presetAttributify()],
   transformers: [transformerDirectives()]
 })

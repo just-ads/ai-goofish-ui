@@ -25,17 +25,14 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         },
       ],
     },
-    css: {
-      preprocessorOptions: {
-        // 全局引入了 scss 的文件
-        scss: {
-          // 添加你的全局共享scss文件
-          additionalData: ``,
-          javascriptEnabled: true,
-        },
-      },
-      postcss: {},
-    },
     plugins: createVitePlugins(viteEnv, isBuild),
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://127.0.0.1:8000',
+          changeOrigin: true,
+        }
+      }
+    }
   };
 };
