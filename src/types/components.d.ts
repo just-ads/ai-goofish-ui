@@ -22,6 +22,7 @@ declare module 'vue' {
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
     AMenu: typeof import('ant-design-vue/es')['Menu']
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
+    AModal: typeof import('ant-design-vue/es')['Modal']
     ARow: typeof import('ant-design-vue/es')['Row']
     BasicLayout: typeof import('./../layout/BasicLayout/index.vue')['default']
     BlankLayout: typeof import('./../layout/BlankLayout/index.vue')['default']
