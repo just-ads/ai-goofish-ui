@@ -20,6 +20,11 @@ export async function getTasks() {
 }
 
 
-export async function f() {
-
+export async function updateTask(task: Task) {
+  const {data} = await useApi<Task[]>(`/api/tasks/update/${task.task_id}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(task),
+  });
+  return data.value!;
 }

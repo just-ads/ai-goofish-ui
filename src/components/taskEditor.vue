@@ -52,7 +52,7 @@ const form = reactive({
       <a-input v-model:value="form.cron" placeholder="cron 表达式"/>
     </a-form-item>
 
-    <a-form-item label="描述">
+    <a-form-item label="描述" required>
       <a-textarea v-model:value="form.description" :rows="4" placeholder="请输入描述"/>
     </a-form-item>
 

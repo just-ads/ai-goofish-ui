@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {getTasks} from '@/api/task'
+import {getTasks, updateTask} from '@/api/task'
 import TaskEditor from "@/components/taskEditor.vue";
 import {message, Modal} from 'ant-design-vue'
 import {onMounted, ref} from 'vue'
@@ -53,9 +53,8 @@ const editTask = (task: Task) => {
     content: h(TaskEditor, {task: editedTask}),
     async onOk() {
       try {
-        // 调用接口更新任务
-        // await axios.put(`/api/tasks/${task.task_id}`, editedTask)
-        Object.assign(task, editedTask) // 更新表格显示
+        await updateTask(editedTask);
+        Object.assign(task, editedTask)
         message.success('任务更新成功')
       } catch (err) {
         message.error('更新失败')
