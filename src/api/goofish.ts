@@ -1,18 +1,25 @@
 import {useApi} from "./fetch";
 
 export async function isLoginGoofish() {
-  return useApi('/api/status/goofish');
+  const {data, error} = await useApi<boolean>('/api/status/goofish');
+  if (error.value) throw error.value
+  return !!data.value
 }
 
-export async function loginGoofish(json: any) {
-  return useApi('/api/state/save', {
+export async function loginGoofish(json: string) {
+  const {error} = await useApi('/api/goofish/state/save', {
     method: 'POST',
-    body: JSON.stringify(json),
-  })
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({content: json}),
+  });
+  if (error.value) throw error.value
 }
 
 export async function logoutGoofish() {
-  return useApi('/api/state/delete', {
+  const {error} = await useApi('/api/goofish/state/delete', {
     method: 'DELETE',
-  })
+  });
+  if (error.value) throw error.value
 }

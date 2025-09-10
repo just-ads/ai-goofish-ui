@@ -12,7 +12,15 @@ const router = createRouter({
       component: IndexView,
       meta: {
         title: '首页'
-      }
+      },
+      children: [{
+        path: '/tasks',
+        name: 'tasks',
+        component: () => import('@/components/tasks.vue'),
+        meta: {
+          title: '任务列表'
+        }
+      }]
     },
     {
       path: '/login',
