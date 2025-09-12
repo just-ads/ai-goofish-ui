@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {getTasks, updateTask} from '@/api/task'
-import TaskEditor from "@/components/taskEditor.vue";
+import {getTasks, updateTask, deleteTask as deleteTaskAPI, createTask as createTaskAPI, runTask as runTaskAPI, stopTask as stopTaskAPI, getRunningTasks} from '@/api/task'
+import TaskForm from "@/components/taskForm.vue";
 import {message, Modal} from 'ant-design-vue'
 import {onMounted, ref} from 'vue'
 
@@ -20,11 +20,20 @@ const fetchTasks = async () => {
   }
 }
 
+const heartbeat = async () => {
+  const runningTasks = tasks.value.filter(it => it.running);
+  if (!runningTasks.length) return;
+  const nowRunningTasks = await getRunningTasks();
+  for (let i = 0; i < runningTasks.length; i++) {
+    runningTasks[i].running = nowRunningTasks[runningTasks[i].task_id];
+  }
+}
+
 onMounted(fetchTasks)
 
 const toggleTaskEnabled = async (task: Task) => {
   try {
-    // await axios.put(`/api/tasks/${task.task_id}`, { enabled: !task.enabled })
+    // await stopTask(task.task_id)
     task.enabled = !task.enabled
     message.success('任务状态已更新')
   } catch (err) {
@@ -34,9 +43,7 @@ const toggleTaskEnabled = async (task: Task) => {
 
 const togglePersonalOnly = async (task: Task, checked: boolean) => {
   try {
-    console.log(checked)
-    // 这里可以调用接口 PUT /api/tasks/{id} 更新 personal_only
-    // await axios.put(`/api/tasks/${task.task_id}`, { personal_only: checked })
+    await updateTask({task_id: task.task_id, personal_only: true})
     task.personal_only = checked
     message.success('任务“仅个人”状态已更新')
   } catch (err) {
@@ -44,16 +51,45 @@ const togglePersonalOnly = async (task: Task, checked: boolean) => {
   }
 }
 
+const createTask = () => {
+  const task = ref<Omit<Task, 'task_id'>>({
+    cron: "",
+    description: "",
+    enabled: true,
+    keyword: "",
+    max_pages: 1,
+    max_price: "",
+    min_price: "",
+    personal_only: false,
+    task_name: ""
+  });
+  Modal.confirm({
+    title: '创建任务',
+    // @ts-expect-error
+    content: h(TaskForm, {modelValue: task.value, 'onUpdate:modelValue': (val) => (task.value = val)}),
+    async onOk() {
+      try {
+        const newTask = await createTaskAPI(task.value);
+        tasks.value.push(newTask);
+        tasks.value = tasks.value;
+        message.success('任务创建成功');
+      } catch (err) {
+        message.success('任务创建失败');
+      }
+    }
+  })
+}
+
 
 const editTask = (task: Task) => {
-  let editedTask = {...task}
+  const editedTask = ref<Task>({...task})
 
   Modal.confirm({
     title: '编辑任务',
-    content: h(TaskEditor, {task: editedTask}),
+    content: h(TaskForm, {modelValue: editedTask.value, 'onUpdate:modelValue': (val) => (editedTask.value = val)}),
     async onOk() {
       try {
-        await updateTask(editedTask);
+        await updateTask(editedTask.value);
         Object.assign(task, editedTask)
         message.success('任务更新成功')
       } catch (err) {
@@ -68,7 +104,7 @@ const deleteTask = (id: number) => {
     title: '确认删除任务？',
     async onOk() {
       try {
-        // 这里可以调用接口 DELETE /api/tasks/{id}
+        await deleteTaskAPI(id)
         tasks.value = tasks.value.filter(t => t.task_id !== id)
         message.success('任务删除成功')
       } catch (err) {
@@ -80,11 +116,19 @@ const deleteTask = (id: number) => {
 
 const runTask = async (task: Task) => {
   try {
-    // 调用接口立即执行任务，例如：
-    // await axios.post(`/api/tasks/${task.task_id}/run`)
+    await runTaskAPI(task.task_id)
     message.success(`任务 "${task.task_name}" 已触发运行`)
   } catch (err) {
     message.error('运行失败')
+  }
+}
+
+const stopTask = async (task: Task) => {
+  try {
+    await stopTaskAPI(task.task_id);
+    message.success(`任务 "${task.task_name}" 已停止运行`)
+  } catch (e) {
+    message.error('停止失败')
   }
 }
 
@@ -94,7 +138,8 @@ const runTask = async (task: Task) => {
 <template>
   <div class="p-4 bg-white h-full">
     <h2 class="text-lg font-bold mb-4">任务管理</h2>
-    <a-table :data-source="tasks" :loading="loading" row-key="task_id" :pagination="false" bordered>
+    <a-button class='mb-4 ml-auto block w-fit' type="primary" @click="createTask">新建任务</a-button>
+    <a-table size="small" :data-source="tasks" :loading="loading" row-key="task_id" :pagination="false">
       <a-table-column title="启用" key="enabled">
         <template #default="{ record }">
           <a-switch :checked="record.enabled" @change="() => toggleTaskEnabled(record)"/>
@@ -107,7 +152,7 @@ const runTask = async (task: Task) => {
         <template #default="{ record }">
           <a-checkbox
             :checked="record.personal_only"
-            @change="checked => togglePersonalOnly(record, checked)"
+            @change="e => togglePersonalOnly(record, e.target.checked)"
           />
         </template>
       </a-table-column>
@@ -122,7 +167,7 @@ const runTask = async (task: Task) => {
           </a-tooltip>
         </template>
       </a-table-column>
-      <a-table-column title="操作" key="action">
+      <a-table-column title="操作" key="action" align="center">
         <template #default="{ record }">
           <a-button type="link" @click="() => editTask(record)">编辑</a-button>
           <a-button type="link" danger @click="() => deleteTask(record.task_id)">删除</a-button>

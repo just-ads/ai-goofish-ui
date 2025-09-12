@@ -9,6 +9,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
+      redirect: '/tasks',
       component: IndexView,
       meta: {
         title: '首页'

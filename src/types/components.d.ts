@@ -69,7 +69,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SvgIcon: typeof import('./../components/icon/svgIcon.vue')['default']
     TabBurger: typeof import('./../layout/components/global-tab/cpns/tab-burger.vue')['default']
-    TaskEditor: typeof import('./../components/taskEditor.vue')['default']
+    TaskForm: typeof import('./../components/taskForm.vue')['default']
     Tasks: typeof import('./../components/tasks.vue')['default']
     ThemeSetting: typeof import('./../layout/components/theme-setting/index.vue')['default']
     TheWelcome: typeof import('./../components/TheWelcome.vue')['default']

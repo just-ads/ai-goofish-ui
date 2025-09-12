@@ -60,7 +60,3 @@ const handleMenuClick = (e: { key: string }) => {
     </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>

@@ -13,7 +13,6 @@ export const useApi = createFetch({
       return {options}
     },
     afterFetch({data}) {
-      data = JSON.parse(data);
       return {data: data?.data}
     },
     onFetchError({response, error, data}) {

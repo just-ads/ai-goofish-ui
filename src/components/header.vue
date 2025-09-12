@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import {isLoginGoofish, loginGoofish, logoutGoofish} from "@/api/goofish";
 import {message} from "ant-design-vue";
+import {onMounted} from "vue";
 
 const open = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
 const isLogin = ref<boolean>(false);
 const jsonInput = ref<string>('');
 
-watchEffect(async () => {
+onMounted(async () => {
   isLogin.value = await isLoginGoofish();
 });
 

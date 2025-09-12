@@ -1,7 +1,7 @@
 import {useApi} from "./fetch";
 
 export async function isLoginGoofish() {
-  const {data, error} = await useApi<boolean>('/api/status/goofish');
+  const {data, error} = await useApi<boolean>('/api/goofish/status').json();
   if (error.value) throw error.value
   return !!data.value
 }
