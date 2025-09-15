@@ -54,6 +54,7 @@ const remove = async () => {
 
 <template>
   <header class="flex-center border-b border-b-solid border-b-[#ddd] h-[64px] px-5">
+    <h2>咸鱼监控机器人后台</h2>
     <a-dropdown v-if="isLogin">
       <a-button type="primary" class="ml-auto">已登录</a-button>
       <template #overlay>

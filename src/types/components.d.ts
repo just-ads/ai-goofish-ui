@@ -75,6 +75,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SvgIcon: typeof import('./../components/icon/svgIcon.vue')['default']
+    System: typeof import('./../components/system.vue')['default']
     TabBurger: typeof import('./../layout/components/global-tab/cpns/tab-burger.vue')['default']
     TaskForm: typeof import('./../components/taskForm.vue')['default']
     Tasks: typeof import('./../components/tasks.vue')['default']

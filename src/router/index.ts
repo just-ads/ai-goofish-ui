@@ -28,6 +28,13 @@ const router = createRouter({
         meta: {
           title: '结果列表'
         }
+      }, {
+        path: '/system',
+        name: 'system',
+        component: () => import('@/components/system.vue'),
+        meta: {
+          title: '系统设置'
+        }
       }]
     },
     {
