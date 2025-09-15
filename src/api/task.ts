@@ -1,22 +1,6 @@
 import {useApi} from "./fetch";
 
-export interface Task {
-  task_id: number
-  task_name: string
-  enabled: boolean
-  keyword: string
-  description: string
-  max_pages: number
-  personal_only: boolean
-  min_price?: string
-  max_price?: string
-  cron?: string
-  running?: boolean
-}
-
-export type UpdateTask = Omit<Partial<Task>, 'task_id'> & {
-  task_id: number
-}
+import type {Task, TaskResult, UpdateTask} from "@/types/task";
 
 export async function getTasks() {
   const {data, error} = await useApi('/api/tasks').json<Task[]>();
@@ -58,7 +42,18 @@ export async function getTaskStatus(task_id: number) {
 }
 
 export async function getRunningTasks() {
-  const {data, error} = await useApi(`/api/tasks/status/`).json();
+  const {data, error} = await useApi(`/api/tasks/status`).json();
   if (error.value) throw error.value;
   return data.value!;
+}
+
+export async function getTaskResult(id: number, options?: { page?: number, limit?: number }): Promise<{ total: number, page: number, limit: number, items: TaskResult[] }> {
+  const {data, error} = await useApi(`/api/results/${id}`).post(options).json();
+  if (error.value) throw error.value;
+  return data.value!;
+}
+
+export async function removeTaskResult(id: number) {
+  const {error} = await useApi(`/api/results/${id}`).delete();
+  if (error.value) throw error.value;
 }

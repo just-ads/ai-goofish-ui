@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends Task">
 import {defineProps, defineEmits, reactive, watch} from 'vue'
-import type {Task} from '@/api/task'
+
+import type {Task} from "@/types/task";
 
 const props = defineProps<{ modelValue: T }>()
 const emit = defineEmits<{
@@ -34,7 +35,9 @@ watch(
     </a-form-item>
 
     <a-form-item label="仅个人">
-      <a-checkbox v-model:checked="form.personal_only">仅个人</a-checkbox>
+      <a-checkbox v-model:checked="form.personal_only">
+        仅个人
+      </a-checkbox>
     </a-form-item>
 
     <a-form-item label="最小价格">

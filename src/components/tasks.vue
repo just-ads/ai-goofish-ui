@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import {getTasks, updateTask, deleteTask as deleteTaskAPI, createTask as createTaskAPI, runTask as runTaskAPI, stopTask as stopTaskAPI, getRunningTasks} from '@/api/task'
 import TaskForm from "@/components/taskForm.vue";
+import {useTaskStore} from "@/store";
 import {message, Modal} from 'ant-design-vue'
-import {onMounted, ref} from 'vue'
 
-import type {Task} from '@/api/task'
+import type {Task} from "@/types/task";
 
-const tasks = ref<Task[]>([])
-const loading = ref(false)
+const taskStore = useTaskStore();
+const loading = ref(false);
+let heartbeatTimer: number
 
 const fetchTasks = async () => {
   loading.value = true
   try {
-    tasks.value = await getTasks()
+    taskStore.setTasks(await getTasks());
   } catch (err) {
+    console.error(err);
     message.error('任务获取失败')
   } finally {
     loading.value = false
@@ -21,22 +23,22 @@ const fetchTasks = async () => {
 }
 
 const heartbeat = async () => {
-  const runningTasks = tasks.value.filter(it => it.running);
+  const runningTasks = taskStore.tasks.filter(it => it.running);
   if (!runningTasks.length) return;
   const nowRunningTasks = await getRunningTasks();
   for (let i = 0; i < runningTasks.length; i++) {
     runningTasks[i].running = nowRunningTasks[runningTasks[i].task_id];
   }
+  heartbeatTimer = window.setTimeout(heartbeat, 2000);
 }
-
-onMounted(fetchTasks)
 
 const toggleTaskEnabled = async (task: Task) => {
   try {
-    // await stopTask(task.task_id)
+    await updateTask({task_id: task.task_id, enabled: !task.enabled});
     task.enabled = !task.enabled
     message.success('任务状态已更新')
   } catch (err) {
+    console.error(err);
     message.error('更新失败')
   }
 }
@@ -47,6 +49,7 @@ const togglePersonalOnly = async (task: Task, checked: boolean) => {
     task.personal_only = checked
     message.success('任务“仅个人”状态已更新')
   } catch (err) {
+    console.error(err);
     message.error('更新失败')
   }
 }
@@ -70,10 +73,10 @@ const createTask = () => {
     async onOk() {
       try {
         const newTask = await createTaskAPI(task.value);
-        tasks.value.push(newTask);
-        tasks.value = tasks.value;
+        taskStore.addTask(newTask);
         message.success('任务创建成功');
       } catch (err) {
+        console.error(err);
         message.success('任务创建失败');
       }
     }
@@ -93,6 +96,7 @@ const editTask = (task: Task) => {
         Object.assign(task, editedTask)
         message.success('任务更新成功')
       } catch (err) {
+        console.error(err);
         message.error('更新失败')
       }
     }
@@ -105,9 +109,10 @@ const deleteTask = (id: number) => {
     async onOk() {
       try {
         await deleteTaskAPI(id)
-        tasks.value = tasks.value.filter(t => t.task_id !== id)
+        taskStore.removeTask(id);
         message.success('任务删除成功')
       } catch (err) {
+        console.error(err);
         message.error('删除失败')
       }
     }
@@ -117,8 +122,11 @@ const deleteTask = (id: number) => {
 const runTask = async (task: Task) => {
   try {
     await runTaskAPI(task.task_id)
+    task.running = true;
     message.success(`任务 "${task.task_name}" 已触发运行`)
+    heartbeat();
   } catch (err) {
+    console.error(err);
     message.error('运行失败')
   }
 }
@@ -126,12 +134,21 @@ const runTask = async (task: Task) => {
 const stopTask = async (task: Task) => {
   try {
     await stopTaskAPI(task.task_id);
+    task.running = false;
     message.success(`任务 "${task.task_name}" 已停止运行`)
-  } catch (e) {
+  } catch (err) {
+    console.error(err);
     message.error('停止失败')
   }
 }
 
+onMounted(() => {
+  fetchTasks().then(heartbeat)
+});
+
+onUnmounted(() => {
+  window.clearTimeout(heartbeatTimer);
+});
 
 </script>
 
@@ -139,7 +156,7 @@ const stopTask = async (task: Task) => {
   <div class="p-4 bg-white h-full">
     <h2 class="text-lg font-bold mb-4">任务管理</h2>
     <a-button class='mb-4 ml-auto block w-fit' type="primary" @click="createTask">新建任务</a-button>
-    <a-table size="small" :data-source="tasks" :loading="loading" row-key="task_id" :pagination="false">
+    <a-table size="small" :data-source="taskStore.tasks" :loading="loading" row-key="task_id" :pagination="false">
       <a-table-column title="启用" key="enabled">
         <template #default="{ record }">
           <a-switch :checked="record.enabled" @change="() => toggleTaskEnabled(record)"/>
@@ -171,16 +188,19 @@ const stopTask = async (task: Task) => {
         <template #default="{ record }">
           <a-button type="link" @click="() => editTask(record)">编辑</a-button>
           <a-button type="link" danger @click="() => deleteTask(record.task_id)">删除</a-button>
-          <a-button
-            type="link"
-            :disabled="!record.enabled"
-            @click="() => runTask(record)"
-          >
+          <a-button v-if="record.running"
+                    type="link"
+                    @click="() => stopTask(record)">
+            停止
+          </a-button>
+          <a-button v-else
+                    type="link"
+                    :disabled="!record.enabled"
+                    @click="() => runTask(record)">
             运行
           </a-button>
         </template>
       </a-table-column>
-
     </a-table>
   </div>
 </template>

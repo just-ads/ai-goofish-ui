@@ -34,7 +34,7 @@ const handleMenuClick = (e: { key: string }) => {
 <template>
   <div class="flex-col h-full">
     <Header/>
-    <div class="flex flex-1">
+    <div class="flex flex-1 h-0">
       <!-- 左侧菜单 -->
       <div class="flex-col text-white">
         <a-button type="default" class="rounded-none border-y-none border-l-none border-r border-r-[rgba(5,5,5,0.06)]" @click="toggleCollapse">
@@ -54,7 +54,7 @@ const handleMenuClick = (e: { key: string }) => {
         </a-menu>
       </div>
       <!-- 主体内容 -->
-      <main class="flex-1 bg-[#f0f2f5]">
+      <main class="flex-1 bg-[#f0f2f5] overflow-hidden">
         <router-view/>
       </main>
     </div>

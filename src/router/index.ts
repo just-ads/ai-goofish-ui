@@ -1,7 +1,7 @@
 import Login from "@/views/login.vue";
 import {createRouter, createWebHistory} from 'vue-router'
-import IndexView from '@/views/index.vue'
-import {App} from 'vue'
+
+import type {App} from 'vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,7 +10,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       redirect: '/tasks',
-      component: IndexView,
+      component: () => import('@/views/index.vue'),
       meta: {
         title: '首页'
       },
@@ -20,6 +20,13 @@ const router = createRouter({
         component: () => import('@/components/tasks.vue'),
         meta: {
           title: '任务列表'
+        }
+      }, {
+        path: '/result',
+        name: 'result',
+        component: () => import('@/components/result.vue'),
+        meta: {
+          title: '结果列表'
         }
       }]
     },
