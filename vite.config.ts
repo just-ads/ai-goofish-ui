@@ -1,18 +1,24 @@
-import type { UserConfig, ConfigEnv } from "vite";
-import { loadEnv } from "vite";
-import { createVitePlugins } from "./build/vite/plugin";
-import { wrapperEnv } from "./build/utils";
-import { resolve } from "path";
+import type {UserConfig, ConfigEnv} from "vite";
+import {loadEnv} from "vite";
+import {createVitePlugins} from "./build/vite/plugin";
+import {wrapperEnv} from "./build/utils";
+import {resolve} from "path";
+
 // https://vitejs.dev/config/
 function pathResolve(dir: string) {
   return resolve(process.cwd(), ".", dir);
 }
-export default ({ command, mode }: ConfigEnv): UserConfig => {
+
+export default ({command, mode}: ConfigEnv): UserConfig => {
   const root = process.cwd();
   const isBuild = command === "build";
   const env = loadEnv(mode, root);
   const viteEnv = wrapperEnv(env);
   return {
+    build: {
+      outDir: '../resources',
+      assetsDir: 'static'
+    },
     resolve: {
       alias: [
         {
