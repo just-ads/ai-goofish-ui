@@ -18,6 +18,15 @@
       <a-button danger type="primary" @click="() => removeResult()">删除结果</a-button>
     </div>
 
+    <div>
+      <span>排序: </span>
+      <a-select v-model:value="sortKey" @select="onSortChange" class="w-30">
+        <a-select-option value="price">价格</a-select-option>
+        <a-select-option value="publish_time">发布时间</a-select-option>
+        <a-select-option value="crawl_time">抓取时间</a-select-option>
+      </a-select>
+    </div>
+
     <a-spin :spinning="loading" wrapperClassName="flex-1 h-0 overflow-auto">
       <div v-if="taskResults?.items?.length" class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))] mt-4 max-h-full">
         <div
@@ -69,28 +78,29 @@
 </template>
 
 <script setup lang="ts">
+import {TaskResultResponse, TaskResultRequest} from "@/types/task";
 import {message, Modal} from "ant-design-vue";
 import {h} from "vue";
 import {ReloadOutlined} from '@ant-design/icons-vue'
 import {useTaskStore} from '@/store';
 import {getTaskResult, removeTaskResult} from '@/api/task';
-import type {TaskResult} from '@/types/task';
 
 const taskStore = useTaskStore();
 
 const selectedTaskId = ref<number>();
-const taskResults = ref<{ total: number; page: number; limit: number; items: TaskResult[] } | null>(null);
+const taskResults = ref<TaskResultResponse | null>(null);
 const loading = ref(false);
 
+const sortKey = ref<TaskResultRequest['sort_by']>('crawl_time');
 const currentPage = ref(1);
 const pageSize = ref(20);
 
 
-const fetchTaskResults = async (taskId: number, page = 1) => {
+const fetchTaskResults = async (taskId: number, page = 1, sort: TaskResultRequest['sort_by']) => {
   if (taskId === undefined) return;
   loading.value = true;
   try {
-    taskResults.value = await getTaskResult(Number(taskId), {page, limit: pageSize.value});
+    taskResults.value = await getTaskResult(Number(taskId), {page, limit: pageSize.value, sort_by: sort});
   } finally {
     loading.value = false;
   }
@@ -100,13 +110,13 @@ const fetchTaskResults = async (taskId: number, page = 1) => {
 const onPageChange = (page: number) => {
   currentPage.value = page;
   if (selectedTaskId.value !== undefined) {
-    fetchTaskResults(selectedTaskId.value, page);
+    fetchTaskResults(selectedTaskId.value, page, sortKey.value);
   }
 }
 
 const reload = () => {
   if (selectedTaskId.value !== undefined) {
-    fetchTaskResults(selectedTaskId.value, currentPage.value)
+    fetchTaskResults(selectedTaskId.value, currentPage.value, sortKey.value)
   }
 }
 
@@ -128,10 +138,16 @@ const removeResult = () => {
   })
 }
 
+const onSortChange = (key: any) => {
+  if (selectedTaskId.value !== undefined) {
+    fetchTaskResults(selectedTaskId.value, currentPage.value, key)
+  }
+}
+
 watch(selectedTaskId, (id) => {
   currentPage.value = 1;
   if (id !== undefined) {
-    fetchTaskResults(id, 1);
+    fetchTaskResults(id, 1, sortKey.value);
   }
 });
 
@@ -147,7 +163,7 @@ watch(
 
 onMounted(() => {
   if (selectedTaskId.value !== undefined) {
-    fetchTaskResults(selectedTaskId.value, currentPage.value);
+    fetchTaskResults(selectedTaskId.value, currentPage.value, sortKey.value);
   }
 });
 </script>

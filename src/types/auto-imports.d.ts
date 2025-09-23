@@ -74,6 +74,7 @@ declare global {
   const mapWritableState: typeof import('pinia')['mapWritableState']
   const markRaw: typeof import('vue')['markRaw']
   const mixColor: typeof import('../utils/common/color')['mixColor']
+  const multiSort: typeof import('../utils/utils')['multiSort']
   const nextTick: typeof import('vue')['nextTick']
   const onActivated: typeof import('vue')['onActivated']
   const onBeforeMount: typeof import('vue')['onBeforeMount']

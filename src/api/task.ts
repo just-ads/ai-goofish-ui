@@ -1,6 +1,6 @@
 import {useApi} from "./fetch";
 
-import type {Task, TaskResult, UpdateTask} from "@/types/task";
+import {Task, TaskResultRequest, TaskResultResponse, UpdateTask} from "@/types/task";
 
 export async function getTasks() {
   const {data, error} = await useApi('/api/tasks').json<Task[]>();
@@ -47,7 +47,7 @@ export async function getRunningTasks() {
   return data.value!;
 }
 
-export async function getTaskResult(id: number, options?: { page?: number, limit?: number }): Promise<{ total: number, page: number, limit: number, items: TaskResult[] }> {
+export async function getTaskResult(id: number, options?: TaskResultRequest): Promise<TaskResultResponse> {
   const {data, error} = await useApi(`/api/results/${id}`).post(options).json();
   if (error.value) throw error.value;
   return data.value!;

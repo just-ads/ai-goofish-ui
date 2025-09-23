@@ -16,6 +16,20 @@ export type UpdateTask = Omit<Partial<Task>, 'task_id'> & {
   task_id: number
 }
 
+export type TaskResultRequest = {
+  page?: number,
+  limit?: number,
+  sort_by?: 'crawl_time' | 'publish_time' | 'price',
+  recommended_only?: boolean
+}
+
+export type TaskResultResponse = {
+  total: number,
+  page: number,
+  limit: number,
+  items: TaskResult[]
+}
+
 export interface TaskResult {
   "爬取时间": string,
   "搜索关键字": string,
