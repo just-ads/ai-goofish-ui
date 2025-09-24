@@ -195,7 +195,6 @@ onUnmounted(() => {
           </a-button>
           <a-button v-else
                     type="link"
-                    :disabled="!record.enabled"
                     @click="() => runTask(record)">
             运行
           </a-button>
