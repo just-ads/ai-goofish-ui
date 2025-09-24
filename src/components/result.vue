@@ -58,7 +58,8 @@
               <div class="text-xs text-gray-500">抓取时间：{{ result['爬取时间'] }}</div>
             </div>
             <div class="text-xs text-blue-500 w-fit ml-auto" title="商品链接">
-              <a :href="result['商品信息']['商品链接']" target="_blank">查看</a>
+              <a :href="result['商品信息']['商品链接']" target="_blank" class="block mb-1">查看</a>
+              <div class="cursor-pointer" @click="copyUrl(result['商品信息']['商品ID'])">复制链接</div>
             </div>
           </div>
         </div>
@@ -79,6 +80,7 @@
 
 <script setup lang="ts">
 import {TaskResultResponse, TaskResultRequest} from "@/types/task";
+import {copyToClipboard} from "@/utils/utils";
 import {message, Modal} from "ant-design-vue";
 import {h} from "vue";
 import {ReloadOutlined} from '@ant-design/icons-vue'
@@ -106,7 +108,6 @@ const fetchTaskResults = async (taskId: number, page = 1, sort: TaskResultReques
   }
 }
 
-
 const onPageChange = (page: number) => {
   currentPage.value = page;
   if (selectedTaskId.value !== undefined) {
@@ -118,6 +119,15 @@ const reload = () => {
   if (selectedTaskId.value !== undefined) {
     fetchTaskResults(selectedTaskId.value, currentPage.value, sortKey.value)
   }
+}
+
+const copyUrl = (id: string) => {
+  const mobileUrl = `https://pages.goofish.com/sharexy?loadingVisible=false&bft=item&bfs=idlepc.item&spm=a21ybx.item.0.0&bfp=%7B%22id%22%3A${id}%7D`
+  copyToClipboard(mobileUrl).then(() => {
+    message.success('复制成功')
+  }).catch(() => {
+    message.success('复制失败: 无权限')
+  });
 }
 
 const removeResult = () => {
