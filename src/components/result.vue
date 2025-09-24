@@ -18,13 +18,20 @@
       <a-button danger type="primary" @click="() => removeResult()">删除结果</a-button>
     </div>
 
-    <div>
-      <span>排序: </span>
-      <a-select v-model:value="sortKey" @select="onSortChange" class="w-30">
-        <a-select-option value="price">价格</a-select-option>
-        <a-select-option value="publish_time">发布时间</a-select-option>
-        <a-select-option value="crawl_time">抓取时间</a-select-option>
-      </a-select>
+    <div class="flex">
+      <div>
+        <span>排序: </span>
+        <a-select v-model:value="taskResultRequest.sort_by" @select="onSortChange" class="w-30">
+          <a-select-option value="price">价格</a-select-option>
+          <a-select-option value="publish_time">发布时间</a-select-option>
+          <a-select-option value="crawl_time">抓取时间</a-select-option>
+        </a-select>
+      </div>
+      <div class="flex ml-1">
+        <a-button type="text" class="p-0" @click="onToggleOrder">
+          <component :is="taskResultRequest.order === 'asce' ? ArrowUpOutlined : ArrowDownOutlined"/>
+        </a-button>
+      </div>
     </div>
 
     <a-spin :spinning="loading" wrapperClassName="flex-1 h-0 overflow-auto">
@@ -59,7 +66,7 @@
             </div>
             <div class="text-xs text-blue-500 w-fit ml-auto" title="商品链接">
               <a :href="result['商品信息']['商品链接']" target="_blank" class="block mb-1">查看</a>
-              <div class="cursor-pointer" @click="copyUrl(result['商品信息']['商品ID'])">复制链接</div>
+              <div class="cursor-pointer" @click="copyUrl(result['商品信息']['商品ID'])">复制</div>
             </div>
           </div>
         </div>
@@ -70,8 +77,8 @@
     <a-pagination
       v-if="taskResults"
       class="mt-4"
-      :current="currentPage"
-      :page-size="pageSize"
+      v-model:current="taskResultRequest.page"
+      v-model:page-size="taskResultRequest.limit"
       :total="taskResults.total"
       @change="onPageChange"
     />
@@ -83,7 +90,7 @@ import {TaskResultResponse, TaskResultRequest} from "@/types/task";
 import {copyToClipboard} from "@/utils/utils";
 import {message, Modal} from "ant-design-vue";
 import {h} from "vue";
-import {ReloadOutlined} from '@ant-design/icons-vue'
+import {ReloadOutlined, ArrowUpOutlined, ArrowDownOutlined} from '@ant-design/icons-vue'
 import {useTaskStore} from '@/store';
 import {getTaskResult, removeTaskResult} from '@/api/task';
 
@@ -93,31 +100,28 @@ const selectedTaskId = ref<number>();
 const taskResults = ref<TaskResultResponse | null>(null);
 const loading = ref(false);
 
-const sortKey = ref<TaskResultRequest['sort_by']>('crawl_time');
-const currentPage = ref(1);
-const pageSize = ref(20);
+const taskResultRequest = reactive<TaskResultRequest>({
+  page: 1,
+  limit: 30,
+  sort_by: 'crawl_time',
+  recommended_only: false,
+  order: 'asce'
+})
 
 
-const fetchTaskResults = async (taskId: number, page = 1, sort: TaskResultRequest['sort_by']) => {
+const fetchTaskResults = async (taskId: number, request: TaskResultRequest) => {
   if (taskId === undefined) return;
   loading.value = true;
   try {
-    taskResults.value = await getTaskResult(Number(taskId), {page, limit: pageSize.value, sort_by: sort});
+    taskResults.value = await getTaskResult(Number(taskId), request);
   } finally {
     loading.value = false;
   }
 }
 
-const onPageChange = (page: number) => {
-  currentPage.value = page;
-  if (selectedTaskId.value !== undefined) {
-    fetchTaskResults(selectedTaskId.value, page, sortKey.value);
-  }
-}
-
 const reload = () => {
   if (selectedTaskId.value !== undefined) {
-    fetchTaskResults(selectedTaskId.value, currentPage.value, sortKey.value)
+    fetchTaskResults(selectedTaskId.value, taskResultRequest)
   }
 }
 
@@ -139,7 +143,7 @@ const removeResult = () => {
       try {
         await removeTaskResult(selectedTaskId.value!);
         taskResults.value = null;
-        currentPage.value = 1;
+        taskResultRequest.page = 1;
         message.success('删除成功');
       } catch (err) {
         message.error('删除失败');
@@ -148,16 +152,35 @@ const removeResult = () => {
   })
 }
 
+const onPageChange = (page: number) => {
+  if (selectedTaskId.value !== undefined) {
+    fetchTaskResults(selectedTaskId.value, {
+      ...taskResultRequest,
+      page,
+    });
+  }
+}
+
 const onSortChange = (key: any) => {
   if (selectedTaskId.value !== undefined) {
-    fetchTaskResults(selectedTaskId.value, currentPage.value, key)
+    fetchTaskResults(selectedTaskId.value, {
+      ...taskResultRequest,
+      sort_by: key
+    })
+  }
+}
+
+const onToggleOrder = () => {
+  taskResultRequest.order = taskResultRequest.order === 'asce' ? 'desc' : 'asce';
+  if (selectedTaskId.value !== undefined) {
+    fetchTaskResults(selectedTaskId.value, taskResultRequest)
   }
 }
 
 watch(selectedTaskId, (id) => {
-  currentPage.value = 1;
+  taskResultRequest.page = 1;
   if (id !== undefined) {
-    fetchTaskResults(id, 1, sortKey.value);
+    fetchTaskResults(id, taskResultRequest);
   }
 });
 
@@ -173,7 +196,7 @@ watch(
 
 onMounted(() => {
   if (selectedTaskId.value !== undefined) {
-    fetchTaskResults(selectedTaskId.value, currentPage.value, sortKey.value);
+    fetchTaskResults(selectedTaskId.value, taskResultRequest);
   }
 });
 </script>

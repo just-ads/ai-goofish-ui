@@ -20,7 +20,8 @@ export type TaskResultRequest = {
   page?: number,
   limit?: number,
   sort_by?: 'crawl_time' | 'publish_time' | 'price',
-  recommended_only?: boolean
+  recommended_only?: boolean,
+  order?: 'asce' | 'desc'
 }
 
 export type TaskResultResponse = {
