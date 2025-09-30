@@ -1,5 +1,5 @@
 import router from "@/router";
-import {getUserToken} from "@/utils/user";
+import {getUserToken, clearUserToken} from "@/utils/user";
 import {createFetch} from "@vueuse/core";
 import {message} from "ant-design-vue";
 
