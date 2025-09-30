@@ -25,7 +25,7 @@ watch(() => route.path, (newPath) => {
 })
 
 // 菜单点击跳转
-const handleMenuClick = (e: { key: string }) => {
+const handleMenuClick = (e: any) => {
   router.push(e.key)
 }
 

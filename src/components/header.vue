@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import {isLoginGoofish, loginGoofish, logoutGoofish} from "@/api/goofish";
+import {useApi} from "@/api/fetch";
 import {message} from "ant-design-vue";
-import {onMounted} from "vue";
 
 const open = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
-const isLogin = ref<boolean>(false);
+const {data: isLogin} = useApi<boolean>('/api/goofish/status').json();
 const jsonInput = ref<string>('');
-
-onMounted(async () => {
-  isLogin.value = await isLoginGoofish();
-});
 
 const showModal = () => {
   open.value = true;
@@ -22,16 +17,11 @@ const closeModal = () => {
 }
 
 const handleOk = async () => {
-  try {
-    confirmLoading.value = true
-    await loginGoofish(jsonInput.value);
+  const {error} = await useApi('/api/goofish/state/save').post({content: jsonInput.value});
+  if (!error.value) {
     isLogin.value = true;
     message.success('状态保存成功');
     closeModal();
-  } catch (err: any) {
-    message.error(err.message || '保存失败');
-  } finally {
-    confirmLoading.value = false
   }
 }
 
@@ -40,12 +30,10 @@ const update = () => {
 }
 
 const remove = async () => {
-  try {
-    await logoutGoofish();
-    message.success('删除成功');
+  const {error} = await useApi('/api/goofish/state/delete').delete();
+  if (!error.value) {
     isLogin.value = false;
-  } catch (err: any) {
-    message.error(err.message || '删除失败');
+    message.success('删除成功');
   }
 }
 

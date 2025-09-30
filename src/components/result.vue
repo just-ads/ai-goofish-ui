@@ -97,13 +97,13 @@
 </template>
 
 <script setup lang="ts">
+import {useApi} from "@/api/fetch";
 import {TaskResultResponse, TaskResultRequest} from "@/types/task";
 import {copyToClipboard} from "@/utils/utils";
 import {message, Modal} from "ant-design-vue";
 import {h} from "vue";
 import {ReloadOutlined, ArrowUpOutlined, ArrowDownOutlined} from '@ant-design/icons-vue'
 import {useTaskStore} from '@/store';
-import {getTaskResult, removeTaskResult} from '@/api/task';
 
 const taskStore = useTaskStore();
 
@@ -135,10 +135,10 @@ const getColor = (suggest: number) => {
 const fetchTaskResults = async (taskId: number, request: TaskResultRequest) => {
   if (taskId === undefined) return;
   loading.value = true;
-  try {
-    taskResults.value = await getTaskResult(Number(taskId), request);
-  } finally {
-    loading.value = false;
+  const {data, error} = await useApi(`/api/results/${taskId}`).post(request).json<TaskResultResponse>();
+  loading.value = false;
+  if (data.value && !error.value) {
+    taskResults.value = data.value;
   }
 }
 
@@ -163,13 +163,11 @@ const removeResult = () => {
     title: '删除结果',
     content: '删除后不可恢复，确定删除？',
     async onOk() {
-      try {
-        await removeTaskResult(selectedTaskId.value!);
+      const {error} = await useApi(`/api/results/${selectedTaskId.value!}`).delete();
+      if (!error.value) {
         taskResults.value = null;
         taskResultRequest.page = 1;
         message.success('删除成功');
-      } catch (err) {
-        message.error('删除失败');
       }
     }
   })

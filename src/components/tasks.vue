@@ -1,57 +1,49 @@
 <script setup lang="ts">
-import {getTasks, updateTask, deleteTask as deleteTaskAPI, createTask as createTaskAPI, runTask as runTaskAPI, stopTask as stopTaskAPI, getRunningTasks} from '@/api/task'
+import {useApi} from "@/api/fetch";
 import TaskForm from "@/components/taskForm.vue";
 import {useTaskStore} from "@/store";
 import {message, Modal} from 'ant-design-vue'
 
-import type {Task} from "@/types/task";
+import type {Task, UpdateTask} from "@/types/task";
 
 const taskStore = useTaskStore();
 const loading = ref(false);
 let heartbeatTimer: number
 
 const fetchTasks = async () => {
-  loading.value = true
-  try {
-    taskStore.setTasks(await getTasks());
-  } catch (err) {
-    console.error(err);
-    message.error('任务获取失败')
-  } finally {
-    loading.value = false
+  loading.value = true;
+  const {data, error} = await useApi('/api/tasks').json<Task[]>();
+  loading.value = false;
+  if (!error.value && data.value) {
+    taskStore.setTasks(data.value);
+  }
+}
+
+const updateTask = async (task: UpdateTask) => {
+  const {data, error} = await useApi(`/api/tasks/update`).post(task).json<Task>();
+  if (data.value && !error.value) {
+    taskStore.updateTask(data.value);
+    message.success('任务状态已更新')
   }
 }
 
 const heartbeat = async () => {
   const runningTasks = taskStore.tasks.filter(it => it.running);
   if (!runningTasks.length) return;
-  const nowRunningTasks = await getRunningTasks();
+  const {data, error} = await useApi(`/api/tasks/status`).json();
+  if (error.value || !data.value) return;
   for (let i = 0; i < runningTasks.length; i++) {
-    runningTasks[i].running = nowRunningTasks[runningTasks[i].task_id];
+    runningTasks[i].running = data.value[runningTasks[i].task_id];
   }
   heartbeatTimer = window.setTimeout(heartbeat, 2000);
 }
 
-const toggleTaskEnabled = async (task: Task) => {
-  try {
-    await updateTask({task_id: task.task_id, enabled: !task.enabled});
-    task.enabled = !task.enabled
-    message.success('任务状态已更新')
-  } catch (err) {
-    console.error(err);
-    message.error('更新失败')
-  }
+const toggleTaskEnabled = (task: Task) => {
+  updateTask({task_id: task.task_id, enabled: !task.enabled});
 }
 
-const togglePersonalOnly = async (task: Task, checked: boolean) => {
-  try {
-    await updateTask({task_id: task.task_id, personal_only: true})
-    task.personal_only = checked
-    message.success('任务“仅个人”状态已更新')
-  } catch (err) {
-    console.error(err);
-    message.error('更新失败')
-  }
+const togglePersonalOnly = (task: Task, checked: boolean) => {
+  updateTask({task_id: task.task_id, personal_only: checked});
 }
 
 const createTask = () => {
@@ -71,13 +63,10 @@ const createTask = () => {
     // @ts-expect-error
     content: h(TaskForm, {modelValue: task.value, 'onUpdate:modelValue': (val) => (task.value = val)}),
     async onOk() {
-      try {
-        const newTask = await createTaskAPI(task.value);
-        taskStore.addTask(newTask);
+      const {data, error} = await useApi('/api/tasks/create').post(task).json();
+      if (!error.value && data.value) {
+        taskStore.addTask(data.value);
         message.success('任务创建成功');
-      } catch (err) {
-        console.error(err);
-        message.success('任务创建失败');
       }
     }
   })
@@ -90,15 +79,8 @@ const editTask = (task: Task) => {
   Modal.confirm({
     title: '编辑任务',
     content: h(TaskForm, {modelValue: editedTask.value, 'onUpdate:modelValue': (val) => (editedTask.value = val)}),
-    async onOk() {
-      try {
-        await updateTask(editedTask.value);
-        Object.assign(task, editedTask)
-        message.success('任务更新成功')
-      } catch (err) {
-        console.error(err);
-        message.error('更新失败')
-      }
+    onOk() {
+      updateTask(editedTask.value)
     }
   })
 }
@@ -107,38 +89,29 @@ const deleteTask = (id: number) => {
   Modal.confirm({
     title: '确认删除任务？',
     async onOk() {
-      try {
-        await deleteTaskAPI(id)
+      const {error} = await useApi(`/api/tasks/delete/${id}`).delete();
+      if (!error.value) {
         taskStore.removeTask(id);
         message.success('任务删除成功')
-      } catch (err) {
-        console.error(err);
-        message.error('删除失败')
       }
     }
   })
 }
 
 const runTask = async (task: Task) => {
-  try {
-    await runTaskAPI(task.task_id)
+  const {error} = await useApi(`/api/tasks/run/${task.task_id}`).post();
+  if (!error.value) {
     task.running = true;
-    message.success(`任务 "${task.task_name}" 已触发运行`)
+    message.success(`任务 "${task.task_name}" 已触发运行`);
     heartbeat();
-  } catch (err) {
-    console.error(err);
-    message.error('运行失败')
   }
 }
 
 const stopTask = async (task: Task) => {
-  try {
-    await stopTaskAPI(task.task_id);
+  const {error} = await useApi(`/api/tasks/stop/${task.task_id}`);
+  if (!error.value) {
     task.running = false;
     message.success(`任务 "${task.task_name}" 已停止运行`)
-  } catch (err) {
-    console.error(err);
-    message.error('停止失败')
   }
 }
 

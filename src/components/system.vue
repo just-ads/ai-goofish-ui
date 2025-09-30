@@ -29,6 +29,9 @@ const testAi = async () => {
   if (!error.value && data.value) {
     message.success(data.value);
   }
+  if (error.value) {
+    testInfo.error = error.value;
+  }
 }
 
 
@@ -67,8 +70,11 @@ const handleSave = async () => {
       </div>
     </a-form>
 
-    <div v-if="testInfo.error">
+    <div v-if="testInfo.error" class="my-2 text-red-500">
       {{ testInfo.error }}
+    </div>
+    <div v-else class="text-green">
+      连接成功
     </div>
 
     <div class="space-x-sm">

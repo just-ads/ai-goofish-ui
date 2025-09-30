@@ -40,10 +40,10 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, ref} from 'vue'
+import {useApi} from "@/api/fetch";
+import {saveUserToken} from "@/utils/user";
 import {message} from 'ant-design-vue'
 import md5 from 'js-md5'
-import {login} from '@/api/auth'
 import {useRouter} from 'vue-router'
 
 const router = useRouter()
@@ -55,16 +55,17 @@ const form = reactive({
 })
 
 async function onSubmit() {
-  try {
-    loading.value = true
-    // @ts-expect-error
-    await login(form.username, md5(form.password))
+  loading.value = true
+  const formData = new URLSearchParams()
+  formData.append('username', form.username)
+  // @ts-expect-error
+  formData.append('password', md5(form.password))
+  const {data} = await useApi('/api/login').post(formData).json()
+  loading.value = false
+  if (data.value?.access_token) {
+    saveUserToken(data.value.access_token)
     message.success('登录成功')
     router.push('/')
-  } catch (err: any) {
-    console.error(err)
-  } finally {
-    loading.value = false
   }
 }
 </script>
