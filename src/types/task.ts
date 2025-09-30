@@ -58,5 +58,10 @@ export interface TaskResult {
     "注册天数": string,
     "卖家个人描述": string,
     "卖家信用": string
+  },
+  "分析结果"?: {
+    "推荐度": number,
+    "建议": string,
+    "原因": string
   }
 }

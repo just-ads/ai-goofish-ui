@@ -39,7 +39,7 @@
         <div
           v-for="result in taskResults.items"
           :key="result['商品信息']['商品ID']"
-          class="border border-gray-200 rounded-md p-2 bg-white"
+          class="border border-gray-200 rounded-md p-2 bg-white relative"
         >
           <img
             v-if="result['商品信息']['商品图片列表']?.length"
@@ -58,6 +58,17 @@
           </div>
           <div class="text-xs text-gray-500 mb-1">发货地: {{ result['商品信息']['发货地区'] }}</div>
           <div class="text-xs text-gray-500 mb-1">卖家: {{ result['卖家信息']['卖家昵称'] }}</div>
+          <div v-if="result['分析结果']">
+            <a-tag :color="getColor(result['分析结果']['推荐度'])" class="absolute top-2 right-0 cursor-default">
+              {{ result['分析结果']['建议'] }}
+            </a-tag>
+            <a-tooltip destroyTooltipOnHide trigger='click' class="max-h-[50px] overflow-auto">
+              <template #title>
+                {{ result['分析结果']['原因'] }}
+              </template>
+              <div class="text-blue ml-auto text-center cursor-pointer">查看ai分析详情</div>
+            </a-tooltip>
+          </div>
           <a-divider/>
           <div class="flex">
             <div>
@@ -107,6 +118,18 @@ const taskResultRequest = reactive<TaskResultRequest>({
   recommended_only: false,
   order: 'asce'
 })
+
+const getColor = (suggest: number) => {
+  if (suggest >= 80) {
+    return 'success'
+  } else if (suggest >= 60) {
+    return 'blue'
+  } else if (suggest >= 30) {
+    return 'warning'
+  } else {
+    return 'red'
+  }
+}
 
 
 const fetchTaskResults = async (taskId: number, request: TaskResultRequest) => {
