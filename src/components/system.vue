@@ -17,6 +17,7 @@ const {data: systemConfig} = useApi<SystemConfig>('api/system', {
 const testInfo = reactive({
   testing: false,
   error: null,
+  message: null
 });
 
 const saving = ref(false);
@@ -24,10 +25,12 @@ const saving = ref(false);
 const testAi = async () => {
   testInfo.testing = true;
   testInfo.error = null;
+  testInfo.message = null;
   const {data, error} = await useApi('api/system/aitest').post(systemConfig.value).json();
   testInfo.testing = false;
   if (!error.value && data.value) {
-    message.success(data.value);
+    testInfo.message = data.value;
+    message.success('连接成功');
   }
   if (error.value) {
     testInfo.error = error.value;
@@ -73,8 +76,8 @@ const handleSave = async () => {
     <div v-if="testInfo.error" class="my-2 text-red-500">
       {{ testInfo.error }}
     </div>
-    <div v-else class="text-green">
-      连接成功
+    <div v-else-if="testInfo.message" class="text-green">
+      连接成功: {{ testInfo.message }}
     </div>
 
     <div class="space-x-sm">
