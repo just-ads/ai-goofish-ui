@@ -108,7 +108,7 @@ const runTask = async (task: Task) => {
 }
 
 const stopTask = async (task: Task) => {
-  const {error} = await useApi(`/api/tasks/stop/${task.task_id}`);
+  const {error} = await useApi(`/api/tasks/stop/${task.task_id}`).post();
   if (!error.value) {
     task.running = false;
     message.success(`任务 "${task.task_name}" 已停止运行`)

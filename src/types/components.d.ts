@@ -35,6 +35,7 @@ declare module 'vue' {
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
     Header: typeof import('./../components/header.vue')['default']
     Login: typeof import('./../views/login.vue')['default']
+    PriceLineChart: typeof import('./../components/PriceLineChart.vue')['default']
     Result: typeof import('./../components/result.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

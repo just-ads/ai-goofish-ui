@@ -18,7 +18,7 @@
       <a-button danger type="primary" @click="() => removeResult()">删除结果</a-button>
     </div>
 
-    <div class="flex">
+    <div class="flex py-2.5">
       <div>
         <span>排序: </span>
         <a-select v-model:value="taskResultRequest.sort_by" @select="onSortChange" class="w-30">
@@ -32,6 +32,14 @@
           <component :is="taskResultRequest.order === 'asce' ? ArrowUpOutlined : ArrowDownOutlined"/>
         </a-button>
       </div>
+      <a-pagination
+        v-if="taskResults"
+        class="ml-auto"
+        v-model:current="taskResultRequest.page"
+        v-model:page-size="taskResultRequest.limit"
+        :total="taskResults.total"
+        @change="onPageChange"
+      />
     </div>
 
     <a-spin :spinning="loading" wrapperClassName="flex-1 h-0 overflow-auto">
@@ -85,19 +93,13 @@
       <div v-else-if="!loading" class="mt-4 text-gray-400">暂无结果</div>
     </a-spin>
 
-    <a-pagination
-      v-if="taskResults"
-      class="mt-4"
-      v-model:current="taskResultRequest.page"
-      v-model:page-size="taskResultRequest.limit"
-      :total="taskResults.total"
-      @change="onPageChange"
-    />
+    <PriceLineChart :chartDataSource="pricesData" :loading="chartLoading"/>
   </div>
 </template>
 
 <script setup lang="ts">
 import {useApi} from "@/api/fetch";
+import PriceLineChart from "./PriceLineChart.vue";
 import {TaskResultResponse, TaskResultRequest} from "@/types/task";
 import {copyToClipboard} from "@/utils/utils";
 import {message, Modal} from "ant-design-vue";
@@ -110,6 +112,8 @@ const taskStore = useTaskStore();
 const selectedTaskId = ref<number>();
 const taskResults = ref<TaskResultResponse | null>(null);
 const loading = ref(false);
+const chartLoading = ref(false);
+const pricesData = ref<{ '时间': string, '价格': string }[]>([]);
 
 const taskResultRequest = reactive<TaskResultRequest>({
   page: 1,
@@ -139,6 +143,16 @@ const fetchTaskResults = async (taskId: number, request: TaskResultRequest) => {
   loading.value = false;
   if (data.value && !error.value) {
     taskResults.value = data.value;
+  }
+}
+
+const fetchPricesData = async (taskId: number) => {
+  if (taskId === undefined) return;
+  chartLoading.value = true;
+  const {data, error} = await useApi(`/api/results/prices/${taskId}`).get().json<{ '时间': string, '价格': string }[]>();
+  chartLoading.value = false;
+  if (data.value && !error.value) {
+    pricesData.value = data.value;
   }
 }
 
@@ -202,6 +216,7 @@ watch(selectedTaskId, (id) => {
   taskResultRequest.page = 1;
   if (id !== undefined) {
     fetchTaskResults(id, taskResultRequest);
+    fetchPricesData(id);
   }
 });
 
@@ -218,6 +233,7 @@ watch(
 onMounted(() => {
   if (selectedTaskId.value !== undefined) {
     fetchTaskResults(selectedTaskId.value, taskResultRequest);
+    fetchPricesData(selectedTaskId.value);
   }
 });
 </script>
