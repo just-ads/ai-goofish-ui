@@ -17,21 +17,21 @@ const router = createRouter({
       children: [{
         path: '/tasks',
         name: 'tasks',
-        component: () => import('@/components/tasks.vue'),
+        component: () => import('@/views/tasks.vue'),
         meta: {
           title: '任务列表'
         }
       }, {
         path: '/result',
         name: 'result',
-        component: () => import('@/components/result.vue'),
+        component: () => import('@/views/result.vue'),
         meta: {
           title: '结果列表'
         }
       }, {
         path: '/system',
         name: 'system',
-        component: () => import('@/components/system.vue'),
+        component: () => import('@/views/system.vue'),
         meta: {
           title: '系统设置'
         }

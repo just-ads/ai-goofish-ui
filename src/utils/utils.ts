@@ -11,3 +11,12 @@ export function copyToClipboard(string: string) {
     }
   })
 }
+
+export function safeStringify(input: any) {
+  try {
+    return JSON.stringify(input);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
+    return input;
+  }
+}
