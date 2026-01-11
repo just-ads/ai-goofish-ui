@@ -60,7 +60,7 @@ async function onSubmit() {
   formData.append('username', form.username)
   // @ts-expect-error
   formData.append('password', md5(form.password))
-  const {data} = await useApi('/api/login').post(formData).json()
+  const {data} = await useApi('/api/auth/login').post(formData).json()
   loading.value = false
   if (data.value?.access_token) {
     saveUserToken(data.value.access_token)
