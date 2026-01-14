@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {useApi} from "@/api/fetch";
 import {message, Modal} from "ant-design-vue";
-import {PlusOutlined, DeleteOutlined, ThunderboltOutlined, InfoCircleOutlined} from "@ant-design/icons-vue";
+import {PlusOutlined, DeleteOutlined, ThunderboltOutlined} from "@ant-design/icons-vue";
 import type {AgentConfig} from "@/types/agent";
-import AgentForm from "@/components/agentForm.vue";
+import AgentForm from "@/components/AgentForm.vue";
 
 // 使用独立的API接口管理Agent配置
 const { data: agents, execute: refreshAgents } = useApi<AgentConfig[]>('/api/agents', {
@@ -41,12 +41,7 @@ const addAgentModal = () => {
     async onOk() {
       try {
         loading.value = true;
-        // 生成唯一ID
-        const newId = `agent-${Date.now()}`;
-        const newAgent = {
-          ...agentConfig.value,
-          id: newId
-        };
+        const newAgent = agentConfig.value;
 
         // 通过API创建Agent
         const {error} = await useApi('/api/agents').post(newAgent).json();
@@ -136,7 +131,7 @@ const testAgent = async (index: number) => {
   const agent = agents.value[index];
 
   try {
-    loading.value = true;
+    testing.value = true;
     const {error} = await useApi(`/api/agents/${agent.id}/test`).post().json();
 
     if (!error.value) {
@@ -147,17 +142,17 @@ const testAgent = async (index: number) => {
   } catch (err) {
     message.error('测试Agent连接时发生错误');
   } finally {
-    loading.value = false;
+    testing.value = false;
   }
 };
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div class="flex-col h-full space-y-4">
     <h3 class="text-lg font-medium">AI Agent配置</h3>
 
     <!-- Agent列表 -->
-    <div>
+    <div class="flex-col flex-1">
       <div class="flex justify-between items-center mb-4">
         <h4 class="text-md font-medium">已配置的Agent</h4>
         <a-button type="primary" @click="addAgentModal" :loading="loading">
@@ -166,11 +161,11 @@ const testAgent = async (index: number) => {
         </a-button>
       </div>
 
-      <div v-if="agents && agents.length > 0" class="space-y-3">
+      <div v-if="agents && agents.length > 0" class="space-y-3 h-0 flex-1 overflow-auto">
         <div
           v-for="(agent, index) in agents"
           :key="agent.id"
-          class="border border-gray-200 rounded p-4 hover:border-blue-300 transition-colors"
+          class="border border-gray-200 rounded p-4 bg-white hover:border-blue-300 transition-colors"
         >
           <div class="flex justify-between items-start">
             <div class="flex-1">
@@ -178,9 +173,6 @@ const testAgent = async (index: number) => {
                 <h5 class="font-medium text-gray-800">{{ agent.name }}</h5>
                 <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">
                   {{ agent.model }}
-                </span>
-                <span class="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded">
-                  {{ agent.id }}
                 </span>
               </div>
 
@@ -205,7 +197,7 @@ const testAgent = async (index: number) => {
                 type="primary"
                 size="small"
                 @click="editAgent(index)"
-                :loading="loading"
+                :disabled="testing"
               >
                 编辑
               </a-button>
@@ -213,7 +205,7 @@ const testAgent = async (index: number) => {
                 type="default"
                 size="small"
                 @click="testAgent(index)"
-                :loading="loading"
+                :loading="testing"
               >
                 <ThunderboltOutlined/>
                 测试
@@ -223,7 +215,7 @@ const testAgent = async (index: number) => {
                 danger
                 size="small"
                 @click="deleteAgent(index)"
-                :loading="loading"
+                :disabled="testing"
               >
                 <DeleteOutlined/>
               </a-button>

@@ -21,7 +21,6 @@ const {data: systemConfig, execute: refreshConfig} = useApi<SystemConfig>('api/s
       enabled: false,
       providers: []
     },
-    agents: [],
     evaluator: {
       enabled: true,
       textAgent: null,
@@ -53,14 +52,17 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <div class="p-4">
+  <div class="flex-col p-4 h-full">
     <!-- 页面标题 -->
-    <div class="mb-6">
+    <div class="flex justify-between mb-6">
       <h2 class="text-xl font-semibold mb-2">系统设置</h2>
+      <a-button type="primary" size="large" @click="handleSave" :loading="saving">
+        保存配置
+      </a-button>
     </div>
 
     <!-- Tab导航 -->
-    <a-tabs v-model:activeKey="activeTab" class="system-tabs">
+    <a-tabs v-model:activeKey="activeTab" class="h-0 flex-1 [&>.ant-tabs-content]:h-full">
       <!-- 浏览器设置 -->
       <a-tab-pane key="browser" tab="浏览器设置">
         <BrowserSettings
@@ -90,12 +92,5 @@ const handleSave = async () => {
         />
       </a-tab-pane>
     </a-tabs>
-
-    <!-- 保存按钮 -->
-    <div class="fixed bottom-6 right-6">
-      <a-button type="primary" size="large" @click="handleSave" :loading="saving">
-        保存配置
-      </a-button>
-    </div>
   </div>
 </template>
