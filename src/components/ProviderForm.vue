@@ -144,14 +144,14 @@ const testProvider = async () => {
       body: form.body
     };
 
-// 测试Provider连接
+    // 测试Provider连接
     const {error: testError, data: testData} = await useApi(`/api/providers/test`).post(testConfig).json();
 
     if (!testError.value && testData.value) {
       const response = testData.value.response || '测试成功';
       const providerName = testData.value.provider_name || testConfig.name;
 
-testResult.value = `✅ Provider连接测试成功！\n\n` +
+      testResult.value = `✅ Provider连接测试成功！\n\n` +
         `Provider名称: ${providerName}\n` +
         `模型: ${testConfig.model}\n` +
         `API端点: ${testConfig.endpoint}\n` +
@@ -206,7 +206,7 @@ defineExpose({
       :label-col="{ span: 5 }"
       :wrapper-col="{ span: 18 }"
     >
-<a-form-item label="Provider名称" name="name" required>
+      <a-form-item label="Provider名称" name="name" required>
         <a-input v-model:value="form.name" placeholder="输入Provider名称"/>
       </a-form-item>
 
@@ -327,7 +327,7 @@ defineExpose({
           <div class="flex items-center gap-2">
             <a-button
               type="primary"
-              @click="testAgent"
+              @click="testProvider"
               :loading="testing"
               :disabled="!form.name || !form.endpoint || !form.model || !form.api_key"
             >

@@ -231,7 +231,7 @@ v-for="provider in providers"
         <p class="text-gray-500 mb-4">尚未配置任何Provider</p>
         <a-button type="primary" @click="addProviderModal">
           <PlusOutlined/>
-          添加第一个Agent
+          添加第一个Provider
         </a-button>
       </div>
     </div>
