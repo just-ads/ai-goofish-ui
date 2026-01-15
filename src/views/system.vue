@@ -6,7 +6,7 @@ import type {SystemConfig} from "@/types/system";
 // 导入新的模块组件
 import BrowserSettings from "@/components/BrowserSettings.vue";
 import NotificationSettings from "@/components/NotificationSettings.vue";
-import AgentSettings from "@/components/AgentSettings.vue";
+import ProviderSettings from "@/components/ProviderSettings.vue";
 import EvaluatorSettings from "@/components/EvaluatorSettings.vue";
 
 const activeTab = ref('browser');
@@ -21,11 +21,11 @@ const {data: systemConfig, execute: refreshConfig} = useApi<SystemConfig>('api/s
       enabled: false,
       providers: []
     },
-    evaluator: {
-      enabled: true,
-      textAgent: null,
-      imagAgent: null
-    }
+      evaluator: {
+        enabled: true,
+        textProvider: null,
+        imageProvider: null
+      }
   }
 }).json<SystemConfig>();
 
@@ -79,9 +79,9 @@ const handleSave = async () => {
         />
       </a-tab-pane>
 
-      <!-- Agent设置 -->
-      <a-tab-pane key="agents" tab="AI Agent设置">
-        <AgentSettings/>
+      <!-- Provider设置 -->
+      <a-tab-pane key="providers" tab="AI Provider设置">
+        <ProviderSettings/>
       </a-tab-pane>
 
       <!-- 商品评估器设置 -->

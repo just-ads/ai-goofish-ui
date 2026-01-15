@@ -1,5 +1,5 @@
-// Agent配置
-export interface AgentConfig {
+// Model provider configuration
+export interface ProviderConfig {
   id: string
   name: string
   endpoint: string
@@ -10,6 +10,7 @@ export interface AgentConfig {
   body?: Record<string, any>
 }
 
-export type AgentTemplate = AgentConfig & {
+export type ProviderTemplate = ProviderConfig & {
   description: string
 }
+

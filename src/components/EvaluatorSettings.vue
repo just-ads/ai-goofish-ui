@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useApi} from "@/api/fetch";
 import type {SystemConfig} from "@/types/system";
-import type {AgentConfig} from "@/types/agent";
+import type {ProviderConfig} from "@/types/provider";
 
 const props = defineProps<{
   config: SystemConfig;
@@ -14,9 +14,9 @@ const emit = defineEmits<{
 const systemConfig = computed(() => props.config);
 
 // 获取Agent列表
-const {data: agents} = useApi<AgentConfig[]>('/api/agents', {
+const {data: providers} = useApi<ProviderConfig[]>('/api/providers', {
   initialData: []
-}).json<AgentConfig[]>();
+}).json<ProviderConfig[]>();
 
 // 更新配置的辅助函数
 const updateConfig = (updates: Partial<SystemConfig>) => {
@@ -42,44 +42,44 @@ const updateConfig = (updates: Partial<SystemConfig>) => {
       </a-form-item>
 
       <div v-if="systemConfig.evaluator.enabled">
-        <a-form-item label="文本分析Agent">
+        <a-form-item label="文本分析Provider">
           <a-select
-            :value="systemConfig.evaluator.textAgent || undefined"
+            :value="systemConfig.evaluator.textProvider || undefined"
             @change="(value) => {
-              const newEvaluator = { ...systemConfig.evaluator, textAgent: value as string || null };
+              const newEvaluator = { ...systemConfig.evaluator, textProvider: value as string || null };
               updateConfig({ evaluator: newEvaluator });
             }"
             class="w-full"
-            placeholder="选择用于文本分析的Agent"
+            placeholder="选择用于文本分析的Provider"
             allow-clear
           >
             <a-select-option
-              v-for="agent in agents"
-              :key="agent.id"
-              :value="agent.id"
+              v-for="provider in providers"
+              :key="provider.id"
+              :value="provider.id"
             >
-              {{ agent.name }}
+              {{ provider.name }}
             </a-select-option>
           </a-select>
         </a-form-item>
 
-        <a-form-item label="图像分析Agent">
+        <a-form-item label="图像分析Provider">
           <a-select
-            :value="systemConfig.evaluator.imagAgent || undefined"
+            :value="systemConfig.evaluator.imageProvider || undefined"
             @change="(value) => {
-              const newEvaluator = { ...systemConfig.evaluator, imagAgent: value as string || null };
+              const newEvaluator = { ...systemConfig.evaluator, imageProvider: value as string || null };
               updateConfig({ evaluator: newEvaluator });
             }"
             class="w-full"
-            placeholder="选择用于图像分析的Agent"
+            placeholder="选择用于图像分析的Provider"
             allow-clear
           >
             <a-select-option
-              v-for="agent in agents"
-              :key="agent.id"
-              :value="agent.id"
+              v-for="provider in providers"
+              :key="provider.id"
+              :value="provider.id"
             >
-              {{ agent.name }}
+              {{ provider.name }}
             </a-select-option>
           </a-select>
         </a-form-item>

@@ -14,9 +14,10 @@ export interface NotificationConfig {
 // 评估器配置
 export interface EvaluatorConfig {
   enabled: boolean
-  textAgent?: string | null
-  imagAgent?: string | null
+  textProvider?: string | null
+  imageProvider?: string | null
 }
+
 
 
 // 系统配置
