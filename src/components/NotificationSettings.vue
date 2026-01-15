@@ -153,7 +153,6 @@ const testNotifier = async (id: string) => {
         <a-switch
           :checked="systemConfig.notifications.enabled"
           @change="checked => {
-            console.log(checked)
             const newNotifyConfig = { ...systemConfig.notifications, enabled: !!checked };
             updateConfig({ notifications: newNotifyConfig });
         }"/>
