@@ -80,12 +80,12 @@ const handleSave = async () => {
       </a-tab-pane>
 
       <!-- Agent设置 -->
-      <a-tab-pane key="agents" tab="Agent设置">
+      <a-tab-pane key="agents" tab="AI Agent设置">
         <AgentSettings/>
       </a-tab-pane>
 
-      <!-- 评估器设置 -->
-      <a-tab-pane key="evaluator" tab="评估器设置">
+      <!-- 商品评估器设置 -->
+      <a-tab-pane key="evaluator" tab="商品评估器设置">
         <EvaluatorSettings
           :config="systemConfig!"
           @update:config="updateConfig"

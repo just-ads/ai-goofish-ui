@@ -8,12 +8,7 @@ export interface BrowserConfig {
 // 通知配置
 export interface NotificationConfig {
   enabled: boolean
-  providers: NotificationProvider[]
-}
-
-export interface NotificationProvider {
-  type: 'ntfy' | 'gotify' | 'wechat'
-  config: Record<string, any>
+  providers: string[]
 }
 
 // 评估器配置
