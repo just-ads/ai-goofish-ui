@@ -6,7 +6,7 @@ import type {AgentConfig} from "@/types/agent";
 import AgentForm from "@/components/AgentForm.vue";
 
 // 使用独立的API接口管理Agent配置
-const { data: agents, execute: refreshAgents } = useApi<AgentConfig[]>('/api/agents', {
+const {data: agents, execute: refreshAgents} = useApi('/api/agents', {
   initialData: []
 }).json<AgentConfig[]>();
 
@@ -62,10 +62,9 @@ const addAgentModal = () => {
 };
 
 // 删除Agent
-const deleteAgent = (index: number) => {
-  if (!agents.value || agents.value.length <= index) return;
-
-  const agent = agents.value[index];
+const deleteAgent = (id: string) => {
+  const agent = agents.value?.find(it => it.id === id);
+  if (!agent) return;
 
   Modal.confirm({
     title: '确认删除',
@@ -91,10 +90,11 @@ const deleteAgent = (index: number) => {
 };
 
 // 编辑Agent
-const editAgent = (index: number) => {
-  if (!agents.value || agents.value.length <= index) return;
+const editAgent = (id: string) => {
+  const agent = agents.value?.find(it => it.id === id);
+  if (!agent) return;
 
-  const agentConfig = ref<AgentConfig>({...agents.value[index]});
+  const agentConfig = ref<AgentConfig>(agent);
 
   Modal.confirm({
     title: '编辑Agent',
@@ -125,10 +125,9 @@ const editAgent = (index: number) => {
 };
 
 // 测试Agent连接
-const testAgent = async (index: number) => {
-  if (!agents.value || agents.value.length <= index) return;
-
-  const agent = agents.value[index];
+const testAgent = async (id: string) => {
+  const agent = agents.value?.find(it => it.id === id);
+  if (!agent) return;
 
   try {
     testing.value = true;
@@ -163,7 +162,7 @@ const testAgent = async (index: number) => {
 
       <div v-if="agents && agents.length > 0" class="space-y-3 h-0 flex-1 overflow-auto">
         <div
-          v-for="(agent, index) in agents"
+          v-for="agent in agents"
           :key="agent.id"
           class="border border-gray-200 rounded p-4 bg-white hover:border-blue-300 transition-colors"
         >
@@ -196,7 +195,7 @@ const testAgent = async (index: number) => {
               <a-button
                 type="primary"
                 size="small"
-                @click="editAgent(index)"
+                @click="editAgent(agent.id)"
                 :disabled="testing"
               >
                 编辑
@@ -204,7 +203,7 @@ const testAgent = async (index: number) => {
               <a-button
                 type="default"
                 size="small"
-                @click="testAgent(index)"
+                @click="testAgent(agent.id)"
                 :loading="testing"
               >
                 <ThunderboltOutlined/>
@@ -214,7 +213,7 @@ const testAgent = async (index: number) => {
                 type="text"
                 danger
                 size="small"
-                @click="deleteAgent(index)"
+                @click="deleteAgent(agent.id)"
                 :disabled="testing"
               >
                 <DeleteOutlined/>
@@ -226,7 +225,7 @@ const testAgent = async (index: number) => {
 
       <div v-else class="text-center py-8 border border-dashed border-gray-300 rounded">
         <p class="text-gray-500 mb-4">尚未配置任何Agent</p>
-        <a-button type="primary" @click="addAgentModal" :loading="loading">
+        <a-button type="primary" @click="addAgentModal">
           <PlusOutlined/>
           添加第一个Agent
         </a-button>
