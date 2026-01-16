@@ -2,6 +2,7 @@ export interface NotifierConfig {
   id: string
   name: string
   type: 'ntfy' | 'gotify' | string
+  enable: boolean
   [key: string]: any
 }
 
@@ -20,18 +21,4 @@ export interface NotifierTemplate {
   description: string
   type: 'ntfy' | 'gotify' | string
   template: Record<string, NotifierTemplateField>
-}
-
-export interface NotifierCreateRequest {
-  name: string
-  type: 'ntfy' | 'gotify'
-  url: string
-  token?: string
-}
-
-export interface NotifierUpdateRequest {
-  name?: string
-  type?: 'ntfy' | 'gotify'
-  url?: string
-  token?: string
 }

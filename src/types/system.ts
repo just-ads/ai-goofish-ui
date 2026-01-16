@@ -6,7 +6,6 @@ export interface BrowserConfig {
 
 export interface NotificationConfig {
   enabled: boolean
-  providers: string[]
 }
 
 export interface EvaluatorConfig {
