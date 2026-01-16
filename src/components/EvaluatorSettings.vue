@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useApi} from "@/api/fetch";
 import type {SystemConfig} from "@/types/system";
-import type {ProviderConfig} from "@/types/provider";
+import type {AIConfig} from "@/types/ai";
 
 const props = defineProps<{
   config: SystemConfig;
@@ -13,10 +13,10 @@ const emit = defineEmits<{
 
 const systemConfig = computed(() => props.config);
 
-// 获取Agent列表
-const {data: providers} = useApi<ProviderConfig[]>('/api/providers', {
+
+const {data: aiConfigList} = useApi<AIConfig[]>('/api/ai', {
   initialData: []
-}).json<ProviderConfig[]>();
+}).json<AIConfig[]>();
 
 // 更新配置的辅助函数
 const updateConfig = (updates: Partial<SystemConfig>) => {
@@ -42,44 +42,44 @@ const updateConfig = (updates: Partial<SystemConfig>) => {
       </a-form-item>
 
       <div v-if="systemConfig.evaluator.enabled">
-        <a-form-item label="文本分析Provider">
+        <a-form-item label="文本分析 AI">
           <a-select
-            :value="systemConfig.evaluator.textProvider || undefined"
+            :value="systemConfig.evaluator.textAI || undefined"
             @change="(value) => {
-              const newEvaluator = { ...systemConfig.evaluator, textProvider: value as string || null };
+              const newEvaluator = { ...systemConfig.evaluator, textAI: value as string || null };
               updateConfig({ evaluator: newEvaluator });
             }"
             class="w-full"
-            placeholder="选择用于文本分析的Provider"
+            placeholder="选择用于文本分析的 AI"
             allow-clear
           >
             <a-select-option
-              v-for="provider in providers"
-              :key="provider.id"
-              :value="provider.id"
+              v-for="config in aiConfigList"
+              :key="config.id"
+              :value="config.id"
             >
-              {{ provider.name }}
+              {{ config.name }}
             </a-select-option>
           </a-select>
         </a-form-item>
 
-        <a-form-item label="图像分析Provider">
+        <a-form-item label="图像分析 AI">
           <a-select
-            :value="systemConfig.evaluator.imageProvider || undefined"
+            :value="systemConfig.evaluator.imageAI || undefined"
             @change="(value) => {
-              const newEvaluator = { ...systemConfig.evaluator, imageProvider: value as string || null };
+              const newEvaluator = { ...systemConfig.evaluator, imageAI: value as string || null };
               updateConfig({ evaluator: newEvaluator });
             }"
             class="w-full"
-            placeholder="选择用于图像分析的Provider"
+            placeholder="选择用于图像分析的 AI"
             allow-clear
           >
             <a-select-option
-              v-for="provider in providers"
-              :key="provider.id"
-              :value="provider.id"
+              v-for="config in aiConfigList"
+              :key="config.id"
+              :value="config.id"
             >
-              {{ provider.name }}
+              {{ config.name }}
             </a-select-option>
           </a-select>
         </a-form-item>

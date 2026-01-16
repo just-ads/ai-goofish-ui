@@ -1,7 +1,7 @@
-<script setup lang="ts" generic="T extends ProviderConfig">
+<script setup lang="ts" generic="T extends AIConfig">
 
 import {useApi} from "@/api/fetch";
-import {ProviderConfig, ProviderTemplate} from "@/types/provider";
+import {AIConfig, AITemplate} from "@/types/ai";
 import {safeStringify} from "@/utils/utils";
 import {DeleteOutlined, DownOutlined, EditOutlined, PlusOutlined, ThunderboltOutlined, InfoCircleOutlined} from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
@@ -20,7 +20,7 @@ const editingBody = ref(false);
 const headersText = ref('');
 const bodyText = ref('');
 
-const {data: providerTemplates} = useApi('/api/providers/templates').json<ProviderTemplate[]>();
+const {data: aiTemplates} = useApi('/api/ai/templates').json<AITemplate[]>();
 
 watch(
   form,
@@ -40,7 +40,7 @@ watch(() => form.body, (newBody) => {
 
 const applyTemplate = (id: string) => {
   if (!id) return;
-  const template = providerTemplates.value?.find(it => it.id === id);
+  const template = aiTemplates.value?.find(it => it.id === id);
   if (!template) {
     return message.error('未找到模板')
   }
@@ -110,12 +110,11 @@ const cancelEditBody = () => {
   editingBody.value = false;
 }
 
-// 测试Provider连接
 const testing = ref(false);
 const testResult = ref<string | null>(null);
 const testVisible = ref(false);
 
-const testProvider = async () => {
+const testConfig = async () => {
   // 验证必填字段
   const missingFields = [];
   if (!form.name) missingFields.push('Agent名称');
@@ -132,7 +131,6 @@ const testProvider = async () => {
     testing.value = true;
     testResult.value = null;
 
-    // 创建临时的Provider配置用于测试
     const testConfig = {
       id: 'test-' + Date.now(),
       name: form.name,
@@ -144,21 +142,20 @@ const testProvider = async () => {
       body: form.body
     };
 
-    // 测试Provider连接
-    const {error: testError, data: testData} = await useApi(`/api/providers/test`).post(testConfig).json();
+    const {error: testError, data: testData} = await useApi(`/api/ai/test`).post(testConfig).json();
 
     if (!testError.value && testData.value) {
       const response = testData.value.response || '测试成功';
-      const providerName = testData.value.provider_name || testConfig.name;
+      const name = testConfig.name;
 
-      testResult.value = `✅ Provider连接测试成功！\n\n` +
-        `Provider名称: ${providerName}\n` +
+      testResult.value = `✅ 连接测试成功！\n\n` +
+        `名称: ${name}\n` +
         `模型: ${testConfig.model}\n` +
         `API端点: ${testConfig.endpoint}\n` +
         `测试响应: ${response.substring(0, 200)}${response.length > 200 ? '...' : ''}`;
-      message.success('Provider连接测试成功');
+      message.success('连接测试成功');
     } else {
-      testResult.value = `❌ Provider连接测试失败\n\n` +
+      testResult.value = `❌ 连接测试失败\n\n` +
         `错误信息: ${testError.value?.message || '未知错误'}\n` +
         `可能原因:\n` +
         `1. API密钥无效\n` +
@@ -166,7 +163,7 @@ const testProvider = async () => {
         `3. API端点无法访问\n` +
         `4. 网络连接问题\n` +
         `5. 请求头/请求体配置错误`;
-      message.error('Provider连接测试失败');
+      message.error('连接测试失败');
     }
 
     testVisible.value = true;
@@ -191,7 +188,7 @@ const closeTestResult = () => {
 
 // 暴露测试方法给父组件
 defineExpose({
-  testProvider,
+  testConfig: testConfig,
   testing,
   testResult,
   testVisible
@@ -206,8 +203,8 @@ defineExpose({
       :label-col="{ span: 5 }"
       :wrapper-col="{ span: 18 }"
     >
-      <a-form-item label="Provider名称" name="name" required>
-        <a-input v-model:value="form.name" placeholder="输入Provider名称"/>
+      <a-form-item label="名称" name="name" required>
+        <a-input v-model:value="form.name" placeholder="输入名称"/>
       </a-form-item>
 
       <a-form-item label="模板选择">
@@ -217,7 +214,7 @@ defineExpose({
           allow-clear
         >
           <a-select-option
-            v-for="template in providerTemplates"
+            v-for="template in aiTemplates"
             :key="template.id"
             :value="template.id"
           >
@@ -327,7 +324,7 @@ defineExpose({
           <div class="flex items-center gap-2">
             <a-button
               type="primary"
-              @click="testProvider"
+              @click="testConfig"
               :loading="testing"
               :disabled="!form.name || !form.endpoint || !form.model || !form.api_key"
             >

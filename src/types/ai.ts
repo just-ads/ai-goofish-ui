@@ -1,5 +1,5 @@
-// Model provider configuration
-export interface ProviderConfig {
+// AI configuration
+export interface AIConfig {
   id: string
   name: string
   endpoint: string
@@ -10,7 +10,7 @@ export interface ProviderConfig {
   body?: Record<string, any>
 }
 
-export type ProviderTemplate = ProviderConfig & {
+export type AITemplate = AIConfig & {
   description: string
 }
 
