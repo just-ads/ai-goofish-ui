@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import {useApi} from "@/api/fetch";
 import {message} from "ant-design-vue";
-import type {SystemConfig} from "@/types/system";
-
-// 导入新的模块组件
 import BrowserSettings from "@/components/BrowserSettings.vue";
 import NotificationSettings from "@/components/NotificationSettings.vue";
 import EvaluatorSettings from "@/components/EvaluatorSettings.vue";
 import AISettings from "@/components/AISettings.vue";
 
+import type {SystemConfig} from "@/types/system";
+import {WarningOutlined} from "@ant-design/icons-vue";
+
 const activeTab = ref('browser');
+const configChanged = ref(false);
+const saving = ref(false);
 
 const {data: systemConfig, execute: refreshConfig} = useApi<SystemConfig>('api/system', {
   initialData: {
@@ -29,10 +31,10 @@ const {data: systemConfig, execute: refreshConfig} = useApi<SystemConfig>('api/s
   }
 }).json<SystemConfig>();
 
-const saving = ref(false);
 
 // 更新配置
 const updateConfig = (newConfig: SystemConfig) => {
+  configChanged.value = true;
   systemConfig.value = newConfig;
 };
 
@@ -44,6 +46,7 @@ const handleSave = async () => {
 
   if (!error.value) {
     message.success("保存成功");
+    configChanged.value = false;
     await refreshConfig();
   } else {
     message.error("保存失败");
@@ -56,9 +59,15 @@ const handleSave = async () => {
     <!-- 页面标题 -->
     <div class="flex justify-between mb-6 items-center">
       <h2 class="text-xl font-semibold">系统设置</h2>
-      <a-button type="primary" @click="handleSave" :loading="saving">
-        保存配置
-      </a-button>
+      <div class='flex items-center space-x-2.5'>
+        <div v-if="configChanged" class="space-x-2 text-orange">
+          <WarningOutlined/>
+          <span>配置未保存</span>
+        </div>
+        <a-button type="primary" @click="handleSave" :loading="saving">
+          保存配置
+        </a-button>
+      </div>
     </div>
 
     <!-- Tab导航 -->
