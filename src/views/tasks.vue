@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useApi} from "@/api/fetch";
-import TaskForm from "@/components/taskForm.vue";
+import TaskForm from "@/components/TaskForm.vue";
 import {useTaskStore} from "@/store";
 import {message, Modal} from 'ant-design-vue'
 

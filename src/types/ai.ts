@@ -1,5 +1,5 @@
-// Agent配置
-export interface AgentConfig {
+// AI configuration
+export interface AIConfig {
   id: string
   name: string
   endpoint: string
@@ -10,6 +10,7 @@ export interface AgentConfig {
   body?: Record<string, any>
 }
 
-export type AgentTemplate = AgentConfig & {
+export type AITemplate = AIConfig & {
   description: string
 }
+

@@ -6,8 +6,8 @@ import type {SystemConfig} from "@/types/system";
 // 导入新的模块组件
 import BrowserSettings from "@/components/BrowserSettings.vue";
 import NotificationSettings from "@/components/NotificationSettings.vue";
-import AgentSettings from "@/components/AgentSettings.vue";
 import EvaluatorSettings from "@/components/EvaluatorSettings.vue";
+import AISettings from "@/components/AISettings.vue";
 
 const activeTab = ref('browser');
 
@@ -21,11 +21,10 @@ const {data: systemConfig, execute: refreshConfig} = useApi<SystemConfig>('api/s
       enabled: false,
       providers: []
     },
-    agents: [],
     evaluator: {
       enabled: true,
-      textAgent: null,
-      imagAgent: null
+      textAI: null,
+      imageAI: null
     }
   }
 }).json<SystemConfig>();
@@ -53,14 +52,17 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <div class="p-4">
+  <div class="flex-col p-4 h-full">
     <!-- 页面标题 -->
-    <div class="mb-6">
-      <h2 class="text-xl font-semibold mb-2">系统设置</h2>
+    <div class="flex justify-between mb-6 items-center">
+      <h2 class="text-xl font-semibold">系统设置</h2>
+      <a-button type="primary" @click="handleSave" :loading="saving">
+        保存配置
+      </a-button>
     </div>
 
     <!-- Tab导航 -->
-    <a-tabs v-model:activeKey="activeTab" class="system-tabs">
+    <a-tabs v-model:activeKey="activeTab" class="h-0 flex-1 [&>.ant-tabs-content]:h-full">
       <!-- 浏览器设置 -->
       <a-tab-pane key="browser" tab="浏览器设置">
         <BrowserSettings
@@ -77,25 +79,18 @@ const handleSave = async () => {
         />
       </a-tab-pane>
 
-      <!-- Agent设置 -->
-      <a-tab-pane key="agents" tab="Agent设置">
-        <AgentSettings/>
-      </a-tab-pane>
-
-      <!-- 评估器设置 -->
-      <a-tab-pane key="evaluator" tab="评估器设置">
+      <!-- 商品评估器设置 -->
+      <a-tab-pane key="evaluator" tab="商品评估器设置">
         <EvaluatorSettings
           :config="systemConfig!"
           @update:config="updateConfig"
         />
       </a-tab-pane>
-    </a-tabs>
 
-    <!-- 保存按钮 -->
-    <div class="fixed bottom-6 right-6">
-      <a-button type="primary" size="large" @click="handleSave" :loading="saving">
-        保存配置
-      </a-button>
-    </div>
+      <!-- AI设置 -->
+      <a-tab-pane key="ai" tab="AI设置">
+        <AISettings/>
+      </a-tab-pane>
+    </a-tabs>
   </div>
 </template>

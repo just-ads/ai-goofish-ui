@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useApi } from "@/api/fetch";
-import type { SystemConfig } from "@/types/system";
-import type { AgentConfig } from "@/types/agent";
+import {useApi} from "@/api/fetch";
+import type {SystemConfig} from "@/types/system";
+import type {AIConfig} from "@/types/ai";
 
 const props = defineProps<{
   config: SystemConfig;
@@ -13,14 +13,14 @@ const emit = defineEmits<{
 
 const systemConfig = computed(() => props.config);
 
-// 获取Agent列表
-const { data: agents } = useApi<AgentConfig[]>('/api/agents', {
+
+const {data: aiConfigList} = useApi<AIConfig[]>('/api/ai', {
   initialData: []
-}).json<AgentConfig[]>();
+}).json<AIConfig[]>();
 
 // 更新配置的辅助函数
 const updateConfig = (updates: Partial<SystemConfig>) => {
-  const newConfig = { ...systemConfig.value, ...updates };
+  const newConfig = {...systemConfig.value, ...updates};
   emit('update:config', newConfig);
 };
 </script>
@@ -31,49 +31,55 @@ const updateConfig = (updates: Partial<SystemConfig>) => {
 
     <a-form layout="vertical" class="max-w-2xl">
       <a-form-item label="启用评估器">
-        <a-switch v-model:checked="systemConfig.evaluator.enabled" />
+        <a-switch
+          :checked="systemConfig.evaluator.enabled"
+          @change="(checked) => {
+            const newEvaluator = { ...systemConfig.evaluator, enabled: !!checked };
+            updateConfig({ evaluator: newEvaluator });
+          }"
+        />
         <span class="ml-2 text-gray-500">是否启用AI商品分析评估</span>
       </a-form-item>
 
       <div v-if="systemConfig.evaluator.enabled">
-        <a-form-item label="文本分析Agent">
+        <a-form-item label="文本分析 AI">
           <a-select
-            :value="systemConfig.evaluator.textAgent || undefined"
+            :value="systemConfig.evaluator.textAI || undefined"
             @change="(value) => {
-              const newEvaluator = { ...systemConfig.evaluator, textAgent: value as string || null };
+              const newEvaluator = { ...systemConfig.evaluator, textAI: value as string || null };
               updateConfig({ evaluator: newEvaluator });
             }"
             class="w-full"
-            placeholder="选择用于文本分析的Agent"
+            placeholder="选择用于文本分析的 AI"
             allow-clear
           >
             <a-select-option
-              v-for="agent in agents"
-              :key="agent.id"
-              :value="agent.id"
+              v-for="config in aiConfigList"
+              :key="config.id"
+              :value="config.id"
             >
-              {{ agent.name }}
+              {{ config.name }}
             </a-select-option>
           </a-select>
         </a-form-item>
 
-        <a-form-item label="图像分析Agent">
+        <a-form-item label="图像分析 AI">
           <a-select
-            :value="systemConfig.evaluator.imagAgent || undefined"
+            :value="systemConfig.evaluator.imageAI || undefined"
             @change="(value) => {
-              const newEvaluator = { ...systemConfig.evaluator, imagAgent: value as string || null };
+              const newEvaluator = { ...systemConfig.evaluator, imageAI: value as string || null };
               updateConfig({ evaluator: newEvaluator });
             }"
             class="w-full"
-            placeholder="选择用于图像分析的Agent"
+            placeholder="选择用于图像分析的 AI"
             allow-clear
           >
             <a-select-option
-              v-for="agent in agents"
-              :key="agent.id"
-              :value="agent.id"
+              v-for="config in aiConfigList"
+              :key="config.id"
+              :value="config.id"
             >
-              {{ agent.name }}
+              {{ config.name }}
             </a-select-option>
           </a-select>
         </a-form-item>

@@ -99,7 +99,7 @@
 
 <script setup lang="ts">
 import {useApi} from "@/api/fetch";
-import PriceLineChart from "@/components/priceLineChart.vue";
+import PriceLineChart from "@/components/PriceLineChart.vue";
 import {TaskResultResponse, TaskResultRequest} from "@/types/task";
 import {copyToClipboard} from "@/utils/utils";
 import {message, Modal} from "ant-design-vue";
