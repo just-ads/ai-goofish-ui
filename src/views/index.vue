@@ -5,7 +5,8 @@ import {
   MenuUnfoldOutlined,
   CalendarOutlined,
   CarryOutOutlined,
-  SettingOutlined
+  SettingOutlined,
+  FieldTimeOutlined
 } from '@ant-design/icons-vue';
 import {h} from "vue";
 
@@ -50,6 +51,7 @@ const handleMenuClick = (e: any) => {
         >
           <a-menu-item key="tasks" :icon="() => h(CalendarOutlined)">任务管理</a-menu-item>
           <a-menu-item key="result" :icon="() => h(CarryOutOutlined)">结果查看</a-menu-item>
+          <a-menu-item key="logs" :icon="() => h(FieldTimeOutlined)">任务日志</a-menu-item>
           <a-menu-item key="system" :icon="() => h(SettingOutlined)">系统设置</a-menu-item>
         </a-menu>
       </div>

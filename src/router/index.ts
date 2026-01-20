@@ -29,6 +29,19 @@ const router = createRouter({
           title: '结果列表'
         }
       }, {
+        path: '/logs',
+        name: 'logs',
+        component: () => import('@/views/logs.vue'),
+        meta: {
+          title: '任务日志'
+        }
+      }, {
+        path: '/logs/:id',
+        component: () => import('@/views/logs.vue'),
+        meta: {
+          title: '任务日志'
+        }
+      }, {
         path: '/system',
         name: 'system',
         component: () => import('@/views/system.vue'),

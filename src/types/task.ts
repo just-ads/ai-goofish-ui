@@ -65,3 +65,19 @@ export interface TaskResult {
     "原因": string
   }
 }
+
+export interface TaskLogEntry {
+  id: number
+  timestamp: string
+  level: string
+  message: string
+  task_id: number
+}
+
+export type TaskLogResponse = TaskLogEntry[]
+
+export interface TaskLogsRequest {
+  from_time?: string;
+  limit?: number;
+  levels?: ('提示' | '警告' | '错误' | 'DEBUG')[]
+}

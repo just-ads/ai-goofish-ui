@@ -10,15 +10,6 @@ const taskStore = useTaskStore();
 const loading = ref(false);
 let heartbeatTimer: number
 
-const fetchTasks = async () => {
-  loading.value = true;
-  const {data, error} = await useApi('/api/tasks').json<Task[]>();
-  loading.value = false;
-  if (!error.value && data.value) {
-    taskStore.setTasks(data.value);
-  }
-}
-
 const updateTask = async (task: UpdateTask) => {
   const {data, error} = await useApi(`/api/tasks/update`).post(task).json<Task>();
   if (data.value && !error.value) {
@@ -116,7 +107,7 @@ const stopTask = async (task: Task) => {
 }
 
 onMounted(() => {
-  fetchTasks().then(heartbeat)
+  taskStore.onReady.then(heartbeat)
 });
 
 onUnmounted(() => {
