@@ -186,9 +186,9 @@ const selectTask = (id?: number) => {
     </div>
 
     <!-- Results Grid -->
-    <div class="flex-1 min-h-0 relative">
+    <div class="flex-1 min-h-0 relative overflow-y-auto">
       <a-spin :spinning="loading" wrapperClassName="h-full">
-        <div v-if="taskResults?.items?.length" class="h-full overflow-y-auto custom-scrollbar pr-2">
+        <div v-if="taskResults?.items?.length" class="h-full custom-scrollbar pr-2">
           <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(280px,1fr))] pb-4">
             <div
               v-for="result in taskResults.items"
