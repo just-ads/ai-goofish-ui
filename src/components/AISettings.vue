@@ -2,8 +2,9 @@
 import {useApi} from "@/api/fetch";
 import {message, Modal} from "ant-design-vue";
 import {PlusOutlined, DeleteOutlined, ThunderboltOutlined} from "@ant-design/icons-vue";
-import type {AIConfig} from "@/types/ai";
 import AIForm from "@/components/AIForm.vue";
+
+import type {AIConfig} from "@/types/ai";
 
 const {data: configList, execute: refreshConfigList} = useApi('/api/ai', {
   initialData: []
@@ -161,13 +162,13 @@ const testConfig = async (id: string) => {
         <div
           v-for="config in configList"
           :key="config.id"
-          class="border border-gray-200 rounded p-4 bg-white hover:border-blue-300 transition-colors"
+          class="border border-gray-200 rounded p-4 bg-blueGray hover:border-blue-300 transition-colors"
         >
           <div class="flex justify-between items-start">
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-2">
                 <h5 class="font-medium text-gray-800">{{ config.name }}</h5>
-                <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">
+                <span class="text-xs px-2 py-1 rounded text-gray-600">
                   {{ config.model }}
                 </span>
               </div>
@@ -175,7 +176,7 @@ const testConfig = async (id: string) => {
               <div class="text-sm text-gray-600 space-y-1">
                 <div class="flex items-center gap-2">
                   <span class="font-medium">端点:</span>
-                  <code class="text-xs bg-gray-50 px-2 py-1 rounded truncate max-w-xs">
+                  <code class="text-xs px-2 py-1 rounded truncate max-w-md">
                     {{ config.endpoint }}
                   </code>
                 </div>

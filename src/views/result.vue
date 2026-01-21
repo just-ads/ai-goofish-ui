@@ -5,13 +5,12 @@ import TaskSelect from "@/components/TaskSelect.vue";
 import {TaskResultResponse, TaskResultRequest} from "@/types/task";
 import {copyToClipboard} from "@/utils/utils";
 import {message, Modal} from "ant-design-vue";
-import {h, reactive, ref} from "vue";
 import {
-  ReloadOutlined, 
-  ArrowUpOutlined, 
-  ArrowDownOutlined, 
-  DeleteOutlined, 
-  CopyOutlined, 
+  ReloadOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+  DeleteOutlined,
+  CopyOutlined,
   LinkOutlined,
   EnvironmentOutlined,
   UserOutlined,
@@ -138,16 +137,22 @@ const selectTask = (id?: number) => {
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
           <div class='w-72'>
-            <TaskSelect :modelValue="selectedTaskId" @change="selectTask"/>
+            <TaskSelect v-model:modelValue="selectedTaskId" @change="selectTask"/>
           </div>
           <a-button type="primary" :loading="loading" class="!rounded-md" @click="reload">
-             <template #icon><ReloadOutlined/></template> 刷新
+            <template #icon>
+              <ReloadOutlined/>
+            </template>
+            刷新
           </a-button>
           <a-button danger type="primary" class="!rounded-md" @click="removeResult">
-             <template #icon><DeleteOutlined/></template> 删除结果
+            <template #icon>
+              <DeleteOutlined/>
+            </template>
+            删除结果
           </a-button>
         </div>
-        
+
         <!-- Pagination -->
         <a-pagination
           v-if="taskResults"
@@ -170,7 +175,7 @@ const selectTask = (id?: number) => {
             <a-select-option value="crawl_time">抓取时间</a-select-option>
           </a-select>
         </div>
-        
+
         <a-button type="text" size="small" @click="onToggleOrder" class="!text-gray-400 hover:!text-white">
           <template #icon>
             <component :is="taskResultRequest.order === 'asce' ? ArrowUpOutlined : ArrowDownOutlined"/>
@@ -182,7 +187,7 @@ const selectTask = (id?: number) => {
 
     <!-- Results Grid -->
     <div class="flex-1 min-h-0 relative">
-       <a-spin :spinning="loading" wrapperClassName="h-full">
+      <a-spin :spinning="loading" wrapperClassName="h-full">
         <div v-if="taskResults?.items?.length" class="h-full overflow-y-auto custom-scrollbar pr-2">
           <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(280px,1fr))] pb-4">
             <div
@@ -200,13 +205,13 @@ const selectTask = (id?: number) => {
                 <div v-else class="w-full h-full flex items-center justify-center text-gray-600">
                   无图片
                 </div>
-                
+
                 <!-- Price Badge -->
                 <div class="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-white font-bold flex items-baseline gap-1">
                   <span class="text-xs">¥</span>
                   <span class="text-lg text-red-400">{{ result['商品信息']['当前售价'] }}</span>
                 </div>
-                
+
                 <!-- Original Price -->
                 <div v-if="result['商品信息']['商品原价']" class="absolute bottom-2 right-2 bg-black/40 px-1.5 py-0.5 rounded text-xs text-gray-400 line-through">
                   ¥{{ result['商品信息']['商品原价'] }}
@@ -215,22 +220,25 @@ const selectTask = (id?: number) => {
 
               <!-- Content -->
               <div class="p-4">
-                <div 
+                <div
                   class="text-sm font-medium mb-2 text-gray-200 line-clamp-2 h-10 group-hover:text-primary-400 transition-colors"
                   :title="result['商品信息']['商品标题']"
                 >
                   {{ result['商品信息']['商品标题'] }}
                 </div>
-                
+
                 <div class="flex flex-col gap-1 text-xs text-gray-500 mb-3">
                   <div class="flex items-center gap-1">
-                    <EnvironmentOutlined class="text-gray-600"/> {{ result['商品信息']['发货地区'] || '未知地区' }}
+                    <EnvironmentOutlined class="text-gray-600"/>
+                    {{ result['商品信息']['发货地区'] || '未知地区' }}
                   </div>
                   <div class="flex items-center gap-1">
-                    <UserOutlined class="text-gray-600"/> {{ result['卖家信息']['卖家昵称'] || '未知卖家' }}
+                    <UserOutlined class="text-gray-600"/>
+                    {{ result['卖家信息']['卖家昵称'] || '未知卖家' }}
                   </div>
-                   <div class="flex items-center gap-1">
-                    <ClockCircleOutlined class="text-gray-600"/> {{ result['商品信息']['发布时间'] }}
+                  <div class="flex items-center gap-1">
+                    <ClockCircleOutlined class="text-gray-600"/>
+                    {{ result['商品信息']['发布时间'] }}
                   </div>
                 </div>
 
@@ -246,59 +254,43 @@ const selectTask = (id?: number) => {
                     {{ result['分析结果']['原因'] }}
                   </div>
                 </div>
-                
+
                 <!-- Actions -->
                 <div class="flex items-center justify-between border-t border-white/5 pt-3 mt-auto">
-                   <div class="text-xs text-gray-600">
-                     {{ result['爬取时间']?.split(' ')[1] }} 抓取
-                   </div>
-                   <div class="flex gap-2">
-                     <a-button type="text" size="small" class="!text-primary-400 hover:!text-primary-300" @click="copyUrl(result['商品信息']['商品ID'])">
-                       <template #icon><CopyOutlined/></template>
-                     </a-button>
-                     <a 
-                       :href="result['商品信息']['商品链接']" 
-                       target="_blank"
-                       class="ant-btn ant-btn-text ant-btn-sm !text-blue-400 hover:!text-blue-300 flex items-center justify-center"
-                     >
-                       <LinkOutlined/>
-                     </a>
-                   </div>
+                  <div class="text-xs text-gray-600">
+                    {{ result['爬取时间']?.split(' ')[1] }} 抓取
+                  </div>
+                  <div class="flex gap-2">
+                    <a-button type="text" size="small" class="!text-primary-400 hover:!text-primary-300" @click="copyUrl(result['商品信息']['商品ID'])">
+                      <template #icon>
+                        <CopyOutlined/>
+                      </template>
+                    </a-button>
+                    <a
+                      :href="result['商品信息']['商品链接']"
+                      target="_blank"
+                      class="ant-btn ant-btn-text ant-btn-sm !text-blue-400 hover:!text-blue-300 flex items-center justify-center"
+                    >
+                      <LinkOutlined/>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div v-else-if="!loading" class="h-full flex flex-col items-center justify-center text-gray-500">
-           <div class="text-6xl mb-4 opacity-20"><EnvironmentOutlined/></div>
-           <div>暂无数据</div>
+          <div class="text-6xl mb-4 opacity-20">
+            <EnvironmentOutlined/>
+          </div>
+          <div>暂无数据</div>
         </div>
       </a-spin>
     </div>
 
     <!-- Chart Section -->
-    <div class="h-64 glass-card p-4 shrink-0" v-if="selectedTaskId">
+    <div class="h-64 glass-card p-4 shrink-0" v-if="selectedTaskId !== undefined">
       <PriceLineChart :chartDataSource="pricesData" :loading="chartLoading"/>
     </div>
   </div>
 </template>
-
-<style scoped>
-.glass-card {
-  background: rgba(30, 30, 30, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-</style>

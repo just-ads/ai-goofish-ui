@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useApi} from "@/api/fetch";
-import {DeleteOutlined, PlusOutlined, ThunderboltOutlined, MinusCircleOutlined} from "@ant-design/icons-vue";
+import {DeleteOutlined, PlusOutlined, ThunderboltOutlined} from "@ant-design/icons-vue";
 import {message, Modal} from "ant-design-vue";
 import NotifierForm from "@/components/NotifierForm.vue";
 
@@ -186,7 +186,7 @@ const testNotifier = async (id: string) => {
         <div
           v-for="notifier in notifiers"
           :key="notifier.id"
-          class="border border-gray-200 rounded p-4 bg-white hover:border-blue-300 transition-colors"
+          class="border border-gray-200 rounded p-4 bg-blueGray  hover:border-blue-300 transition-colors"
         >
           <div class="flex justify-between items-start">
             <div class="flex gap-2.5">
@@ -194,9 +194,6 @@ const testNotifier = async (id: string) => {
                 已启用
               </a-tag>
               <a-tag v-else color="default">
-                <template #icon>
-                  <MinusCircleOutlined/>
-                </template>
                 未启用
               </a-tag>
               <a-switch :checked="notifier.enable" @change="toggleNotifier(notifier.id)"/>

@@ -5,9 +5,9 @@ import BrowserSettings from "@/components/BrowserSettings.vue";
 import NotificationSettings from "@/components/NotificationSettings.vue";
 import EvaluatorSettings from "@/components/EvaluatorSettings.vue";
 import AISettings from "@/components/AISettings.vue";
+import {WarningOutlined, SaveOutlined} from "@ant-design/icons-vue";
 
 import type {SystemConfig} from "@/types/system";
-import {WarningOutlined, SaveOutlined} from "@ant-design/icons-vue";
 
 const activeTab = ref('browser');
 const configChanged = ref(false);
@@ -68,15 +68,17 @@ const handleSave = async () => {
             </div>
           </transition>
           <a-button type="primary" @click="handleSave" :loading="saving" class="!bg-primary-600 hover:!bg-primary-500 shadow-lg shadow-primary-500/20 border-none">
-            <template #icon><SaveOutlined/></template>
+            <template #icon>
+              <SaveOutlined/>
+            </template>
             保存配置
           </a-button>
         </div>
       </div>
 
       <!-- Tab导航 -->
-      <a-tabs 
-        v-model:activeKey="activeTab" 
+      <a-tabs
+        v-model:activeKey="activeTab"
         class="h-0 flex-1 [&>.ant-tabs-content]:h-full custom-tabs"
         :tabBarStyle="{ borderBottom: '1px solid rgba(255,255,255,0.05)' }"
       >
@@ -112,47 +114,11 @@ const handleSave = async () => {
 
         <!-- AI设置 -->
         <a-tab-pane key="ai" tab="AI设置">
-           <div class="h-full overflow-y-auto custom-scrollbar p-2">
+          <div class="h-full overflow-y-auto custom-scrollbar p-2">
             <AISettings/>
-           </div>
+          </div>
         </a-tab-pane>
       </a-tabs>
     </div>
   </div>
 </template>
-
-<style scoped>
-.glass-card {
-  background: rgba(30, 30, 30, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-}
-
-.gradient-text {
-  background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

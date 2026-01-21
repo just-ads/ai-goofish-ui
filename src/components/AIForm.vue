@@ -1,5 +1,4 @@
 <script setup lang="ts" generic="T extends AIConfig">
-
 import {useApi} from "@/api/fetch";
 import {AIConfig, AITemplate} from "@/types/ai";
 import {safeStringify} from "@/utils/utils";
@@ -35,7 +34,7 @@ watch(() => form.headers, (newHeaders) => {
 }, {immediate: true})
 
 watch(() => form.body, (newBody) => {
-  bodyText.value = safeStringify(newBody || {});
+  bodyText.value = safeStringify(newBody || {}, null, 2);
 }, {immediate: true})
 
 const applyTemplate = (id: string) => {
@@ -303,7 +302,7 @@ defineExpose({
             </div>
             <div v-else>
               <div class="mb-2">
-                <pre class="bg-gray-50 p-3 rounded text-sm overflow-auto max-h-40">{{ bodyText }}</pre>
+                <pre class="bg-gray-50 text-black p-3 rounded text-sm overflow-auto max-h-40">{{ bodyText }}</pre>
               </div>
               <div class="flex gap-2">
                 <a-button @click="editBody">
@@ -387,16 +386,3 @@ defineExpose({
     </a-form>
   </div>
 </template>
-
-<style scoped>
-.rotate-180 {
-  transform: rotate(180deg);
-  transition: transform 0.3s;
-}
-
-pre {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-</style>

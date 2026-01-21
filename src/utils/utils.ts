@@ -12,9 +12,9 @@ export function copyToClipboard(string: string) {
   })
 }
 
-export function safeStringify(input: any) {
+export function safeStringify(input: any, replacer?: any, space?: string | number) {
   try {
-    return JSON.stringify(input);
+    return JSON.stringify(input, replacer, space);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return input;

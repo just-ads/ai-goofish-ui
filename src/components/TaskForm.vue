@@ -1,5 +1,4 @@
 <script setup lang="ts" generic="T extends Task">
-import {defineProps, defineEmits, reactive, watch} from 'vue'
 import {QuestionCircleTwoTone} from '@ant-design/icons-vue'
 
 import type {Task} from "@/types/task";
@@ -22,12 +21,18 @@ watch(
 </script>
 
 <template>
-  <a-form :model="form" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
-    <a-form-item label="任务名称" required>
+  <a-form ref="formRef" :model="form" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
+    <a-form-item
+      label="任务名称"
+      :rules="[{ required: true, message: '请输入任务名称' }]"
+    >
       <a-input v-model:value="form.task_name"/>
     </a-form-item>
 
-    <a-form-item label="关键词" required>
+    <a-form-item
+      label="关键词"
+      :rules="[{ required: true, message: '请输入搜索关键词' }]"
+    >
       <a-input v-model:value="form.keyword"/>
     </a-form-item>
 
@@ -49,7 +54,10 @@ watch(
       <a-input-number stringMode v-model:value="form.max_price" :min="0" style="width: 100%"/>
     </a-form-item>
 
-    <a-form-item label="定时任务" required tooltip="123">
+    <a-form-item
+      label="定时任务"
+      :rules="[{ required: true, message: '请输入定时规则' }]"
+    >
       <template #tooltip>
         <a-tooltip>
           <QuestionCircleTwoTone/>
@@ -66,7 +74,10 @@ watch(
       <a-input v-model:value="form.cron" placeholder="CRON表达式"/>
     </a-form-item>
 
-    <a-form-item label="描述" required>
+    <a-form-item
+      label="详细需求"
+      :rules="[{ required: true, message: '请输入商品的详细需求' }]"
+    >
       <a-textarea v-model:value="form.description" :rows="4"/>
     </a-form-item>
 

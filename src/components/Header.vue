@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useApi} from "@/api/fetch";
 import {message} from "ant-design-vue";
-import {UserOutlined, CloudSyncOutlined, DeleteOutlined, RobotOutlined, CheckCircleOutlined, ExclamationCircleOutlined} from '@ant-design/icons-vue';
+import {UserOutlined, CloudSyncOutlined, DeleteOutlined, RobotOutlined, ExclamationCircleOutlined} from '@ant-design/icons-vue';
 
 const open = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
@@ -50,7 +50,7 @@ const remove = async () => {
         <span class="text-xs font-normal text-gray-400 ml-2 tracking-normal opacity-60">AI Goofish Control Panel</span>
       </h2>
     </div>
-    
+
     <div class="flex items-center">
       <a-dropdown v-if="isLogin">
         <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-success/10 border border-success/20 cursor-pointer hover:bg-success/20 transition-colors group">
@@ -71,7 +71,7 @@ const remove = async () => {
           </a-menu>
         </template>
       </a-dropdown>
-      
+
       <div v-else @click="showModal" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-error/10 border border-error/20 cursor-pointer hover:bg-error/20 transition-colors group">
         <div class="w-2 h-2 rounded-full bg-error"></div>
         <span class="text-error font-medium text-sm group-hover:text-error/90">未登录 (点击设置)</span>
@@ -79,7 +79,7 @@ const remove = async () => {
       </div>
     </div>
 
-    <a-modal 
+    <a-modal
       title="更新 Cookie"
       v-model:open="open"
       :confirmLoading="confirmLoading"

@@ -12,7 +12,7 @@
           <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/40">
             <!-- Icon placeholder or SVG -->
             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
           </div>
         </div>
@@ -31,15 +31,14 @@
           :rules="[{ required: true, message: '请输入用户名' }]"
           class="!mb-4"
         >
-          <a-input 
-            v-model:value="form.username" 
-            placeholder="用户名" 
+          <a-input
+            v-model:value="form.username"
+            placeholder="用户名"
             size="large"
-            class="!bg-black/20 !border-white/10 !text-white placeholder:!text-gray-500 hover:!border-primary-500/50 focus:!border-primary-500 !rounded-lg"
           >
             <template #prefix>
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
               </svg>
             </template>
           </a-input>
@@ -50,15 +49,15 @@
           :rules="[{ required: true, message: '请输入密码' }]"
           class="!mb-6"
         >
-          <a-input-password 
-            v-model:value="form.password" 
-            placeholder="密码" 
+          <a-input-password
+            v-model:value="form.password"
+            placeholder="密码"
             size="large"
-            class="!bg-black/20 !border-white/10 !text-white placeholder:!text-gray-500 hover:!border-primary-500/50 focus:!border-primary-500 !rounded-lg"
           >
             <template #prefix>
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
               </svg>
             </template>
           </a-input-password>
@@ -75,7 +74,7 @@
           </a-button>
         </a-form-item>
       </a-form>
-      
+
       <div class="mt-6 text-center text-xs text-gray-500">
         &copy; 2024 AI Goofish Monitor. All rights reserved.
       </div>
@@ -113,26 +112,3 @@ async function onSubmit() {
   }
 }
 </script>
-
-<style scoped>
-.glass-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-.animate-pulse-slow {
-  animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.2;
-  }
-}
-</style>

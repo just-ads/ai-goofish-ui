@@ -2,10 +2,10 @@ import {createApp} from "vue";
 import {setupRouter} from "@/router";
 import {setupStore} from "@/store";
 
-import './main.css'
+import 'virtual:uno.css'
 import './styles/theme.css'
 import './styles/animations.css'
-import 'virtual:uno.css'
+
 
 import App from "./App.vue";
 

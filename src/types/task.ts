@@ -10,6 +10,7 @@ export interface Task {
   max_price?: string
   cron?: string
   running?: boolean
+  next_run_time?: string
 }
 
 export type UpdateTask = Omit<Partial<Task>, 'task_id'> & {

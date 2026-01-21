@@ -9,7 +9,6 @@ import {
   FieldTimeOutlined
 } from '@ant-design/icons-vue';
 import {h} from "vue";
-import {useRoute, useRouter} from 'vue-router' // Ensure imports are present
 
 const router = useRouter()
 const route = useRoute()
@@ -37,7 +36,7 @@ const handleMenuClick = (e: any) => {
     <Header class="z-20 shadow-md"/>
     <div class="flex flex-1 h-0 overflow-hidden relative">
       <!-- 左侧菜单 -->
-      <div 
+      <div
         class="flex flex-col h-full transition-all duration-300 ease-out border-r border-white/5 bg-black/20 backdrop-blur-md z-10"
         :class="collapsed ? 'w-20' : 'w-64'"
       >
@@ -64,9 +63,9 @@ const handleMenuClick = (e: any) => {
             </a-menu-item>
           </a-menu>
         </div>
-        
+
         <!-- Collapse Trigger -->
-        <div 
+        <div
           class="h-12 flex items-center justify-center cursor-pointer hover:bg-white/5 border-t border-white/5 text-gray-400 hover:text-white transition-colors"
           @click="toggleCollapse"
         >
@@ -74,7 +73,7 @@ const handleMenuClick = (e: any) => {
           <MenuFoldOutlined v-else class="text-lg"/>
         </div>
       </div>
-      
+
       <!-- 主体内容 -->
       <main class="flex-1 relative overflow-hidden bg-transparent">
         <!-- Decorative background elements -->
@@ -82,46 +81,16 @@ const handleMenuClick = (e: any) => {
           <div class="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-primary-500/10 blur-[120px]"></div>
           <div class="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-secondary-500/10 blur-[100px]"></div>
         </div>
-        
+
         <!-- Scrollable Content -->
         <div class="relative z-10 h-full overflow-auto custom-scrollbar p-4">
-           <router-view v-slot="{ Component }">
-             <transition name="fade-slide" mode="out-in">
-               <component :is="Component" />
-             </transition>
-           </router-view>
+          <router-view v-slot="{ Component }">
+            <transition name="fade-slide" mode="out-in">
+              <component :is="Component"/>
+            </transition>
+          </router-view>
         </div>
       </main>
     </div>
   </div>
 </template>
-
-<style scoped>
-/* Custom Scrollbar for sidebar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Page Transition */
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-</style>

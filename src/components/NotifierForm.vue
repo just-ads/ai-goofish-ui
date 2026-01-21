@@ -1,5 +1,4 @@
 <script setup lang="ts" generic="T extends NotifierConfig">
-
 import {useApi} from "@/api/fetch";
 import {NotifierConfig, NotifierTemplate} from "@/types/notifier";
 import {ThunderboltOutlined, InfoCircleOutlined} from "@ant-design/icons-vue";

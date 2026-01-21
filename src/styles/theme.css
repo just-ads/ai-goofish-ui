@@ -12,7 +12,7 @@
   --primary-700: #0050b3;
   --primary-800: #003a8c;
   --primary-900: #002766;
-  
+
   /* 辅助色 - 活力橙 */
   --secondary-50: #fff7e6;
   --secondary-100: #ffe7ba;
@@ -24,7 +24,7 @@
   --secondary-700: #ad4e00;
   --secondary-800: #873800;
   --secondary-900: #612500;
-  
+
   /* 中性色 - 深色主题 */
   --gray-50: #fafafa;
   --gray-100: #f5f5f5;
@@ -37,29 +37,29 @@
   --gray-800: #262626;
   --gray-900: #1f1f1f;
   --gray-950: #141414;
-  
+
   /* 功能色 */
   --success: #52c41a;
   --warning: #faad14;
   --error: #ff4d4f;
   --info: #1890ff;
-  
+
   /* 玻璃态效果 */
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  
+
   /* 动画曲线 */
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
-  
+
   /* 圆角 */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-2xl: 24px;
-  
+
   /* 阴影 */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -81,6 +81,12 @@ html, body {
   background: linear-gradient(135deg, var(--gray-950) 0%, var(--gray-900) 100%);
   color: var(--gray-100);
   overflow-x: hidden;
+}
+
+pre {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 /* 滚动条样式 */
@@ -185,9 +191,9 @@ a:hover {
 }
 
 .shimmer {
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0) 0%, 
-    rgba(255, 255, 255, 0.1) 50%, 
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
     rgba(255, 255, 255, 0) 100%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
@@ -296,9 +302,9 @@ a:hover {
 /* 分割线 */
 .divider {
   height: 1px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    var(--glass-border) 50%, 
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--glass-border) 50%,
     transparent 100%);
   margin: 1.5rem 0;
 }
@@ -347,9 +353,9 @@ a:hover {
 
 /* 骨架屏 */
 .skeleton {
-  background: linear-gradient(90deg, 
-    var(--gray-800) 25%, 
-    var(--gray-700) 50%, 
+  background: linear-gradient(90deg,
+    var(--gray-800) 25%,
+    var(--gray-700) 50%,
     var(--gray-800) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -360,7 +366,7 @@ a:hover {
   .mobile-hidden {
     display: none !important;
   }
-  
+
   .mobile-full {
     width: 100% !important;
   }
