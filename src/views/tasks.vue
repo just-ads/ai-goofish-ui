@@ -164,6 +164,8 @@ const updateTask = async (task: UpdateTask) => {
   if (data.value && !error.value) {
     taskStore.updateTask(data.value);
     message.success('任务状态已更新')
+  } else {
+    return Promise.reject();
   }
 }
 
@@ -209,6 +211,8 @@ const createTask = () => {
       if (!error.value && data.value) {
         taskStore.addTask(data.value);
         message.success('任务创建成功');
+      } else {
+        return Promise.reject();
       }
     }
   })
@@ -221,8 +225,8 @@ const editTask = (task: Task) => {
   Modal.confirm({
     title: '编辑任务',
     content: h(TaskForm, {modelValue: editedTask.value, 'onUpdate:modelValue': (val) => (editedTask.value = val)}),
-    onOk() {
-      updateTask(editedTask.value)
+    async onOk() {
+      await updateTask(editedTask.value)
     }
   })
 }
