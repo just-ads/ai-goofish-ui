@@ -76,7 +76,7 @@
       </a-form>
 
       <div class="mt-6 text-center text-xs text-gray-500">
-        &copy; 2024 AI Goofish Monitor. All rights reserved.
+        &copy; 2026 AI Goofish. All rights reserved.
       </div>
     </div>
   </div>
