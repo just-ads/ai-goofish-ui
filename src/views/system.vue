@@ -7,7 +7,7 @@ import EvaluatorSettings from "@/components/EvaluatorSettings.vue";
 import AISettings from "@/components/AISettings.vue";
 
 import type {SystemConfig} from "@/types/system";
-import {WarningOutlined} from "@ant-design/icons-vue";
+import {WarningOutlined, SaveOutlined} from "@ant-design/icons-vue";
 
 const activeTab = ref('browser');
 const configChanged = ref(false);
@@ -55,51 +55,104 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <div class="flex-col p-4 h-full">
-    <!-- 页面标题 -->
-    <div class="flex justify-between mb-6 items-center">
-      <h2 class="text-xl font-semibold">系统设置</h2>
-      <div class='flex items-center space-x-2.5'>
-        <div v-if="configChanged" class="space-x-2 text-orange">
-          <WarningOutlined/>
-          <span>配置未保存</span>
+  <div class="flex flex-col h-full gap-4">
+    <div class="glass-card flex-1 flex flex-col p-6 animate-fade-in-up">
+      <!-- 页面标题 -->
+      <div class="flex justify-between mb-6 items-center border-b border-white/5 pb-4">
+        <h2 class="text-xl font-bold gradient-text m-0">系统设置</h2>
+        <div class='flex items-center space-x-4'>
+          <transition name="fade">
+            <div v-if="configChanged" class="flex items-center gap-2 text-warning px-3 py-1 bg-warning/10 rounded-full border border-warning/20">
+              <WarningOutlined class="animate-pulse"/>
+              <span class="text-sm font-medium">配置未保存</span>
+            </div>
+          </transition>
+          <a-button type="primary" @click="handleSave" :loading="saving" class="!bg-primary-600 hover:!bg-primary-500 shadow-lg shadow-primary-500/20 border-none">
+            <template #icon><SaveOutlined/></template>
+            保存配置
+          </a-button>
         </div>
-        <a-button type="primary" @click="handleSave" :loading="saving">
-          保存配置
-        </a-button>
       </div>
+
+      <!-- Tab导航 -->
+      <a-tabs 
+        v-model:activeKey="activeTab" 
+        class="h-0 flex-1 [&>.ant-tabs-content]:h-full custom-tabs"
+        :tabBarStyle="{ borderBottom: '1px solid rgba(255,255,255,0.05)' }"
+      >
+        <!-- 浏览器设置 -->
+        <a-tab-pane key="browser" tab="浏览器设置">
+          <div class="h-full overflow-y-auto custom-scrollbar p-2">
+            <BrowserSettings
+              :config="systemConfig!"
+              @update:config="updateConfig"
+            />
+          </div>
+        </a-tab-pane>
+
+        <!-- 通知设置 -->
+        <a-tab-pane key="notifications" tab="通知设置">
+          <div class="h-full overflow-y-auto custom-scrollbar p-2">
+            <NotificationSettings
+              :config="systemConfig!"
+              @update:config="updateConfig"
+            />
+          </div>
+        </a-tab-pane>
+
+        <!-- 商品评估器设置 -->
+        <a-tab-pane key="evaluator" tab="商品评估器设置">
+          <div class="h-full overflow-y-auto custom-scrollbar p-2">
+            <EvaluatorSettings
+              :config="systemConfig!"
+              @update:config="updateConfig"
+            />
+          </div>
+        </a-tab-pane>
+
+        <!-- AI设置 -->
+        <a-tab-pane key="ai" tab="AI设置">
+           <div class="h-full overflow-y-auto custom-scrollbar p-2">
+            <AISettings/>
+           </div>
+        </a-tab-pane>
+      </a-tabs>
     </div>
-
-    <!-- Tab导航 -->
-    <a-tabs v-model:activeKey="activeTab" class="h-0 flex-1 [&>.ant-tabs-content]:h-full">
-      <!-- 浏览器设置 -->
-      <a-tab-pane key="browser" tab="浏览器设置">
-        <BrowserSettings
-          :config="systemConfig!"
-          @update:config="updateConfig"
-        />
-      </a-tab-pane>
-
-      <!-- 通知设置 -->
-      <a-tab-pane key="notifications" tab="通知设置">
-        <NotificationSettings
-          :config="systemConfig!"
-          @update:config="updateConfig"
-        />
-      </a-tab-pane>
-
-      <!-- 商品评估器设置 -->
-      <a-tab-pane key="evaluator" tab="商品评估器设置">
-        <EvaluatorSettings
-          :config="systemConfig!"
-          @update:config="updateConfig"
-        />
-      </a-tab-pane>
-
-      <!-- AI设置 -->
-      <a-tab-pane key="ai" tab="AI设置">
-        <AISettings/>
-      </a-tab-pane>
-    </a-tabs>
   </div>
 </template>
+
+<style scoped>
+.glass-card {
+  background: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

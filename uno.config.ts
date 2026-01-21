@@ -42,6 +42,38 @@ export default defineConfig({
     'ellipsis-text': 'nowrap-hidden text-ellipsis',
     'transition-base': 'transition-all duration-300 ease-in-out'
   },
+  theme: {
+    colors: {
+      primary: {
+        50: '#e6f7ff',
+        100: '#bae7ff',
+        200: '#91d5ff',
+        300: '#69c0ff',
+        400: '#40a9ff',
+        500: '#1890ff',
+        600: '#096dd9',
+        700: '#0050b3',
+        800: '#003a8c',
+        900: '#002766',
+      },
+      secondary: {
+        50: '#fff7e6',
+        100: '#ffe7ba',
+        200: '#ffd591',
+        300: '#ffc069',
+        400: '#ffa940',
+        500: '#fa8c16',
+        600: '#d46b08',
+        700: '#ad4e00',
+        800: '#873800',
+        900: '#612500',
+      },
+      success: '#52c41a',
+      warning: '#faad14',
+      error: '#ff4d4f',
+      info: '#1890ff',
+    }
+  },
   presets: [presetWind3(), presetAttributify()],
   transformers: [transformerDirectives()]
 })

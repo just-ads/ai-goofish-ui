@@ -1,8 +1,147 @@
+<template>
+  <div class="p-0 h-full flex flex-col">
+    <div class="glass-card flex-1 flex flex-col p-6 animate-fade-in-up">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold gradient-text m-0">任务管理</h2>
+        <a-button type="primary" @click="createTask" class="!bg-primary-600 hover:!bg-primary-500 border-none shadow-md shadow-primary-500/20">
+          <template #icon><PlusOutlined/></template>
+          新建任务
+        </a-button>
+      </div>
+      
+      <div class="flex-1 overflow-hidden rounded-lg border border-white/5">
+        <a-table 
+          size="middle" 
+          :data-source="taskStore.tasks" 
+          :loading="loading" 
+          row-key="task_id" 
+          :pagination="false"
+          :scroll="{ y: 'calc(100vh - 250px)' }"
+          class="ant-table-glass"
+        >
+          <a-table-column title="启用" key="enabled" width="80px" align="center">
+            <template #default="{ record }">
+              <a-switch 
+                :checked="record.enabled" 
+                @change="() => toggleTaskEnabled(record)"
+                size="small"
+              />
+            </template>
+          </a-table-column>
+          
+          <a-table-column title="任务名称" dataIndex="task_name" key="task_name">
+            <template #default="{ text }">
+              <span class="font-medium text-white">{{ text }}</span>
+            </template>
+          </a-table-column>
+          
+          <a-table-column title="关键词" dataIndex="keyword" key="keyword">
+             <template #default="{ text }">
+              <a-tag color="blue" class="!bg-blue-500/10 !border-blue-500/20 !text-blue-300">{{ text }}</a-tag>
+            </template>
+          </a-table-column>
+          
+          <a-table-column title="配置" key="config">
+            <template #default="{ record }">
+               <div class="flex flex-col text-xs space-y-1 text-gray-400">
+                 <div class="flex items-center gap-1" v-if="record.max_pages">
+                   <FileTextOutlined/> <span>{{ record.max_pages }} 页</span>
+                 </div>
+                 <div class="flex items-center gap-1" v-if="record.min_price || record.max_price">
+                   <PayCircleOutlined/> 
+                   <span>{{ record.min_price || 0 }} - {{ record.max_price || '∞' }}</span>
+                 </div>
+               </div>
+            </template>
+          </a-table-column>
+
+          <a-table-column title="选项" key="options">
+            <template #default="{ record }">
+              <div class="flex items-center gap-2">
+                <a-tooltip title="仅个人闲置">
+                   <UserOutlined :class="record.personal_only ? 'text-green-400' : 'text-gray-600'"/>
+                </a-tooltip>
+                <a-tooltip title="定时任务" v-if="record.cron">
+                   <ClockCircleOutlined class="text-purple-400"/>
+                </a-tooltip>
+              </div>
+            </template>
+          </a-table-column>
+          
+          <a-table-column title="描述" dataIndex="description" key="description">
+            <template #default="{ text }">
+              <a-tooltip :title="text" v-if="text">
+                <span class="block w-32 truncate text-gray-500">{{ text }}</span>
+              </a-tooltip>
+              <span v-else class="text-gray-700">-</span>
+            </template>
+          </a-table-column>
+          
+          <a-table-column title="状态" key="status" width="100px" align="center">
+            <template #default="{ record }">
+               <div v-if="record.running" class="flex items-center justify-center gap-1 text-success text-xs animate-pulse">
+                 <div class="w-1.5 h-1.5 rounded-full bg-success"></div>
+                 运行中
+               </div>
+               <div v-else class="text-gray-500 text-xs">已停止</div>
+            </template>
+          </a-table-column>
+
+          <a-table-column title="操作" key="action" align="center" width="200px">
+            <template #default="{ record }">
+              <div class="flex justify-center gap-2">
+                 <a-button type="text" size="small" class="!text-blue-400 hover:!text-blue-300" @click="() => editTask(record)">
+                   <template #icon><EditOutlined/></template>
+                 </a-button>
+                 
+                 <a-button 
+                   v-if="record.running"
+                   type="text" 
+                   size="small" 
+                   class="!text-orange-400 hover:!text-orange-300"
+                   @click="() => stopTask(record)"
+                 >
+                   <template #icon><PauseCircleOutlined/></template>
+                 </a-button>
+                 <a-button 
+                   v-else
+                   type="text" 
+                   size="small" 
+                   class="!text-green-400 hover:!text-green-300"
+                   @click="() => runTask(record)"
+                 >
+                   <template #icon><PlayCircleOutlined/></template>
+                 </a-button>
+                 
+                 <a-button type="text" size="small" class="!text-red-400 hover:!text-red-300" @click="() => deleteTask(record.task_id)">
+                   <template #icon><DeleteOutlined/></template>
+                 </a-button>
+              </div>
+            </template>
+          </a-table-column>
+        </a-table>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import {useApi} from "@/api/fetch";
 import TaskForm from "@/components/TaskForm.vue";
 import {useTaskStore} from "@/store";
 import {message, Modal} from 'ant-design-vue'
+import {
+  PlusOutlined, 
+  EditOutlined, 
+  DeleteOutlined, 
+  PlayCircleOutlined, 
+  PauseCircleOutlined,
+  FileTextOutlined,
+  PayCircleOutlined,
+  UserOutlined,
+  ClockCircleOutlined
+} from '@ant-design/icons-vue'
+import {h, ref, onMounted, onUnmounted} from 'vue' // Explicit imports
 
 import type {Task, UpdateTask} from "@/types/task";
 
@@ -113,57 +252,20 @@ onMounted(() => {
 onUnmounted(() => {
   window.clearTimeout(heartbeatTimer);
 });
-
 </script>
 
-<template>
-  <div class="p-4 bg-white h-full">
-    <h2 class="text-lg font-bold mb-4">任务管理</h2>
-    <a-button class='mb-4 ml-auto block w-fit' type="primary" @click="createTask">新建任务</a-button>
-    <a-table size="small" :data-source="taskStore.tasks" :loading="loading" row-key="task_id" :pagination="false">
-      <a-table-column title="启用" key="enabled">
-        <template #default="{ record }">
-          <a-switch :checked="record.enabled" @change="() => toggleTaskEnabled(record)"/>
-        </template>
-      </a-table-column>
-      <a-table-column title="任务名称" dataIndex="task_name" key="task_name"/>
-      <a-table-column title="关键词" dataIndex="keyword" key="keyword"/>
-      <a-table-column title="最大页数" dataIndex="max_pages" key="max_pages"/>
-      <a-table-column title="仅个人" key="personal_only">
-        <template #default="{ record }">
-          <a-checkbox
-            :checked="record.personal_only"
-            @change="e => togglePersonalOnly(record, e.target.checked)"
-          />
-        </template>
-      </a-table-column>
+<style scoped>
+.glass-card {
+  background: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
 
-      <a-table-column title="最小价格" dataIndex="min_price" key="min_price"/>
-      <a-table-column title="最大价格" dataIndex="max_price" key="max_price"/>
-      <a-table-column title="定时任务" dataIndex="cron" key="cron"/>
-      <a-table-column title="描述" dataIndex="description" key="description">
-        <template #default="{ text }">
-          <a-tooltip :title="text">
-            <span class="block w-10 truncate">{{ text }}</span>
-          </a-tooltip>
-        </template>
-      </a-table-column>
-      <a-table-column title="操作" key="action" align="center">
-        <template #default="{ record }">
-          <a-button type="link" @click="() => editTask(record)">编辑</a-button>
-          <a-button type="link" danger @click="() => deleteTask(record.task_id)">删除</a-button>
-          <a-button v-if="record.running"
-                    type="link"
-                    @click="() => stopTask(record)">
-            停止
-          </a-button>
-          <a-button v-else
-                    type="link"
-                    @click="() => runTask(record)">
-            运行
-          </a-button>
-        </template>
-      </a-table-column>
-    </a-table>
-  </div>
-</template>
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+</style>

@@ -1,41 +1,85 @@
 <template>
-  <div class="flex items-center justify-center h-screen bg-gray-100">
-    <a-card class="w-96 shadow-lg rounded-2xl">
-      <h2 class="text-center text-xl font-bold mb-6">咸鱼监控后台登录</h2>
+  <div class="flex items-center justify-center h-screen w-screen overflow-hidden relative">
+    <!-- Background Animation -->
+    <div class="absolute inset-0 bg-gray-900 overflow-hidden -z-10">
+      <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-900/20 blur-[100px] animate-pulse-slow"></div>
+      <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-secondary-900/20 blur-[100px] animate-pulse-slow delay-1000"></div>
+    </div>
+
+    <div class="relative z-10 p-8 glass-card w-[400px] animate-fade-in-up">
+      <div class="text-center mb-8">
+        <div class="flex justify-center mb-4">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/40">
+            <!-- Icon placeholder or SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+        </div>
+        <h2 class="text-2xl font-bold text-white mb-2">欢迎回来</h2>
+        <p class="text-gray-400 text-sm">闲鱼监控机器人后台管理系统</p>
+      </div>
 
       <a-form
         :model="form"
         layout="vertical"
         @finish="onSubmit"
+        class="space-y-4"
       >
         <a-form-item
           name="username"
-          label="用户名"
           :rules="[{ required: true, message: '请输入用户名' }]"
+          class="!mb-4"
         >
-          <a-input v-model:value="form.username" placeholder="请输入用户名"/>
+          <a-input 
+            v-model:value="form.username" 
+            placeholder="用户名" 
+            size="large"
+            class="!bg-black/20 !border-white/10 !text-white placeholder:!text-gray-500 hover:!border-primary-500/50 focus:!border-primary-500 !rounded-lg"
+          >
+            <template #prefix>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </template>
+          </a-input>
         </a-form-item>
 
         <a-form-item
           name="password"
-          label="密码"
           :rules="[{ required: true, message: '请输入密码' }]"
+          class="!mb-6"
         >
-          <a-input-password v-model:value="form.password" placeholder="请输入密码"/>
+          <a-input-password 
+            v-model:value="form.password" 
+            placeholder="密码" 
+            size="large"
+            class="!bg-black/20 !border-white/10 !text-white placeholder:!text-gray-500 hover:!border-primary-500/50 focus:!border-primary-500 !rounded-lg"
+          >
+            <template #prefix>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </template>
+          </a-input-password>
         </a-form-item>
 
-        <a-form-item>
+        <a-form-item class="!mb-0">
           <a-button
             type="primary"
             html-type="submit"
-            class="w-full"
+            class="w-full !h-10 !rounded-lg !bg-gradient-to-r !from-primary-600 !to-primary-500 hover:!from-primary-500 hover:!to-primary-400 !border-0 shadow-lg shadow-primary-500/30 transition-all transform hover:scale-[1.02]"
             :loading="loading"
           >
-            登录
+            登录系统
           </a-button>
         </a-form-item>
       </a-form>
-    </a-card>
+      
+      <div class="mt-6 text-center text-xs text-gray-500">
+        &copy; 2024 AI Goofish Monitor. All rights reserved.
+      </div>
+    </div>
   </div>
 </template>
 
@@ -69,3 +113,26 @@ async function onSubmit() {
   }
 }
 </script>
+
+<style scoped>
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.animate-pulse-slow {
+  animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+</style>

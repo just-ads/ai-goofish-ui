@@ -5,6 +5,8 @@ import {SyncOutlined} from '@ant-design/icons-vue';
 import {DynamicScroller, DynamicScrollerItem} from 'vue-virtual-scroller';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 import {TaskLogEntry, TaskLogResponse, TaskLogsRequest} from "@/types/task";
+import TaskSelect from "@/components/TaskSelect.vue";
+import {ref, reactive, nextTick, onUnmounted} from 'vue';
 
 const selectedTaskId = ref<number>();
 const logs = ref<TaskLogEntry[]>([]);
@@ -92,79 +94,120 @@ onUnmounted(() => {
 });
 
 const getLevelColor = (level: string) => {
-  const colors: Record<string, string> = {'错误': '#f87171', '警告': '#fb923c', '提示': '#60a5fa', 'DEBUG': '#9ca3af'};
-  return colors[level] || '#d9d9d9';
+  const colors: Record<string, string> = {
+    '错误': '#ef4444', 
+    '警告': '#f97316', 
+    '提示': '#3b82f6', 
+    'DEBUG': '#6b7280'
+  };
+  return colors[level] || '#d1d5db';
 };
 </script>
 
 <template>
-  <div class="flex-col p-4 bg-white h-full">
-    <h2 class="text-lg font-bold mb-4">任务日志</h2>
-    <div class="flex-1 h-0 flex-col bg-[#1a1a1a] text-gray-200 rounded-lg border border-gray-800 font-mono">
-      <div class="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-gray-800">
-        <div class="flex items-center space-x-6">
-          <div class='w-40'>
-            <TaskSelect v-model:modelValue="selectedTaskId" @change="selectTask"/>
-          </div>
-          <div class='flex items-center gap-2.5'>
-            <div>过滤</div>
-            <a-select :value="requestOptions.levels" placeholder="无过滤" class="w-62" @change="filterLogLevel" mode="multiple">
-              <a-select-option key="提示">提示</a-select-option>
-              <a-select-option key="警告">警告</a-select-option>
-              <a-select-option key="错误">错误</a-select-option>
-              <a-select-option key="DEBUG">DEBUG</a-select-option>
-            </a-select>
-          </div>
-          <a-button>
-            <template #icon>
-              <SyncOutlined :spin="logsLoading" @click="fetchLogs()"/>
-            </template>
-          </a-button>
-          <div class="flex items-center space-x-2">
-            <span class="text-xs text-gray-400">自动刷新</span>
-            <a-switch v-model:checked="autoRefresh" @change="toggleAutoRefresh"/>
-          </div>
-        </div>
-
-        <div class="flex items-center space-x-3">
-          <div v-if="!isLockedAtBottom && autoRefresh"
-               @click="scrollToBottom"
-               class="cursor-pointer text-[10px] bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded border border-blue-500/30 hover:bg-blue-600/40">
-            发现新日志 ↓
-          </div>
-          <span class="text-[10px] text-gray-500">Buffer: {{ logs.length }}/{{ MAX_LOGS }}</span>
-        </div>
+  <div class="flex flex-col h-full gap-4">
+    <div class="glass-card flex-1 flex flex-col p-4 animate-fade-in-up">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold gradient-text m-0">任务日志</h2>
       </div>
 
-      <div class="flex-1 h-0 overflow-hidden relative">
-        <DynamicScroller
-          ref="scrollerRef"
-          class="h-full px-2"
-          :items="logs"
-          :min-item-size="24"
-          key-field="id"
-          @scrollend="onScrollEnd"
-        >
-          <template #default="{ item, active, index }">
-            <DynamicScrollerItem
-              :item="item"
-              :active="active"
-              :size-dependencies="[item.message]"
-              :data-index="index"
-            >
-              <div class="border-b-[#ddd] flex items-baseline text-[12px]">
-                <span class="text-gray-500 mr-4 whitespace-nowrap">{{ item.timestamp }}</span>
-                <span :style="{ color: getLevelColor(item.level) }" class="w-14 flex-shrink-0 font-bold whitespace-nowrap">
-                  [{{ item.level }}]
-                </span>
-                <span class="text-gray-300">{{ item.message }}</span>
-              </div>
-            </DynamicScrollerItem>
-          </template>
-        </DynamicScroller>
+      <div class="flex-1 h-0 flex flex-col bg-black/40 rounded-lg border border-white/10 font-mono shadow-inner overflow-hidden">
+        <!-- Toolbar -->
+        <div class="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/5 backdrop-blur-sm">
+          <div class="flex items-center gap-4 flex-wrap">
+            <div class='w-56'>
+              <TaskSelect v-model:modelValue="selectedTaskId" @change="selectTask" size="small"/>
+            </div>
+            
+            <div class="h-4 w-px bg-white/10 mx-2"></div>
+            
+            <div class='flex items-center gap-2 text-sm text-gray-400'>
+              <span class="text-xs">级别:</span>
+              <a-select 
+                :value="requestOptions.levels" 
+                placeholder="全部" 
+                class="min-w-[120px]" 
+                @change="filterLogLevel" 
+                mode="multiple"
+                size="small"
+                :maxTagCount="1"
+              >
+                <a-select-option key="提示">提示</a-select-option>
+                <a-select-option key="警告">警告</a-select-option>
+                <a-select-option key="错误">错误</a-select-option>
+                <a-select-option key="DEBUG">DEBUG</a-select-option>
+              </a-select>
+            </div>
+            
+            <div class="h-4 w-px bg-white/10 mx-2"></div>
 
-        <div v-if="logsLoading" class="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
-          <a-spin size="default" :delay="500"/>
+            <div class="flex items-center gap-2">
+              <a-button type="text" size="small" class="!text-gray-400 hover:!text-white" @click="fetchLogs()">
+                <template #icon><SyncOutlined :spin="logsLoading"/></template>
+              </a-button>
+              
+              <div class="flex items-center gap-2 px-2 py-1 rounded bg-white/5 border border-white/5">
+                <span class="text-xs text-gray-400">自动刷新</span>
+                <a-switch v-model:checked="autoRefresh" @change="toggleAutoRefresh" size="small"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+             <transition name="fade">
+               <div v-if="!isLockedAtBottom && autoRefresh"
+                    @click="scrollToBottom"
+                    class="cursor-pointer text-[10px] bg-primary-500/20 text-primary-400 px-2 py-1 rounded-full border border-primary-500/30 hover:bg-primary-500/30 flex items-center gap-1 animate-pulse">
+                 <span>↓ 新日志</span>
+               </div>
+             </transition>
+             <div class="text-[10px] text-gray-600 font-mono bg-black/30 px-2 py-1 rounded">
+               BUFFER: {{ logs.length }}/{{ MAX_LOGS }}
+             </div>
+          </div>
+        </div>
+
+        <!-- Log Content -->
+        <div class="flex-1 h-0 overflow-hidden relative bg-black/20">
+          <DynamicScroller
+            ref="scrollerRef"
+            class="h-full px-4 py-2 custom-scrollbar"
+            :items="logs"
+            :min-item-size="28"
+            key-field="id"
+            @scrollend="onScrollEnd"
+          >
+            <template #default="{ item, active, index }">
+              <DynamicScrollerItem
+                :item="item"
+                :active="active"
+                :size-dependencies="[item.message]"
+                :data-index="index"
+              >
+                <div class="flex items-baseline py-1 hover:bg-white/5 transition-colors px-2 rounded -mx-2 group">
+                  <span class="text-gray-600 text-[10px] mr-3 font-mono opacity-60 w-32 shrink-0 select-none">{{ item.timestamp }}</span>
+                  <span 
+                    :style="{ color: getLevelColor(item.level) }" 
+                    class="text-[11px] font-bold mr-3 w-10 shrink-0 uppercase tracking-wider select-none text-center bg-white/5 rounded px-1"
+                  >
+                    {{ item.level }}
+                  </span>
+                  <span class="text-gray-300 text-xs font-mono break-all leading-relaxed group-hover:text-white transition-colors">{{ item.message }}</span>
+                </div>
+              </DynamicScrollerItem>
+            </template>
+          </DynamicScroller>
+
+          <transition name="fade">
+            <div v-if="logsLoading && logs.length === 0" class="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm z-10">
+              <a-spin size="large"/>
+              <div class="mt-4 text-gray-400 text-sm">正在加载日志...</div>
+            </div>
+          </transition>
+          
+          <div v-if="!logsLoading && logs.length === 0" class="absolute inset-0 flex items-center justify-center text-gray-600">
+            暂无日志数据
+          </div>
         </div>
       </div>
     </div>
@@ -172,16 +215,39 @@ const getLevelColor = (level: string) => {
 </template>
 
 <style scoped>
-::-webkit-scrollbar {
-  width: 8px;
+.glass-card {
+  background: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #333;
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
 
-::-webkit-scrollbar-thumb:hover {
-  background: #444;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

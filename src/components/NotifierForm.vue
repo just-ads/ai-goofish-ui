@@ -10,7 +10,8 @@ const emit = defineEmits<{
   (e: "update:modelValue", value: T): void
 }>();
 
-const form = reactive({...props.modelValue})
+// Avoid TS2862: reactive<T> generic index writes
+const form = reactive<NotifierConfig>({ ...props.modelValue })
 
 const testing = ref(false);
 const testResult = ref<string | null>(null);

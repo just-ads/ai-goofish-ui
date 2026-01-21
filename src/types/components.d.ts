@@ -13,11 +13,9 @@ declare module 'vue' {
   export interface GlobalComponents {
     AApp: typeof import('ant-design-vue/es')['App']
     AButton: typeof import('ant-design-vue/es')['Button']
-    ACard: typeof import('ant-design-vue/es')['Card']
     ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
     ACol: typeof import('ant-design-vue/es')['Col']
     AConfigProvider: typeof import('ant-design-vue/es')['ConfigProvider']
-    ADivider: typeof import('ant-design-vue/es')['Divider']
     ADropdown: typeof import('ant-design-vue/es')['Dropdown']
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
@@ -52,13 +50,10 @@ declare module 'vue' {
     Result: typeof import('./../views/result.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SelectTask: typeof import('./../components/SelectTask.vue')['default']
     System: typeof import('./../views/system.vue')['default']
     TaskForm: typeof import('./../components/TaskForm.vue')['default']
-    TaskLogViewer: typeof import('./../views/TaskLogViewer.vue')['default']
     Tasks: typeof import('./../views/tasks.vue')['default']
     TaskSelect: typeof import('./../components/TaskSelect.vue')['default']
-    TestTaskSelect: typeof import('./../views/test-task-select.vue')['default']
     Views: typeof import('./../views/index.vue')['default']
   }
 }
