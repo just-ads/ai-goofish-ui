@@ -107,7 +107,7 @@ const getLevelColor = (level: string) => {
   <div class="flex flex-col h-full gap-4">
     <div class="glass-card flex-1 h-full flex-col p-4 animate-fade-in-up">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold gradient-text m-0">任务日志</h2>
+        <h2 class="text-xl font-bold text-gray m-0">任务日志</h2>
       </div>
 
       <div class="flex-1 h-0 flex-col bg-black/40 rounded-lg border border-white/10 font-mono shadow-inner overflow-hidden">

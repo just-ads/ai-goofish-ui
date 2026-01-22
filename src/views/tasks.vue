@@ -2,7 +2,7 @@
   <div class="p-0 h-full flex flex-col">
     <div class="glass-card flex-1 flex flex-col p-6 animate-fade-in-up">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold gradient-text m-0">任务管理</h2>
+        <h2 class="text-xl font-bold m-0 text-gray">任务管理</h2>
         <a-button type="primary" @click="createTask" class="!bg-primary-600 hover:!bg-primary-500 border-none shadow-md shadow-primary-500/20">
           <template #icon>
             <PlusOutlined/>

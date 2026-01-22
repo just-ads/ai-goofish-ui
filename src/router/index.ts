@@ -63,7 +63,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {
-    document.title = '咸鱼监控机器人 - ' + to.meta.title;
+    document.title = '闲鱼监控机器人 - ' + to.meta.title;
   }
   next()
 })

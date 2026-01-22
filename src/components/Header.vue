@@ -45,15 +45,15 @@ const remove = async () => {
       <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 shadow-lg shadow-primary-500/30">
         <RobotOutlined class="text-xl text-white"/>
       </div>
-      <h2 class="text-xl font-bold m-0 gradient-text tracking-wide">
+      <h2 class="text-xl font-bold m-0 tracking-wide text-primary">
         闲鱼监控机器人
-        <span class="text-xs font-normal text-gray-400 ml-2 tracking-normal opacity-60">AI Goofish Control Panel</span>
       </h2>
     </div>
 
     <div class="flex items-center">
       <a-dropdown v-if="isLogin">
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-success/10 border border-success/20 cursor-pointer hover:bg-success/20 transition-colors group">
+        <div
+          class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-success/10 border border-success/20 cursor-pointer hover:bg-success/20 transition-colors group">
           <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
           <span class="text-success font-medium text-sm group-hover:text-success/90">咸鱼已登录</span>
           <UserOutlined class="text-success ml-1"/>
@@ -61,18 +61,23 @@ const remove = async () => {
         <template #overlay>
           <a-menu class="!bg-gray-800 !border !border-gray-700 !shadow-xl !rounded-lg overflow-hidden">
             <a-menu-item @click="update" class="!text-gray-200 hover:!bg-gray-700">
-              <template #icon><CloudSyncOutlined/></template>
+              <template #icon>
+                <CloudSyncOutlined/>
+              </template>
               更新 Cookie
             </a-menu-item>
             <a-menu-item @click="remove" class="!text-red-400 hover:!bg-red-900/20">
-              <template #icon><DeleteOutlined/></template>
+              <template #icon>
+                <DeleteOutlined/>
+              </template>
               删除 Cookie
             </a-menu-item>
           </a-menu>
         </template>
       </a-dropdown>
 
-      <div v-else @click="showModal" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-error/10 border border-error/20 cursor-pointer hover:bg-error/20 transition-colors group">
+      <div v-else @click="showModal"
+           class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-error/10 border border-error/20 cursor-pointer hover:bg-error/20 transition-colors group">
         <div class="w-2 h-2 rounded-full bg-error"></div>
         <span class="text-error font-medium text-sm group-hover:text-error/90">未登录 (点击设置)</span>
         <ExclamationCircleOutlined class="text-error ml-1"/>
@@ -99,13 +104,3 @@ const remove = async () => {
     </a-modal>
   </header>
 </template>
-
-<style scoped>
-/* Gradient Text from theme.css */
-.gradient-text {
-  background: linear-gradient(135deg, var(--primary-400), var(--secondary-400));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-</style>

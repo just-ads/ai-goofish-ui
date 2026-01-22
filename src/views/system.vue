@@ -59,7 +59,7 @@ const handleSave = async () => {
     <div class="glass-card flex-1 flex flex-col p-6 animate-fade-in-up">
       <!-- 页面标题 -->
       <div class="flex justify-between mb-6 items-center border-b border-white/5 pb-4">
-        <h2 class="text-xl font-bold gradient-text m-0">系统设置</h2>
+        <h2 class="text-xl font-bold text-gray m-0">系统设置</h2>
         <div class='flex items-center space-x-4'>
           <transition name="fade">
             <div v-if="configChanged" class="flex items-center gap-2 text-warning px-3 py-1 bg-warning/10 rounded-full border border-warning/20">
