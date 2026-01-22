@@ -217,7 +217,7 @@ defineExpose({
             :key="template.id"
             :value="template.id"
           >
-            {{ template.name }}
+            {{ template.name }} - {{template.description}}
           </a-select-option>
         </a-select>
       </a-form-item>
