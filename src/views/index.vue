@@ -20,27 +20,25 @@ const toggleCollapse = () => {
   collapsed.value = !collapsed.value
 }
 
-// 路由变化时更新选中
 watch(() => route.path, (newPath) => {
   selectedKey.value = newPath
 })
 
-// 菜单点击跳转
 const handleMenuClick = (e: any) => {
   router.push(e.key)
 }
 </script>
 
 <template>
-  <div class="flex flex-col h-full overflow-hidden bg-transparent">
+  <div class="flex-col h-full overflow-hidden bg-transparent">
     <Header class="z-20 shadow-md"/>
     <div class="flex flex-1 h-0 overflow-hidden relative">
       <!-- 左侧菜单 -->
       <div
-        class="flex flex-col h-full transition-all duration-300 ease-out border-r border-white/5 bg-black/20 backdrop-blur-md z-10"
+        class="flex-col h-full transition-all duration-300 ease-out border-r border-white/5 bg-black/20 backdrop-blur-md z-10"
         :class="collapsed ? 'w-20' : 'w-64'"
       >
-        <div class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar py-2">
+        <div class="flex-1 overflow-y-auto overflow-x-hidden py-2">
           <a-menu
             class="!bg-transparent !border-r-0"
             mode="inline"
@@ -83,7 +81,7 @@ const handleMenuClick = (e: any) => {
         </div>
 
         <!-- Scrollable Content -->
-        <div class="relative z-10 h-full overflow-auto custom-scrollbar p-4">
+        <div class="relative z-10 h-full overflow-auto p-4">
           <router-view v-slot="{ Component }">
             <transition name="fade-slide" mode="out-in">
               <component :is="Component"/>

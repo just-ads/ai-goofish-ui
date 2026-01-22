@@ -134,9 +134,9 @@ const selectTask = (id?: number) => {
 </script>
 
 <template>
-  <div class="h-full flex flex-col gap-4">
+  <div class="h-full flex-col gap-4">
     <!-- Top Control Panel -->
-    <div class="glass-card p-4 animate-fade-in-down flex flex-col gap-4">
+    <div class="glass-card p-4 animate-fade-in-down flex-col gap-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
           <div class='w-72'>
@@ -247,7 +247,7 @@ const selectTask = (id?: number) => {
                   {{ result['商品信息']['商品标题'] }}
                 </div>
 
-                <div class="flex flex-col gap-1 text-xs text-gray-500 mb-3">
+                <div class="flex-col gap-1 text-xs text-gray-500 mb-3">
                   <div class="flex items-center gap-1">
                     <EnvironmentOutlined class="text-gray-600"/>
                     {{ result['商品信息']['发货地区'] || '未知地区' }}

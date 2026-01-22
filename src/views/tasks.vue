@@ -1,6 +1,6 @@
 <template>
-  <div class="p-0 h-full flex flex-col">
-    <div class="glass-card flex-1 flex flex-col p-6 animate-fade-in-up">
+  <div class="p-0 h-full flex-col">
+    <div class="glass-card flex-1 flex-col p-6 animate-fade-in-up">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-bold m-0 text-gray">任务管理</h2>
         <a-button type="primary" @click="createTask" class="!bg-primary-600 hover:!bg-primary-500 border-none shadow-md shadow-primary-500/20">
@@ -45,7 +45,7 @@
 
           <a-table-column title="配置" key="config">
             <template #default="{ record }">
-              <div class="flex flex-col text-xs space-y-1 text-gray-400">
+              <div class="flex-col text-xs space-y-1 text-gray-400">
                 <div class="flex items-center gap-1" v-if="record.max_pages">
                   <FileTextOutlined/>
                   <span>{{ record.max_pages }} 页</span>

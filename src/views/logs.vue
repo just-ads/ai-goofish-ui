@@ -104,7 +104,7 @@ const getLevelColor = (level: string) => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full gap-4">
+  <div class="flex-col h-full gap-4">
     <div class="glass-card flex-1 h-full flex-col p-4 animate-fade-in-up">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-bold text-gray m-0">任务日志</h2>
@@ -200,7 +200,7 @@ const getLevelColor = (level: string) => {
           </DynamicScroller>
 
           <transition name="fade">
-            <div v-if="logsLoading && logs.length === 0" class="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm z-10">
+            <div v-if="logsLoading && logs.length === 0" class="absolute inset-0 flex-col items-center justify-center bg-black/40 backdrop-blur-sm z-10">
               <a-spin size="large"/>
               <div class="mt-4 text-gray-400 text-sm">正在加载日志...</div>
             </div>

@@ -2,8 +2,8 @@
   <div class="flex items-center justify-center h-screen w-screen overflow-hidden relative">
     <!-- Background Animation -->
     <div class="absolute inset-0 bg-gray-900 overflow-hidden -z-10">
-      <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-900/20 blur-[100px] animate-pulse-slow"></div>
-      <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-secondary-900/20 blur-[100px] animate-pulse-slow delay-1000"></div>
+      <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-900/20 blur-[100px]"></div>
+      <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-secondary-900/20 blur-[100px] delay-1000"></div>
     </div>
 
     <div class="relative z-10 p-8 glass-card w-[400px] animate-fade-in-up">

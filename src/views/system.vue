@@ -55,8 +55,8 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full gap-4">
-    <div class="glass-card flex-1 flex flex-col p-6 animate-fade-in-up">
+  <div class="flex-col h-full gap-4">
+    <div class="glass-card flex-1 flex-col p-6 animate-fade-in-up">
       <!-- 页面标题 -->
       <div class="flex justify-between mb-6 items-center border-b border-white/5 pb-4">
         <h2 class="text-xl font-bold text-gray m-0">系统设置</h2>

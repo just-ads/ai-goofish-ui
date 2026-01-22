@@ -251,7 +251,7 @@ defineExpose({
         </a-form-item>
 
         <a-form-item label="请求头配置">
-          <div class="flex flex-col gap-2">
+          <div class="flex-col gap-2">
             <div v-if="form.headers && Object.keys(form.headers).length > 0" class="mb-2">
               <div v-for="(value, key) in form.headers" :key="key" class="flex items-center justify-between py-1 px-2 bg-gray-50 rounded mb-1">
                 <span class="font-mono text-sm">
@@ -263,7 +263,7 @@ defineExpose({
               </div>
             </div>
 
-            <div v-if="editingHeaders" class="flex flex-col gap-2">
+            <div v-if="editingHeaders" class="flex-col gap-2">
               <a-textarea
                 v-model:value="headersText"
                 :rows="6"
@@ -288,8 +288,8 @@ defineExpose({
         </a-form-item>
 
         <a-form-item label="请求体配置">
-          <div class="flex flex-col gap-2">
-            <div v-if="editingBody" class="flex flex-col gap-2">
+          <div class="flex-col gap-2">
+            <div v-if="editingBody" class="flex-col gap-2">
               <a-textarea
                 v-model:value="bodyText"
                 :rows="8"
