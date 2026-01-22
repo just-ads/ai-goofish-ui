@@ -20,6 +20,8 @@ declare module 'vue' {
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AIForm: typeof import('./../components/AIForm.vue')['default']
+    AImage: typeof import('ant-design-vue/es')['Image']
+    AImagePreviewGroup: typeof import('ant-design-vue/es')['ImagePreviewGroup']
     AInput: typeof import('ant-design-vue/es')['Input']
     AInputNumber: typeof import('ant-design-vue/es')['InputNumber']
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']

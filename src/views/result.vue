@@ -14,14 +14,17 @@ import {
   LinkOutlined,
   EnvironmentOutlined,
   UserOutlined,
-  ClockCircleOutlined
+  ClockCircleOutlined,
+  LineChartOutlined
 } from '@ant-design/icons-vue'
 
 const selectedTaskId = ref<number>();
 const taskResults = ref<TaskResultResponse | null>(null);
 const loading = ref(false);
+const chartVisibility = ref(false);
 const chartLoading = ref(false);
 const pricesData = ref<{ '时间': string, '价格': string }[]>([]);
+const viewImagesTaskId = ref<string | null>(null);
 
 const taskResultRequest = reactive<TaskResultRequest>({
   page: 1,
@@ -151,6 +154,12 @@ const selectTask = (id?: number) => {
             </template>
             删除结果
           </a-button>
+          <a-button @click="chartVisibility = !chartVisibility">
+            <template #icon>
+              <LineChartOutlined/>
+            </template>
+            {{ chartVisibility ? '隐藏' : '显示' }}价格趋势
+          </a-button>
         </div>
 
         <!-- Pagination -->
@@ -197,11 +206,21 @@ const selectTask = (id?: number) => {
             >
               <!-- Image Container -->
               <div class="relative h-48 bg-black/40 overflow-hidden">
-                <img
-                  v-if="result['商品信息']['商品图片列表']?.length"
-                  :src="result['商品信息']['商品图片列表'][0]"
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
+                <div v-if="result['商品信息']['商品图片列表']?.length">
+                  <a-image
+                    :preview="{ visible: false }"
+                    :src="result['商品信息']['商品图片列表'][0]"
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    @click="viewImagesTaskId = result['商品信息']['商品ID']"
+                  />
+                  <div style="display: none" v-if="result['商品信息']['商品图片列表'].length > 1">
+                    <a-image-preview-group
+                      :preview="{visible: viewImagesTaskId === result['商品信息']['商品ID'], onVisibleChange: vis => (viewImagesTaskId = null)}"
+                    >
+                      <a-image v-for="it in result['商品信息']['商品图片列表']" :src="it"/>
+                    </a-image-preview-group>
+                  </div>
+                </div>
                 <div v-else class="w-full h-full flex items-center justify-center text-gray-600">
                   无图片
                 </div>
@@ -213,7 +232,8 @@ const selectTask = (id?: number) => {
                 </div>
 
                 <!-- Original Price -->
-                <div v-if="result['商品信息']['商品原价']" class="absolute bottom-2 right-2 bg-black/40 px-1.5 py-0.5 rounded text-xs text-gray-400 line-through">
+                <div v-if="result['商品信息']['商品原价']"
+                     class="absolute bottom-2 right-2 bg-black/40 px-1.5 py-0.5 rounded text-xs text-gray-400 line-through">
                   ¥{{ result['商品信息']['商品原价'] }}
                 </div>
               </div>
@@ -258,7 +278,7 @@ const selectTask = (id?: number) => {
                 <!-- Actions -->
                 <div class="flex items-center justify-between border-t border-white/5 pt-3 mt-auto">
                   <div class="text-xs text-gray-600">
-                    {{ result['爬取时间']?.split(' ')[1] }} 抓取
+                    {{ result['爬取时间'] }} 抓取
                   </div>
                   <div class="flex gap-2">
                     <a-button type="text" size="small" class="!text-primary-400 hover:!text-primary-300" @click="copyUrl(result['商品信息']['商品ID'])">
@@ -289,7 +309,7 @@ const selectTask = (id?: number) => {
     </div>
 
     <!-- Chart Section -->
-    <div class="h-64 glass-card p-4 shrink-0" v-if="selectedTaskId !== undefined">
+    <div class="h-64 glass-card p-4 shrink-0" v-if="chartVisibility && selectedTaskId !== undefined">
       <PriceLineChart :chartDataSource="pricesData" :loading="chartLoading"/>
     </div>
   </div>
