@@ -56,7 +56,7 @@ const handleSave = async () => {
 
 <template>
   <div class="flex-col h-full gap-4">
-    <div class="glass-card flex-1 flex-col p-6 animate-fade-in-up">
+    <div class="glass-card flex-1 flex-col p-6 animate-fade-in-up h-full">
       <!-- 页面标题 -->
       <div class="flex justify-between mb-6 items-center border-b border-white/5 pb-4">
         <h2 class="text-xl font-bold text-gray m-0">系统设置</h2>
@@ -79,7 +79,7 @@ const handleSave = async () => {
       <!-- Tab导航 -->
       <a-tabs
         v-model:activeKey="activeTab"
-        class="h-0 flex-1 [&>.ant-tabs-content]:h-full custom-tabs"
+        class="h-0 flex-1 [&_.ant-tabs-content]:h-full"
         :tabBarStyle="{ borderBottom: '1px solid rgba(255,255,255,0.05)' }"
       >
         <!-- 浏览器设置 -->
@@ -94,7 +94,7 @@ const handleSave = async () => {
 
         <!-- 通知设置 -->
         <a-tab-pane key="notifications" tab="通知设置">
-          <div class="h-full overflow-y-auto custom-scrollbar p-2">
+          <div class="h-full overflow-y-auto p-2">
             <NotificationSettings
               :config="systemConfig!"
               @update:config="updateConfig"
@@ -104,7 +104,7 @@ const handleSave = async () => {
 
         <!-- 商品评估器设置 -->
         <a-tab-pane key="evaluator" tab="商品评估器设置">
-          <div class="h-full overflow-y-auto custom-scrollbar p-2">
+          <div class="h-full overflow-y-auto p-2">
             <EvaluatorSettings
               :config="systemConfig!"
               @update:config="updateConfig"
@@ -113,8 +113,8 @@ const handleSave = async () => {
         </a-tab-pane>
 
         <!-- AI设置 -->
-        <a-tab-pane key="ai" tab="AI设置">
-          <div class="h-full overflow-y-auto custom-scrollbar p-2">
+        <a-tab-pane key="ai" tab="AI设置" class="&_ant-tabs-content">
+          <div class="h-full overflow-y-auto p-2">
             <AISettings/>
           </div>
         </a-tab-pane>

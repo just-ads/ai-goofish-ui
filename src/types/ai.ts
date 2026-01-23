@@ -11,6 +11,7 @@ export interface AIConfig {
 }
 
 export type AITemplate = AIConfig & {
+  api_key_domin: string
   description: string
 }
 

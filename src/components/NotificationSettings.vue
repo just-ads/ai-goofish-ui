@@ -21,7 +21,7 @@ const {data: notifiers, execute: refreshNotifiers} = useApi('/api/notifier', {
 }).json<NotifierConfig[]>();
 
 const loading = ref(false);
-const testing = ref(false);
+const testingMap = reactive(new Map<string, 'testing' | 'success' | 'failure'>());
 
 const systemConfig = computed(() => props.config);
 
@@ -99,6 +99,7 @@ const editNotifier = (id: string) => {
     title: '编辑通知配置',
     content: h(NotifierForm, {
       modelValue: notifierConfig.value,
+      hideTemplate: true,
       'onUpdate:modelValue': (val: NotifierConfig) => notifierConfig.value = val,
     }),
     async onOk() {
@@ -142,21 +143,55 @@ const toggleNotifier = async (id: string) => {
 const testNotifier = async (id: string) => {
   const notifier = notifiers.value?.find(it => it.id === id);
   if (!notifier) return;
+  testingMap.set(id, 'testing')
   try {
-    testing.value = true;
     const {error} = await useApi(`/api/notifier/${notifier.id}/test`).post().json();
 
     if (!error.value) {
+      testingMap.set(id, 'success')
       message.success('Notifier连接测试成功');
     } else {
+      testingMap.set(id, 'failure')
       message.error('Notifier连接测试失败');
     }
   } catch (err) {
+    testingMap.set(id, 'failure')
     message.error('测试Notifier连接时发生错误');
-  } finally {
-    testing.value = false;
   }
 }
+
+const isTesting = (id: string) => {
+  return testingMap.get(id) === 'testing';
+}
+
+const getColor = (id: string) => {
+  const type = testingMap.get(id)
+  switch (type) {
+    case 'success':
+      return '#52c41a';
+    case 'failure':
+      return '#ef4444';
+    case 'testing':
+      return '#3b82f6';
+    default:
+      return 'default'
+  }
+}
+
+const getText = (id: string) => {
+  const type = testingMap.get(id)
+  switch (type) {
+    case 'success':
+      return '测试成功';
+    case 'failure':
+      return '测试失败';
+    case 'testing':
+      return '测试中';
+    default:
+      return '未测试'
+  }
+}
+
 </script>
 
 <template>
@@ -174,7 +209,7 @@ const testNotifier = async (id: string) => {
         <span class="ml-2 text-gray-500">是否启用消息通知功能</span>
       </a-form-item>
     </a-form>
-    <div v-if="systemConfig.notifications.enabled" class="flex-col flex-1">
+    <div v-if="systemConfig.notifications.enabled" class="flex-col flex-1 h-0">
       <div class="flex justify-between items-center mb-4">
         <h4 class="text-md font-medium">已配置的通知</h4>
         <a-button type="primary" @click="addNotifier">
@@ -190,12 +225,7 @@ const testNotifier = async (id: string) => {
         >
           <div class="flex justify-between items-start">
             <div class="flex gap-2.5">
-              <a-tag v-if="notifier.enable" color="success">
-                已启用
-              </a-tag>
-              <a-tag v-else color="default">
-                未启用
-              </a-tag>
+              <a-tag :color="getColor(notifier.id)">{{ getText(notifier.id) }}</a-tag>
               <a-switch :checked="notifier.enable" @change="toggleNotifier(notifier.id)"/>
               <div>{{ notifier.name }}</div>
               <div>提供商: {{ notifier.type }}</div>
@@ -205,7 +235,7 @@ const testNotifier = async (id: string) => {
                 type="primary"
                 size="small"
                 @click="editNotifier(notifier.id)"
-                :disabled="testing"
+                :disabled="isTesting(notifier.id)"
               >
                 编辑
               </a-button>
@@ -213,7 +243,7 @@ const testNotifier = async (id: string) => {
                 type="default"
                 size="small"
                 @click="testNotifier(notifier.id)"
-                :loading="testing"
+                :loading="isTesting(notifier.id)"
               >
                 <ThunderboltOutlined/>
                 测试
@@ -223,7 +253,7 @@ const testNotifier = async (id: string) => {
                 danger
                 size="small"
                 @click="removeNotifier(notifier.id)"
-                :disabled="testing"
+                :disabled="isTesting(notifier.id)"
               >
                 <DeleteOutlined/>
               </a-button>

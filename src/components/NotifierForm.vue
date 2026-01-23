@@ -4,16 +4,22 @@ import {NotifierConfig, NotifierTemplate} from "@/types/notifier";
 import {ThunderboltOutlined, InfoCircleOutlined} from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 
-const props = defineProps<{ modelValue: T }>()
+const props = defineProps<{
+  modelValue: T,
+  hideTemplate?: boolean
+}>()
+
 const emit = defineEmits<{
   (e: "update:modelValue", value: T): void
 }>();
 
-// Avoid TS2862: reactive<T> generic index writes
-const form = reactive<NotifierConfig>({ ...props.modelValue })
+const form = reactive<NotifierConfig>({...props.modelValue})
 
 const testing = ref(false);
-const testResult = ref<string | null>(null);
+const testResult = reactive({
+  success: false,
+  content: ''
+});
 const testVisible = ref(false);
 
 const {data: notifierTemplates} = useApi('/api/notifier/templates').json<NotifierTemplate[]>();
@@ -75,37 +81,23 @@ const testNotifier = async () => {
 
   try {
     testing.value = true;
-    testResult.value = null;
-
     const {error: testError} = await useApi(`/api/notifier/test`).post(form).json();
 
     if (!testError.value) {
       const response = '测试成功';
-      const notifierName = form.name;
-
-      testResult.value = `✅ 通知连接测试成功！\n\n` +
-        `通知名称: ${notifierName}\n` +
-        `通知类型: ${form.type}\n` +
-        `测试响应: ${response.substring(0, 200)}${response.length > 200 ? '...' : ''}`;
+      testResult.success = true;
+      testResult.content = `测试响应: ${response.substring(0, 200)}${response.length > 200 ? '...' : ''}`;
       message.success('通知连接测试成功');
     } else {
-      testResult.value = `❌ 通知连接测试失败\n\n` +
-        `错误信息: ${testError.value?.message || '未知错误'}\n` +
-        `可能原因:\n` +
-        `1. 配置信息错误\n` +
-        `2. 通知服务无法访问\n` +
-        `3. 网络连接问题`;
+      testResult.success = false;
+      testResult.content = `错误信息: ${testError.value || '未知错误'}\n`;
       message.error('通知连接测试失败');
     }
 
     testVisible.value = true;
   } catch (err: any) {
-    testResult.value = `❌ 测试过程中发生错误\n\n` +
-      `错误信息: ${err.message || '未知错误'}\n` +
-      `可能原因:\n` +
-      `1. 网络连接中断\n` +
-      `2. 服务器无响应\n` +
-      `3. 请求超时`;
+    testResult.success = false;
+    testResult.content = `错误信息: ${err.message || '未知错误'}\n`;
     message.error('测试过程中发生错误');
     testVisible.value = true;
   } finally {
@@ -115,7 +107,6 @@ const testNotifier = async () => {
 
 const closeTestResult = () => {
   testVisible.value = false;
-  testResult.value = null;
 }
 
 // 暴露测试方法给父组件
@@ -131,7 +122,7 @@ defineExpose({
   <div class="space-y-4">
     <a-form
       :model="form"
-      :label-col="{ span: 5 }"
+      :label-col="{ span: 6 }"
       :wrapper-col="{ span: 18 }"
     >
       <a-form-item label="通知名称" name="name" required>
@@ -140,6 +131,7 @@ defineExpose({
 
       <a-form-item label="通知类型" name="type" required>
         <a-select
+          v-if="!hideTemplate"
           placeholder="选择通知类型"
           v-model:value="form.type"
           @change="applyTemplate"
@@ -153,6 +145,7 @@ defineExpose({
             {{ template.name }}
           </a-select-option>
         </a-select>
+        <div v-else>{{ form.type }}</div>
       </a-form-item>
 
       <!-- 动态字段 -->
@@ -220,24 +213,24 @@ defineExpose({
       </a-form-item>
 
       <!-- 测试结果（显示在操作按钮行下方） -->
-      <a-form-item v-if="testVisible" :wrapper-col="{ offset: 5, span: 18 }">
-        <div class="mt-2 p-4 border rounded" :class="testResult?.includes('✅') ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'">
+      <a-form-item v-if="!testing && testVisible" :wrapper-col="{ offset: 5, span: 18 }">
+        <div class="mt-2 p-4 border rounded" :class="testResult.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'">
           <div class="flex justify-between items-start mb-2">
-            <h4 class="font-medium" :class="testResult?.includes('✅') ? 'text-green-700' : 'text-red-700'">
-              {{ testResult?.includes('✅') ? '✅ 测试成功' : '❌ 测试失败' }}
+            <h4 class="font-medium" :class="testResult.success ? 'text-green-700' : 'text-red-700'">
+              {{ testResult.success ? '✅ 测试成功' : '❌ 测试失败' }}
             </h4>
             <a-button type="text" size="small" @click="closeTestResult">
               关闭
             </a-button>
           </div>
           <div class="text-sm whitespace-pre-wrap font-mono bg-white/50 p-3 rounded">
-            <div v-if="testResult?.includes('✅')" class="space-y-2">
+            <div v-if="testResult.success" class="space-y-2">
               <div class="text-green-700 font-medium">配置验证通过！</div>
-              <div class="text-gray-700">{{ testResult.replace('✅ 通知连接测试成功！\n\n', '') }}</div>
+              <div class="text-gray-700">{{ testResult.content }}</div>
             </div>
             <div v-else class="space-y-2">
               <div class="text-red-700 font-medium">配置验证失败</div>
-              <div class="text-gray-700">{{ testResult?.replace('❌ ', '') }}</div>
+              <div class="text-gray-700">{{ testResult.content }}</div>
               <div class="text-gray-600 text-xs mt-2">
                 请检查以下配置：
                 <ul class="list-disc pl-4 mt-1">

@@ -6,7 +6,10 @@ import {DeleteOutlined, DownOutlined, EditOutlined, PlusOutlined, ThunderboltOut
 import {message} from "ant-design-vue";
 import clone from "fast-clone";
 
-const props = defineProps<{ modelValue: T }>()
+const props = defineProps<{
+  modelValue: T,
+  hideTemplate?: boolean
+}>()
 const emit = defineEmits<{
   (e: "update:modelValue", value: T): void
 }>();
@@ -18,6 +21,7 @@ const editingHeaders = ref(false);
 const editingBody = ref(false);
 const headersText = ref('');
 const bodyText = ref('');
+const apiKeyDomin = ref('');
 
 const {data: aiTemplates} = useApi('/api/ai/templates').json<AITemplate[]>();
 
@@ -47,6 +51,7 @@ const applyTemplate = (id: string) => {
   form.model = template.model;
   form.headers = clone(template.headers);
   form.body = clone(template.body);
+  apiKeyDomin.value = template.api_key_domin;
 }
 
 const addHeader = () => {
@@ -110,11 +115,13 @@ const cancelEditBody = () => {
 }
 
 const testing = ref(false);
-const testResult = ref<string | null>(null);
+const testResult = reactive({
+  success: false,
+  content: ''
+});
 const testVisible = ref(false);
 
 const testConfig = async () => {
-  // 验证必填字段
   const missingFields = [];
   if (!form.name) missingFields.push('Agent名称');
   if (!form.endpoint) missingFields.push('API端点');
@@ -128,7 +135,6 @@ const testConfig = async () => {
 
   try {
     testing.value = true;
-    testResult.value = null;
 
     const testConfig = {
       id: 'test-' + Date.now(),
@@ -145,34 +151,19 @@ const testConfig = async () => {
 
     if (!testError.value && testData.value) {
       const response = testData.value.response || '测试成功';
-      const name = testConfig.name;
-
-      testResult.value = `✅ 连接测试成功！\n\n` +
-        `名称: ${name}\n` +
-        `模型: ${testConfig.model}\n` +
-        `API端点: ${testConfig.endpoint}\n` +
-        `测试响应: ${response.substring(0, 200)}${response.length > 200 ? '...' : ''}`;
+      testResult.success = true;
+      testResult.content = `测试响应: ${response.substring(0, 200)}${response.length > 200 ? '...' : ''}`;
       message.success('连接测试成功');
     } else {
-      testResult.value = `❌ 连接测试失败\n\n` +
-        `错误信息: ${testError.value?.message || '未知错误'}\n` +
-        `可能原因:\n` +
-        `1. API密钥无效\n` +
-        `2. 模型名称错误\n` +
-        `3. API端点无法访问\n` +
-        `4. 网络连接问题\n` +
-        `5. 请求头/请求体配置错误`;
+      testResult.success = false;
+      testResult.content = `错误信息: ${testError.value || '未知错误'}\n`;
       message.error('连接测试失败');
     }
 
     testVisible.value = true;
   } catch (err: any) {
-    testResult.value = `❌ 测试过程中发生错误\n\n` +
-      `错误信息: ${err.message || '未知错误'}\n` +
-      `可能原因:\n` +
-      `1. 网络连接中断\n` +
-      `2. 服务器无响应\n` +
-      `3. 请求超时`;
+    testResult.success = false;
+    testResult.content = `错误信息: ${err.message || '未知错误'}\n`;
     message.error('测试过程中发生错误');
     testVisible.value = true;
   } finally {
@@ -182,7 +173,6 @@ const testConfig = async () => {
 
 const closeTestResult = () => {
   testVisible.value = false;
-  testResult.value = null;
 }
 
 // 暴露测试方法给父组件
@@ -206,7 +196,7 @@ defineExpose({
         <a-input v-model:value="form.name" placeholder="输入名称"/>
       </a-form-item>
 
-      <a-form-item label="模板选择">
+      <a-form-item label="模板选择" v-if="!hideTemplate">
         <a-select
           placeholder="选择预设模板"
           @change="applyTemplate"
@@ -217,7 +207,7 @@ defineExpose({
             :key="template.id"
             :value="template.id"
           >
-            {{ template.name }} - {{template.description}}
+            {{ template.name }} - {{ template.description }}
           </a-select-option>
         </a-select>
       </a-form-item>
@@ -227,7 +217,10 @@ defineExpose({
       </a-form-item>
 
       <a-form-item label="API密钥">
-        <a-input-password v-model:value="form.api_key" placeholder="输入API密钥"/>
+        <div class='flex items-center gap-1'>
+          <a-input-password v-model:value="form.api_key" placeholder="输入API密钥"/>
+          <a v-if="!!apiKeyDomin" :href="apiKeyDomin" class="shrink-0" target="_blank">获取api_key</a>
+        </div>
       </a-form-item>
 
       <a-form-item label="模型名称" name="model" required>
@@ -352,31 +345,33 @@ defineExpose({
       </a-form-item>
 
       <!-- 测试结果（显示在操作按钮行下方） -->
-      <a-form-item v-if="testVisible" :wrapper-col="{ offset: 5, span: 18 }">
-        <div class="mt-2 p-4 border rounded" :class="testResult?.includes('✅') ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'">
+      <a-form-item v-if="!testing && testVisible" :wrapper-col="{ offset: 5, span: 18 }">
+        <div class="mt-2 p-4 border rounded" :class="testResult.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'">
           <div class="flex justify-between items-start mb-2">
-            <h4 class="font-medium" :class="testResult?.includes('✅') ? 'text-green-700' : 'text-red-700'">
-              {{ testResult?.includes('✅') ? '✅ 测试成功' : '❌ 测试失败' }}
+            <h4 class="font-medium" :class="testResult.success ? 'text-green-700' : 'text-red-700'">
+              {{ testResult.success ? '✅ 测试成功' : '❌ 测试失败' }}
             </h4>
             <a-button type="text" size="small" @click="closeTestResult">
               关闭
             </a-button>
           </div>
           <div class="text-sm whitespace-pre-wrap font-mono bg-white/50 p-3 rounded">
-            <div v-if="testResult?.includes('✅')" class="space-y-2">
+            <div v-if="testResult.success" class="space-y-2">
               <div class="text-green-700 font-medium">配置验证通过！</div>
-              <div class="text-gray-700">{{ testResult.replace('✅ Agent连接测试成功！\n\n', '') }}</div>
+              <div class="text-gray-700">{{ testResult.content }}</div>
             </div>
             <div v-else class="space-y-2">
               <div class="text-red-700 font-medium">配置验证失败</div>
-              <div class="text-gray-700">{{ testResult?.replace('❌ ', '') }}</div>
+              <div class="text-gray-700">{{ testResult.content }}</div>
               <div class="text-gray-600 text-xs mt-2">
                 请检查以下配置：
                 <ul class="list-disc pl-4 mt-1">
                   <li>API端点是否正确</li>
                   <li>API密钥是否有效</li>
+                  <li>账户余额是否充足</li>
                   <li>模型名称是否正确</li>
                   <li>网络连接是否正常</li>
+                  <li>请求头/请求体配置错误</li>
                 </ul>
               </div>
             </div>

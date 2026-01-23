@@ -12,7 +12,7 @@ const {data: configList, execute: refreshConfigList} = useApi('/api/ai', {
 
 
 const loading = ref(false);
-const testing = ref(false);
+const testingMap = reactive(new Map<string, 'testing' | 'success' | 'failure'>());
 
 const addConfig = () => {
   const config = ref<AIConfig>({
@@ -101,6 +101,7 @@ const editConfig = (id: string) => {
     width: 600,
     content: h(AIForm, {
       modelValue: editingConfig.value,
+      hideTemplate: true,
       'onUpdate:modelValue': (val: AIConfig) => editingConfig.value = val
     }),
     async onOk() {
@@ -126,22 +127,55 @@ const editConfig = (id: string) => {
 const testConfig = async (id: string) => {
   const config = configList.value?.find(it => it.id === id);
   if (!config) return;
-
+  testingMap.set(id, 'testing');
   try {
-    testing.value = true;
     const {error} = await useApi(`/api/ai/${config.id}/test`).post().json();
 
     if (!error.value) {
+      testingMap.set(id, 'success');
       message.success('连接测试成功');
     } else {
+      testingMap.set(id, 'failure');
       message.error('连接测试失败');
     }
   } catch (err) {
+    testingMap.set(id, 'failure');
     message.error('测试连接时发生错误');
-  } finally {
-    testing.value = false;
   }
 };
+
+const isTesting = (id: string) => {
+  return testingMap.get(id) === 'testing';
+}
+
+const getColor = (id: string) => {
+  const type = testingMap.get(id)
+  switch (type) {
+    case 'success':
+      return '#52c41a';
+    case 'failure':
+      return '#ef4444';
+    case 'testing':
+      return '#3b82f6';
+    default:
+      return 'default'
+  }
+}
+
+const getText = (id: string) => {
+  const type = testingMap.get(id)
+  switch (type) {
+    case 'success':
+      return '测试成功';
+    case 'failure':
+      return '测试失败';
+    case 'testing':
+      return '测试中';
+    default:
+      return '未测试'
+  }
+}
+
 </script>
 
 <template>
@@ -149,9 +183,9 @@ const testConfig = async (id: string) => {
     <h3 class="text-lg font-medium">AI 配置</h3>
 
     <!-- Agent列表 -->
-    <div class="flex-col flex-1">
+    <div class="flex-col flex-1 h-0">
       <div class="flex justify-between items-center mb-4">
-        <h4 class="text-md font-medium">已配置的 AI</h4>
+        <h4 class="font-medium">已配置的 AI</h4>
         <a-button type="primary" @click="addConfig" :loading="loading">
           <PlusOutlined/>
           添加AI
@@ -171,6 +205,7 @@ const testConfig = async (id: string) => {
                 <span class="text-xs px-2 py-1 rounded text-gray-600">
                   {{ config.model }}
                 </span>
+                <a-tag :color="getColor(config.id)">{{ getText(config.id) }}</a-tag>
               </div>
 
               <div class="text-sm text-gray-600 space-y-1">
@@ -194,7 +229,7 @@ const testConfig = async (id: string) => {
                 type="primary"
                 size="small"
                 @click="editConfig(config.id)"
-                :disabled="testing"
+                :disabled="isTesting(config.id)"
               >
                 编辑
               </a-button>
@@ -202,7 +237,7 @@ const testConfig = async (id: string) => {
                 type="default"
                 size="small"
                 @click="testConfig(config.id)"
-                :loading="testing"
+                :loading="isTesting(config.id)"
               >
                 <ThunderboltOutlined/>
                 测试
@@ -212,7 +247,7 @@ const testConfig = async (id: string) => {
                 danger
                 size="small"
                 @click="deleteConfig(config.id)"
-                :disabled="testing"
+                :disabled="isTesting(config.id)"
               >
                 <DeleteOutlined/>
               </a-button>
