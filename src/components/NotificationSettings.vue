@@ -54,10 +54,11 @@ const addNotifier = () => {
           message.success('已添加');
           await refreshNotifiers();
         } else {
-          message.error('添加失败');
+          return Promise.reject();
         }
       } catch (err) {
         message.error('添加时发生错误');
+        return Promise.reject();
       } finally {
         loading.value = false;
       }
@@ -110,10 +111,11 @@ const editNotifier = (id: string) => {
           message.success('已更新');
           await refreshNotifiers();
         } else {
-          message.error('更新失败');
+          return Promise.reject();
         }
       } catch (err) {
         message.error('更新时发生错误');
+        return Promise.reject();
       } finally {
         loading.value = false;
       }
@@ -152,7 +154,6 @@ const testNotifier = async (id: string) => {
       message.success('Notifier连接测试成功');
     } else {
       testingMap.set(id, 'failure')
-      message.error('Notifier连接测试失败');
     }
   } catch (err) {
     testingMap.set(id, 'failure')

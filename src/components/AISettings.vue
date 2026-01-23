@@ -48,10 +48,11 @@ const addConfig = () => {
           message.success('已添加');
           await refreshConfigList();
         } else {
-          message.error('添加失败');
+          return Promise.reject();
         }
       } catch (err) {
         message.error('添加时发生错误');
+        return Promise.reject();
       } finally {
         loading.value = false;
       }
@@ -95,7 +96,6 @@ const editConfig = (id: string) => {
 
   const editingConfig = ref<AIConfig>(config);
 
-
   Modal.confirm({
     title: '编辑 AI 配置',
     width: 600,
@@ -113,10 +113,11 @@ const editConfig = (id: string) => {
           message.success('已更新');
           await refreshConfigList();
         } else {
-          message.error('更新失败');
+          return Promise.reject();
         }
       } catch (err) {
         message.error('更新时发生错误');
+        return Promise.reject();
       } finally {
         loading.value = false;
       }
@@ -136,7 +137,6 @@ const testConfig = async (id: string) => {
       message.success('连接测试成功');
     } else {
       testingMap.set(id, 'failure');
-      message.error('连接测试失败');
     }
   } catch (err) {
     testingMap.set(id, 'failure');
