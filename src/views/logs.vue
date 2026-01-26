@@ -62,6 +62,7 @@ const onScrollEnd = () => {
 
 const autoRefreshLogs = async () => {
   await fetchLogs();
+  if (!autoRefresh.value) return;
   refreshTimer = window.setTimeout(() => {
     autoRefreshLogs()
   }, 2000)
