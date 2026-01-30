@@ -206,6 +206,7 @@ const getText = (id: string) => {
                 <span class="text-xs px-2 py-1 rounded text-gray-600">
                   {{ config.model }}
                 </span>
+                <a-tag v-if="config.multimodal" color="success">多模态</a-tag>
                 <a-tag :color="getColor(config.id)">{{ getText(config.id) }}</a-tag>
               </div>
 

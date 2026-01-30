@@ -58,6 +58,7 @@ const updateConfig = (updates: Partial<SystemConfig>) => {
               :value="config.id"
             >
               {{ config.name }}
+              <a-tag v-if="config.multimodal" color="success">多模态</a-tag>
             </a-select-option>
           </a-select>
         </a-form-item>
@@ -80,6 +81,7 @@ const updateConfig = (updates: Partial<SystemConfig>) => {
               :value="config.id"
             >
               {{ config.name }}
+              <a-tag v-if="config.multimodal" color="success">多模态</a-tag>
             </a-select-option>
           </a-select>
         </a-form-item>
