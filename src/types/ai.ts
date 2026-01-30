@@ -5,6 +5,7 @@ export interface AIConfig {
   endpoint: string
   api_key: string
   model: string
+  multimodal: boolean
   proxy?: string
   headers?: Record<string, string>
   body?: Record<string, any>

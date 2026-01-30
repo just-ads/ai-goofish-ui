@@ -137,7 +137,7 @@ const testConfig = async () => {
     testing.value = true;
 
     const testConfig = {
-      id: 'test-' + Date.now(),
+      id: form.id,
       name: form.name,
       endpoint: form.endpoint,
       api_key: form.api_key,
@@ -147,7 +147,9 @@ const testConfig = async () => {
       body: form.body
     };
 
-    const {error: testError, data: testData} = await useApi(`/api/ai/test`).post(testConfig).json();
+    const {error: testError, data: testData} = form.id ?
+      await useApi(`/api/ai/${form.id}/test`).post().json() :
+      await useApi(`/api/ai/test`).post(testConfig).json();
 
     if (!testError.value && testData.value) {
       const response = testData.value.response || '测试成功';
@@ -225,6 +227,10 @@ defineExpose({
 
       <a-form-item label="模型名称" name="model" required>
         <a-input v-model:value="form.model" placeholder="gpt-3.5-turbo"/>
+      </a-form-item>
+
+      <a-form-item label="多模态" name="multimodal">
+        <a-checkbox v-model:checked="form.multimodal"/>
       </a-form-item>
 
       <a-col align="right">

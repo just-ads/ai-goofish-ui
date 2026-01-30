@@ -21,6 +21,7 @@ const addConfig = () => {
     endpoint: "",
     api_key: "",
     model: "",
+    multimodal: false,
     headers: {
       "Authorization": "Bearer {key}",
       "Content-Type": "application/json"

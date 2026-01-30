@@ -18,7 +18,6 @@ const {data: aiConfigList} = useApi<AIConfig[]>('/api/ai', {
   initialData: []
 }).json<AIConfig[]>();
 
-// 更新配置的辅助函数
 const updateConfig = (updates: Partial<SystemConfig>) => {
   const newConfig = {...systemConfig.value, ...updates};
   emit('update:config', newConfig);
@@ -63,7 +62,7 @@ const updateConfig = (updates: Partial<SystemConfig>) => {
           </a-select>
         </a-form-item>
 
-        <a-form-item label="图像分析 AI">
+        <a-form-item label="图像分析 AI" tooltip="支持多模态的模型">
           <a-select
             :value="systemConfig.evaluator.imageAI || undefined"
             @change="(value) => {
@@ -71,11 +70,12 @@ const updateConfig = (updates: Partial<SystemConfig>) => {
               updateConfig({ evaluator: newEvaluator });
             }"
             class="w-full"
-            placeholder="选择用于图像分析的 AI"
+            placeholder="未启用"
             allow-clear
           >
             <a-select-option
               v-for="config in aiConfigList"
+              :disabled="!config.multimodal"
               :key="config.id"
               :value="config.id"
             >
