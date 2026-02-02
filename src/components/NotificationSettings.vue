@@ -209,6 +209,18 @@ const getText = (id: string) => {
         }"/>
         <span class="ml-2 text-gray-500">是否启用消息通知功能</span>
       </a-form-item>
+      <a-form-item label="通知阈值" tooltip="大于指定值才会通知，设为 0 通知所有">
+        <a-slider
+          class="w-72"
+          :min="0"
+          :max="100"
+          :step="1"
+          :value="systemConfig.notifications.threshold ?? 60"
+          @change="value => {
+            const newNotifyConfig = { ...systemConfig.notifications, threshold: value as number };
+            updateConfig({ notifications: newNotifyConfig });
+          }"/>
+      </a-form-item>
     </a-form>
     <div v-if="systemConfig.notifications.enabled" class="flex-col flex-1 h-0">
       <div class="flex justify-between items-center mb-4">
