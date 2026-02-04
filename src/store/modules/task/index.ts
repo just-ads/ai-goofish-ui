@@ -39,9 +39,9 @@ export const useTaskStore = defineStore('task-store', () => {
       const {data, error} = await useApi('/api/tasks').json<Task[]>();
       if (!error.value && data.value) {
         tasks.value = data.value;
+        initialized = true;
       }
     } finally {
-      initialized = true;
       initializing = false;
       resolve(tasks.value)
     }
