@@ -61,8 +61,8 @@
           <a-table-column title="选项" key="options">
             <template #default="{ record }">
               <div class="flex items-center gap-2">
-                <a-tooltip title="仅个人闲置">
-                  <UserOutlined :class="record.personal_only ? 'text-green-400' : 'text-gray-600'"/>
+                <a-tooltip title="仅个人闲置" v-if="record.personal_only">
+                  <UserOutlined class="text-green-400"/>
                 </a-tooltip>
                 <a-tooltip :title="`下次运行时间: ${record.next_run_time}`" v-if="record.cron">
                   <ClockCircleOutlined class="text-purple-400"/>
