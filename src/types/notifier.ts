@@ -12,6 +12,7 @@ export interface NotifierTemplateField {
   type: string
   required?: boolean
   placeholder?: string
+  editable?: boolean
   default?: any
 }
 

@@ -161,12 +161,14 @@ defineExpose({
             <a-input-password
               v-model:value="form[fieldName]"
               :placeholder="fieldDef.placeholder || `输入${fieldDef.name}`"
+              :readonly="fieldDef.editable === false"
             />
           </template>
           <template v-else-if="fieldDef.type === 'number'">
             <a-input-number
               v-model:value="form[fieldName]"
               :placeholder="fieldDef.placeholder || `输入${fieldDef.name}`"
+              :readonly="fieldDef.editable === false"
               style="width: 100%"
             />
           </template>
@@ -174,6 +176,7 @@ defineExpose({
             <a-input
               v-model:value="form[fieldName]"
               :placeholder="fieldDef.placeholder || `输入${fieldDef.name}`"
+              :readonly="fieldDef.editable === false"
             />
           </template>
         </a-form-item>
