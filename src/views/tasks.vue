@@ -71,12 +71,30 @@
             </template>
           </a-table-column>
 
-          <a-table-column title="描述" dataIndex="description" key="description">
+          <a-table-column title="运行记录" dataIndex="run_record" key="run_record" :width="200">
             <template #default="{ text }">
-              <a-tooltip :title="text" v-if="text">
-                <span class="block w-32 truncate text-gray-500">{{ text }}</span>
-              </a-tooltip>
-              <span v-else class="text-gray-700">-</span>
+              <div class="flex flex-col gap-1.5 py-1">
+                <div class="text-xs text-gray-400 flex items-center gap-1">
+                  <span>运行总数</span>
+                  <span class="font-medium text-gray-600">{{ text?.total_count || 0 }}</span>
+                </div>
+
+                <div class="flex flex-wrap gap-1">
+                  <a-tag :color="(text?.abnormal_count > 0) ? 'error' : 'default'" class="m-0 border-none px-1.5">
+                    <template #icon v-if="text?.abnormal_count > 0">
+                      <CloseCircleOutlined/>
+                    </template>
+                    异常 {{ text?.abnormal_count || 0 }}
+                  </a-tag>
+
+                  <a-tag :color="(text?.risk_count > 0) ? 'warning' : 'default'" class="m-0 border-none px-1.5">
+                    <template #icon v-if="text?.risk_count > 0">
+                      <WarningOutlined/>
+                    </template>
+                    风控 {{ text?.risk_count || 0 }}
+                  </a-tag>
+                </div>
+              </div>
             </template>
           </a-table-column>
 
@@ -150,7 +168,9 @@ import {
   FileTextOutlined,
   PayCircleOutlined,
   UserOutlined,
-  ClockCircleOutlined
+  ClockCircleOutlined,
+  CloseCircleOutlined,
+  WarningOutlined
 } from '@ant-design/icons-vue'
 
 import type {Task, UpdateTask} from "@/types/task";
@@ -207,7 +227,7 @@ const createTask = () => {
       }
     ),
     async onOk() {
-      const {data, error} = await useApi('/api/tasks/create').post(task.value).json();
+      const {data, error} = await useApi('/api/tasks').post(task.value).json();
       if (!error.value && data.value) {
         taskStore.addTask(data.value);
         message.success('任务创建成功');

@@ -11,6 +11,12 @@ export interface Task {
   cron?: string
   running?: boolean
   next_run_time?: string
+  run_record?: {
+    total_count: number
+    normal_count: number
+    abnormal_count: number
+    risk_count: number
+  }
 }
 
 export type UpdateTask = Omit<Partial<Task>, 'task_id'> & {
