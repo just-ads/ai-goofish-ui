@@ -21,7 +21,7 @@
           :scroll="{ y: 'calc(100vh - 250px)' }"
           class="ant-table-glass"
         >
-          <a-table-column title="启用" key="enabled" width="80px" align="center">
+          <a-table-column title="启用" key="enabled" :width="50" align="center">
             <template #default="{ record }">
               <a-switch
                 :checked="record.enabled"
@@ -31,26 +31,26 @@
             </template>
           </a-table-column>
 
-          <a-table-column title="任务名称" dataIndex="task_name" key="task_name">
+          <a-table-column title="任务名称" dataIndex="task_name" key="task_name" align="center" :width="100">
             <template #default="{ text }">
               <span class="font-medium text-white">{{ text }}</span>
             </template>
           </a-table-column>
 
-          <a-table-column title="关键词" dataIndex="keyword" key="keyword">
+          <a-table-column title="关键词" dataIndex="keyword" key="keyword" align="center" :width="100">
             <template #default="{ text }">
               <a-tag color="blue" class="!bg-blue-500/10 !border-blue-500/20 !text-blue-300">{{ text }}</a-tag>
             </template>
           </a-table-column>
 
-          <a-table-column title="配置" key="config">
+          <a-table-column title="配置" key="config" align="center" :width="80">
             <template #default="{ record }">
               <div class="flex-col text-xs space-y-1 text-gray-400">
-                <div class="flex items-center gap-1" v-if="record.max_pages">
+                <div class="flex items-center justify-center gap-1" v-if="record.max_pages">
                   <FileTextOutlined/>
                   <span>{{ record.max_pages }} 页</span>
                 </div>
-                <div class="flex items-center gap-1" v-if="record.min_price || record.max_price">
+                <div class="flex items-center justify-center gap-1" v-if="record.min_price || record.max_price">
                   <PayCircleOutlined/>
                   <span>{{ record.min_price || 0 }} - {{ record.max_price || '∞' }}</span>
                 </div>
@@ -58,9 +58,9 @@
             </template>
           </a-table-column>
 
-          <a-table-column title="选项" key="options">
+          <a-table-column title="选项" key="options" align="center" :width="80">
             <template #default="{ record }">
-              <div class="flex items-center gap-2">
+              <div class="flex items-center justify-center gap-2">
                 <a-tooltip title="仅个人闲置" v-if="record.personal_only">
                   <UserOutlined class="text-green-400"/>
                 </a-tooltip>
@@ -71,15 +71,15 @@
             </template>
           </a-table-column>
 
-          <a-table-column title="运行记录" dataIndex="run_record" key="run_record" :width="200">
+          <a-table-column title="运行记录" dataIndex="run_record" key="run_record" align="center" :width="125">
             <template #default="{ text }">
               <div class="flex flex-col gap-1.5 py-1">
-                <div class="text-xs text-gray-400 flex items-center gap-1">
+                <div class="text-xs text-gray-400 flex items-center justify-center gap-1">
                   <span>运行总数</span>
                   <span class="font-medium text-gray-600">{{ text?.total_count || 0 }}</span>
                 </div>
 
-                <div class="flex flex-wrap gap-1">
+                <div class="flex flex-wrap justify-center gap-1">
                   <a-tag :color="(text?.abnormal_count > 0) ? 'error' : 'default'" class="m-0 border-none px-1.5">
                     <template #icon v-if="text?.abnormal_count > 0">
                       <CloseCircleOutlined/>
@@ -98,7 +98,7 @@
             </template>
           </a-table-column>
 
-          <a-table-column title="状态" key="status" width="100px" align="center">
+          <a-table-column title="状态" key="status" :width="80" align="center">
             <template #default="{ record }">
               <div v-if="record.running" class="flex items-center justify-center gap-1 text-success text-xs animate-pulse">
                 <div class="w-1.5 h-1.5 rounded-full bg-success"></div>
@@ -108,7 +108,7 @@
             </template>
           </a-table-column>
 
-          <a-table-column title="操作" key="action" align="center" width="200px">
+          <a-table-column title="操作" key="action" align="center" :width="200">
             <template #default="{ record }">
               <div class="flex justify-center gap-2">
                 <a-button type="text" size="small" class="!text-blue-400 hover:!text-blue-300" @click="() => editTask(record)">
