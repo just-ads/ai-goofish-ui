@@ -163,8 +163,8 @@ const selectTask = (id?: number) => {
       <!-- Filters -->
       <div class="flex flex-col gap-3 text-sm text-gray-400 sm:flex-row sm:items-center sm:gap-4">
         <div class="flex-y-center w-full gap-2 sm:w-auto">
-          <span>排序:</span>
-          <a-select v-model:value="sortRule" class="w-full sm:w-48" size="small" @select="onSortChange">
+          <span class="shrink-0">排序:</span>
+          <a-select v-model:value="sortRule" class="flex-1 sm:w-48" size="small" @select="onSortChange">
             <a-select-option value="price_desc">
               价格从高到低
             </a-select-option>
