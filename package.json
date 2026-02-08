@@ -7,7 +7,8 @@
     "dev": "vite --host",
     "build": "vite build --emptyOutDir",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
+    "lint:fix": "eslint --fix",
     "prettier": "prettier --write ./**/*.{html,vue,ts,js,json,md}",
     "type-check": "vue-tsc --noEmit"
   },

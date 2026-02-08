@@ -126,16 +126,16 @@ defineExpose({
       :wrapper-col="{ span: 18 }"
     >
       <a-form-item label="通知名称" name="name" required>
-        <a-input v-model:value="form.name" placeholder="输入通知名称"/>
+        <a-input v-model:value="form.name" placeholder="输入通知名称" />
       </a-form-item>
 
       <a-form-item label="通知类型" name="type" required>
         <a-select
           v-if="!hideTemplate"
-          placeholder="选择通知类型"
           v-model:value="form.type"
-          @change="applyTemplate"
+          placeholder="选择通知类型"
           allow-clear
+          @change="applyTemplate"
         >
           <a-select-option
             v-for="template in notifierTemplates"
@@ -145,7 +145,9 @@ defineExpose({
             {{ template.name }}
           </a-select-option>
         </a-select>
-        <div v-else>{{ form.type }}</div>
+        <div v-else>
+          {{ form.type }}
+        </div>
       </a-form-item>
 
       <!-- 动态字段 -->
@@ -184,34 +186,38 @@ defineExpose({
 
       <!-- 操作按钮行 -->
       <a-form-item :wrapper-col="{ offset: 5, span: 18 }">
-        <div class="flex items-center pt-4 border-t border-gray-200">
+        <div class="flex-y-center pt-4 border-t border-gray-200">
           <!-- 左侧：测试按钮 -->
-          <div class="flex items-center gap-2">
+          <div class="flex-y-center gap-2">
             <a-button
               type="primary"
-              @click="testNotifier"
               :loading="testing"
               :disabled="!form.name || !form.type"
+              @click="testNotifier"
             >
-              <ThunderboltOutlined/>
+              <ThunderboltOutlined />
               测试连接
             </a-button>
 
             <a-tooltip v-if="!form.name || !form.type">
               <template #title>
                 <div class="text-xs">
-                  <div v-if="!form.name">请填写通知名称</div>
-                  <div v-if="!form.type">请选择通知类型</div>
+                  <div v-if="!form.name">
+                    请填写通知名称
+                  </div>
+                  <div v-if="!form.type">
+                    请选择通知类型
+                  </div>
                 </div>
               </template>
-              <InfoCircleOutlined class="text-gray-400"/>
+              <InfoCircleOutlined class="text-gray-400" />
             </a-tooltip>
           </div>
 
           <!-- 右侧：提示信息 -->
           <span class="text-gray-500 text-sm">
-              测试通过后再保存
-            </span>
+            测试通过后再保存
+          </span>
         </div>
       </a-form-item>
 
@@ -228,12 +234,20 @@ defineExpose({
           </div>
           <div class="text-sm whitespace-pre-wrap font-mono bg-white/50 p-3 rounded">
             <div v-if="testResult.success" class="space-y-2">
-              <div class="text-green-700 font-medium">配置验证通过！</div>
-              <div class="text-gray-700">{{ testResult.content }}</div>
+              <div class="text-green-700 font-medium">
+                配置验证通过！
+              </div>
+              <div class="text-gray-700">
+                {{ testResult.content }}
+              </div>
             </div>
             <div v-else class="space-y-2">
-              <div class="text-red-700 font-medium">配置验证失败</div>
-              <div class="text-gray-700">{{ testResult.content }}</div>
+              <div class="text-red-700 font-medium">
+                配置验证失败
+              </div>
+              <div class="text-gray-700">
+                {{ testResult.content }}
+              </div>
               <div class="text-gray-600 text-xs mt-2">
                 请检查以下配置：
                 <ul class="list-disc pl-4 mt-1">

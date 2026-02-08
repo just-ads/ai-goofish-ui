@@ -64,8 +64,8 @@ onMounted(() => {
     :value="selectedTaskId"
     :show-search="showSearch"
     :size="size"
-    @change="handleChange"
     style="width: 100%"
+    @change="handleChange"
   >
     <a-select-option
       v-for="task in taskStore.tasks"

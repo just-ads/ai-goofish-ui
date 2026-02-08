@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="loading" tip="加载中...">
     <div v-show="!loading" class="min-h-[200px]">
-      <Line :data="chartData" :options="chartOptions"/>
+      <Line :data="chartData" :options="chartOptions" />
     </div>
   </a-spin>
 </template>

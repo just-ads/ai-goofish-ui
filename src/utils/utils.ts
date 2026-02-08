@@ -1,6 +1,6 @@
 export function copyToClipboard(string: string) {
   return self.navigator.permissions.query({
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+     
     // @ts-expect-error
     name: 'clipboard-write'
   }).then(res => {
@@ -15,7 +15,7 @@ export function copyToClipboard(string: string) {
 export function safeStringify(input: any, replacer?: any, space?: string | number) {
   try {
     return JSON.stringify(input, replacer, space);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
   } catch (e) {
     return input;
   }

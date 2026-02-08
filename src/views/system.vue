@@ -56,20 +56,22 @@ const handleSave = async () => {
 
 <template>
   <div class="flex-col h-full gap-4">
-    <div class="glass-card flex-1 flex-col p-6 animate-fade-in-up h-full">
+    <div class="glass-card flex-1 flex-col p-6 animate-fade-in-up animate-duration-400 h-full">
       <!-- 页面标题 -->
-      <div class="flex justify-between mb-6 items-center border-b border-white/5 pb-4">
-        <h2 class="text-xl font-bold text-gray m-0">系统设置</h2>
-        <div class='flex items-center space-x-4'>
+      <div class="flex gap-3 flex-col sm:flex-row sm:items-center sm:justify-between mb-6 border-b border-white/5 pb-4">
+        <h2 class="text-xl font-bold text-gray m-0">
+          系统设置
+        </h2>
+        <div class="flex gap-2 w-full sm:w-auto flex-col sm:flex-row sm:items-center sm:gap-4">
           <transition name="fade">
-            <div v-if="configChanged" class="flex items-center gap-2 text-warning px-3 py-1 bg-warning/10 rounded-full border border-warning/20">
-              <WarningOutlined class="animate-pulse"/>
+            <div v-if="configChanged" class="flex-y-center gap-2 text-warning px-3 py-1 bg-warning/10 rounded-full border border-warning/20">
+              <WarningOutlined class="animate-pulse" />
               <span class="text-sm font-medium">配置未保存</span>
             </div>
           </transition>
-          <a-button type="primary" @click="handleSave" :loading="saving" class="!bg-primary-600 hover:!bg-primary-500 shadow-lg shadow-primary-500/20 border-none">
+          <a-button type="primary" :loading="saving" class="w-full sm:w-auto !bg-primary-600 hover:!bg-primary-500 shadow-lg shadow-primary-500/20 border-none" @click="handleSave">
             <template #icon>
-              <SaveOutlined/>
+              <SaveOutlined />
             </template>
             保存配置
           </a-button>
@@ -78,9 +80,11 @@ const handleSave = async () => {
 
       <!-- Tab导航 -->
       <a-tabs
-        v-model:activeKey="activeTab"
+        v-model:active-key="activeTab"
+        size="small"
+        :tab-bar-gutter="8"
         class="h-0 flex-1 [&_.ant-tabs-content]:h-full"
-        :tabBarStyle="{ borderBottom: '1px solid rgba(255,255,255,0.05)' }"
+        :tab-bar-style="{ borderBottom: '1px solid rgba(255,255,255,0.05)' }"
       >
         <!-- 浏览器设置 -->
         <a-tab-pane key="browser" tab="浏览器设置">
@@ -103,7 +107,7 @@ const handleSave = async () => {
         </a-tab-pane>
 
         <!-- 商品评估器设置 -->
-        <a-tab-pane key="evaluator" tab="商品评估器设置">
+        <a-tab-pane key="evaluator" tab="评估器设置">
           <div class="h-full overflow-y-auto p-2">
             <EvaluatorSettings
               :config="systemConfig!"
@@ -115,7 +119,7 @@ const handleSave = async () => {
         <!-- AI设置 -->
         <a-tab-pane key="ai" tab="AI设置" class="&_ant-tabs-content">
           <div class="h-full overflow-y-auto p-2">
-            <AISettings/>
+            <AISettings />
           </div>
         </a-tab-pane>
       </a-tabs>

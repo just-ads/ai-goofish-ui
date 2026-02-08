@@ -198,11 +198,11 @@ defineExpose({
         <a-input v-model:value="form.name" placeholder="输入名称"/>
       </a-form-item>
 
-      <a-form-item label="模板选择" v-if="!hideTemplate">
+      <a-form-item v-if="!hideTemplate" label="模板选择">
         <a-select
           placeholder="选择预设模板"
-          @change="applyTemplate"
           allow-clear
+          @change="applyTemplate"
         >
           <a-select-option
             v-for="template in aiTemplates"
@@ -219,7 +219,7 @@ defineExpose({
       </a-form-item>
 
       <a-form-item label="API密钥">
-        <div class='flex items-center gap-1'>
+        <div class="flex-y-center gap-1">
           <a-input-password v-model:value="form.api_key" placeholder="输入API密钥"/>
           <a v-if="!!apiKeyDomin" :href="apiKeyDomin" class="shrink-0" target="_blank">获取api_key</a>
         </div>
@@ -236,8 +236,8 @@ defineExpose({
       <a-col align="right">
         <a-button
           type="link"
-          @click="advancedVisible = !advancedVisible"
           class="p-0 h-auto"
+          @click="advancedVisible = !advancedVisible"
         >
           {{ advancedVisible ? "收起" : "展开" }}高级配置
           <DownOutlined :class="{ 'rotate-180': advancedVisible }"/>
@@ -252,7 +252,7 @@ defineExpose({
         <a-form-item label="请求头配置">
           <div class="flex-col gap-2">
             <div v-if="form.headers && Object.keys(form.headers).length > 0" class="mb-2">
-              <div v-for="(value, key) in form.headers" :key="key" class="flex items-center justify-between py-1 px-2 bg-gray-50 rounded mb-1">
+              <div v-for="(value, key) in form.headers" :key="key" class="flex-y-center justify-between py-1 px-2 bg-gray-50 rounded mb-1">
                 <span class="font-mono text-sm">
                   <span class="text-blue-600">{{ key }}</span>: <span class="text-green-600">{{ value }}</span>
                 </span>
@@ -266,15 +266,19 @@ defineExpose({
               <a-textarea
                 v-model:value="headersText"
                 :rows="6"
-                placeholder='输入JSON格式的请求头，例如：{"Authorization": "Bearer {key}", "Content-Type": "application/json"}'
+                placeholder="输入JSON格式的请求头，例如：{&quot;Authorization&quot;: &quot;Bearer {key}&quot;, &quot;Content-Type&quot;: &quot;application/json&quot;}"
               />
               <div class="flex gap-2">
-                <a-button type="primary" @click="saveHeaders">保存</a-button>
-                <a-button @click="cancelEditHeaders">取消</a-button>
+                <a-button type="primary" @click="saveHeaders">
+                  保存
+                </a-button>
+                <a-button @click="cancelEditHeaders">
+                  取消
+                </a-button>
               </div>
             </div>
             <div v-else class="flex gap-2">
-              <a-button @click="addHeader" type="dashed">
+              <a-button type="dashed" @click="addHeader">
                 <PlusOutlined/>
                 添加请求头
               </a-button>
@@ -292,11 +296,16 @@ defineExpose({
               <a-textarea
                 v-model:value="bodyText"
                 :rows="8"
-                placeholder='输入JSON格式的请求体模板，例如：{"model": "{model}", "messages": {messages}, "temperature": 0.2}' 有好感
+                placeholder="输入JSON格式的请求体模板，例如：{&quot;model&quot;: &quot;{model}&quot;, &quot;messages&quot;: {messages}, &quot;temperature&quot;: 0.2}"
+                有好感
               />
               <div class="flex gap-2">
-                <a-button type="primary" @click="saveBody">保存</a-button>
-                <a-button @click="cancelEditBody">取消</a-button>
+                <a-button type="primary" @click="saveBody">
+                  保存
+                </a-button>
+                <a-button @click="cancelEditBody">
+                  取消
+                </a-button>
               </div>
             </div>
             <div v-else>
@@ -317,14 +326,14 @@ defineExpose({
 
       <!-- 操作按钮行 -->
       <a-form-item :wrapper-col="{ offset: 5, span: 18 }">
-        <div class="flex items-center pt-4 border-t border-gray-200">
+        <div class="flex-y-center pt-4 border-t border-gray-200">
           <!-- 左侧：测试按钮 -->
-          <div class="flex items-center gap-2">
+          <div class="flex-y-center gap-2">
             <a-button
               type="primary"
-              @click="testConfig"
               :loading="testing"
               :disabled="!form.name || !form.endpoint || !form.model || !form.api_key"
+              @click="testConfig"
             >
               <ThunderboltOutlined/>
               测试连接
@@ -333,10 +342,18 @@ defineExpose({
             <a-tooltip v-if="!form.name || !form.endpoint || !form.model || !form.api_key">
               <template #title>
                 <div class="text-xs">
-                  <div v-if="!form.name">请填写Agent名称</div>
-                  <div v-if="!form.endpoint">请填写API端点</div>
-                  <div v-if="!form.model">请填写模型名称</div>
-                  <div v-if="!form.api_key">请填写API密钥</div>
+                  <div v-if="!form.name">
+                    请填写Agent名称
+                  </div>
+                  <div v-if="!form.endpoint">
+                    请填写API端点
+                  </div>
+                  <div v-if="!form.model">
+                    请填写模型名称
+                  </div>
+                  <div v-if="!form.api_key">
+                    请填写API密钥
+                  </div>
                 </div>
               </template>
               <InfoCircleOutlined class="text-gray-400"/>
@@ -345,8 +362,8 @@ defineExpose({
 
           <!-- 右侧：提示信息 -->
           <span class="text-gray-500 text-sm">
-              测试通过后再保存
-            </span>
+            测试通过后再保存
+          </span>
         </div>
       </a-form-item>
 
@@ -363,12 +380,20 @@ defineExpose({
           </div>
           <div class="text-sm whitespace-pre-wrap font-mono bg-white/50 p-3 rounded">
             <div v-if="testResult.success" class="space-y-2">
-              <div class="text-green-700 font-medium">配置验证通过！</div>
-              <div class="text-gray-700">{{ testResult.content }}</div>
+              <div class="text-green-700 font-medium">
+                配置验证通过！
+              </div>
+              <div class="text-gray-700">
+                {{ testResult.content }}
+              </div>
             </div>
             <div v-else class="space-y-2">
-              <div class="text-red-700 font-medium">配置验证失败</div>
-              <div class="text-gray-700">{{ testResult.content }}</div>
+              <div class="text-red-700 font-medium">
+                配置验证失败
+              </div>
+              <div class="text-gray-700">
+                {{ testResult.content }}
+              </div>
               <div class="text-gray-600 text-xs mt-2">
                 请检查以下配置：
                 <ul class="list-disc pl-4 mt-1">

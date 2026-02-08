@@ -120,13 +120,6 @@ const onSortChange = (key: any) => {
   }
 };
 
-const onToggleOrder = () => {
-  taskResultRequest.order = taskResultRequest.order === 'asce' ? 'desc' : 'asce';
-  if (selectedTaskId.value !== undefined) {
-    fetchTaskResults(selectedTaskId.value, taskResultRequest)
-  }
-}
-
 const selectTask = (id?: number) => {
   taskResultRequest.page = 1;
   if (id !== undefined) {
@@ -140,62 +133,77 @@ const selectTask = (id?: number) => {
 <template>
   <div class="h-full flex-col gap-4">
     <!-- Top Control Panel -->
-    <div class="p-4 animate-fade-in-down flex-col gap-4">
-      <div class="flex items-center gap-4">
-        <div class='w-72'>
-          <TaskSelect v-model:modelValue="selectedTaskId" @change="selectTask"/>
+    <div class="p-4 animate-fade-in-down animate-duration-400 flex-col gap-4">
+      <div class="flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <div class="w-full sm:w-72">
+          <TaskSelect v-model:model-value="selectedTaskId" @change="selectTask"/>
         </div>
-        <a-button type="primary" :loading="loading" class="!rounded-md" @click="reload">
-          <template #icon>
-            <ReloadOutlined/>
-          </template>
-          刷新
-        </a-button>
-        <a-button danger type="primary" class="!rounded-md" @click="removeResult">
-          <template #icon>
-            <DeleteOutlined/>
-          </template>
-          删除结果
-        </a-button>
-        <a-button @click="chartVisibility = !chartVisibility">
-          <template #icon>
-            <LineChartOutlined/>
-          </template>
-          {{ chartVisibility ? '隐藏' : '显示' }}价格趋势
-        </a-button>
+        <div class="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center sm:gap-2">
+          <a-button type="primary" :loading="loading" class="!rounded-md w-full sm:w-auto" @click="reload">
+            <template #icon>
+              <ReloadOutlined/>
+            </template>
+            刷新
+          </a-button>
+          <a-button danger type="primary" class="!rounded-md w-full sm:w-auto" @click="removeResult">
+            <template #icon>
+              <DeleteOutlined/>
+            </template>
+            删除结果
+          </a-button>
+          <a-button class="col-span-2 w-full sm:col-span-1 sm:w-auto" @click="chartVisibility = !chartVisibility">
+            <template #icon>
+              <LineChartOutlined/>
+            </template>
+            {{ chartVisibility ? '隐藏' : '显示' }}价格趋势
+          </a-button>
+        </div>
       </div>
 
       <!-- Filters -->
-      <div class="flex items-center gap-4 text-sm text-gray-400">
-        <div class="flex items-center gap-2">
+      <div class="flex flex-col gap-3 text-sm text-gray-400 sm:flex-row sm:items-center sm:gap-4">
+        <div class="flex-y-center w-full gap-2 sm:w-auto">
           <span>排序:</span>
-          <a-select v-model:value="sortRule" @select="onSortChange" class="w-48" size="small">
-            <a-select-option value="price_desc">价格从高到低</a-select-option>
-            <a-select-option value="price_asce">价格从低到高</a-select-option>
-            <a-select-option value="publish_time_desc">发布时间从晚到早</a-select-option>
-            <a-select-option value="publish_time_asce">发布时间从早到晚</a-select-option>
-            <a-select-option value="crawl_time_desc">抓取时间从晚到早</a-select-option>
-            <a-select-option value="crawl_time_asce">抓取时间从早到晚</a-select-option>
+          <a-select v-model:value="sortRule" class="w-full sm:w-48" size="small" @select="onSortChange">
+            <a-select-option value="price_desc">
+              价格从高到低
+            </a-select-option>
+            <a-select-option value="price_asce">
+              价格从低到高
+            </a-select-option>
+            <a-select-option value="publish_time_desc">
+              发布时间从晚到早
+            </a-select-option>
+            <a-select-option value="publish_time_asce">
+              发布时间从早到晚
+            </a-select-option>
+            <a-select-option value="crawl_time_desc">
+              抓取时间从晚到早
+            </a-select-option>
+            <a-select-option value="crawl_time_asce">
+              抓取时间从早到晚
+            </a-select-option>
           </a-select>
         </div>
 
         <!-- Pagination -->
-        <a-pagination
-          class="ml-auto"
-          v-if="taskResults"
-          v-model:current="taskResultRequest.page"
-          v-model:page-size="taskResultRequest.limit"
-          :total="taskResults.total"
-          @change="onPageChange"
-          size="small"
-          show-quick-jumper
-        />
+        <div v-if="taskResults" class="w-full overflow-x-auto sm:ml-auto sm:w-auto sm:overflow-visible">
+          <a-pagination
+            v-model:current="taskResultRequest.page"
+            v-model:page-size="taskResultRequest.limit"
+            class="min-w-max"
+            :total="taskResults.total"
+            size="small"
+            show-quick-jumper
+            @change="onPageChange"
+          />
+        </div>
       </div>
     </div>
 
     <!-- Results Grid -->
     <div class="flex-1 min-h-0 relative overflow-y-auto">
-      <a-spin :spinning="loading" wrapperClassName="h-full">
+      <a-spin :spinning="loading" wrapper-class-name="h-full">
         <div v-if="taskResults?.items?.length" class="h-full custom-scrollbar pr-2">
           <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(280px,1fr))] pb-4">
             <div
@@ -216,11 +224,11 @@ const selectTask = (id?: number) => {
                     <a-image-preview-group
                       :preview="{visible: viewImagesTaskId === result['商品信息']['商品ID'], onVisibleChange: vis => (viewImagesTaskId = null)}"
                     >
-                      <a-image v-for="it in result['商品信息']['商品图片列表']" :src="it"/>
+                      <a-image v-for="it in result['商品信息']['商品图片列表']" :key="it" :src="it"/>
                     </a-image-preview-group>
                   </div>
                 </div>
-                <div v-else class="w-full h-full flex items-center justify-center text-gray-600">
+                <div v-else class="w-full h-full flex-center text-gray-600">
                   无图片
                 </div>
 
@@ -231,8 +239,10 @@ const selectTask = (id?: number) => {
                 </div>
 
                 <!-- Original Price -->
-                <div v-if="result['商品信息']['商品原价']"
-                     class="absolute bottom-2 right-2 bg-black/40 px-1.5 py-0.5 rounded text-xs text-gray-400 line-through">
+                <div
+                  v-if="result['商品信息']['商品原价']"
+                  class="absolute bottom-2 right-2 bg-black/40 px-1.5 py-0.5 rounded text-xs text-gray-400 line-through"
+                >
                   ¥{{ result['商品信息']['商品原价'] }}
                 </div>
               </div>
@@ -247,15 +257,15 @@ const selectTask = (id?: number) => {
                 </div>
 
                 <div class="flex-col gap-1 text-xs text-gray-500 mb-3">
-                  <div class="flex items-center gap-1">
+                  <div class="flex-y-center gap-1">
                     <EnvironmentOutlined class="text-gray-600"/>
                     {{ result['商品信息']['发货地区'] || '未知地区' }}
                   </div>
-                  <div class="flex items-center gap-1">
+                  <div class="flex-y-center gap-1">
                     <UserOutlined class="text-gray-600"/>
                     {{ result['卖家信息']['卖家昵称'] || '未知卖家' }}
                   </div>
-                  <div class="flex items-center gap-1">
+                  <div class="flex-y-center gap-1">
                     <ClockCircleOutlined class="text-gray-600"/>
                     {{ result['商品信息']['发布时间'] }}
                   </div>
@@ -263,7 +273,7 @@ const selectTask = (id?: number) => {
 
                 <!-- AI Analysis -->
                 <div v-if="result['分析结果']" class="bg-white/5 rounded p-2 mb-3 border border-white/5">
-                  <div class="flex justify-between items-center mb-1">
+                  <div class="flex-y-center justify-between mb-1">
                     <span class="text-xs text-gray-400">AI 推荐度</span>
                     <a-tag :color="getColor(result['分析结果']['推荐度'])" class="!m-0 text-xs">
                       {{ result['分析结果']['建议'] }}
@@ -275,7 +285,7 @@ const selectTask = (id?: number) => {
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center justify-between border-t border-white/5 pt-3 mt-auto">
+                <div class="flex-y-center justify-between border-t border-white/5 pt-3 mt-auto">
                   <div class="text-xs text-gray-600">
                     {{ result['爬取时间'] }} 抓取
                   </div>
@@ -288,7 +298,7 @@ const selectTask = (id?: number) => {
                     <a
                       :href="result['商品信息']['商品链接']"
                       target="_blank"
-                      class="ant-btn ant-btn-text ant-btn-sm !text-blue-400 hover:!text-blue-300 flex items-center justify-center"
+                      class="flex-center !text-blue-400 hover:!text-blue-300"
                     >
                       <LinkOutlined/>
                     </a>
@@ -298,7 +308,7 @@ const selectTask = (id?: number) => {
             </div>
           </div>
         </div>
-        <div v-else-if="!loading" class="h-full flex flex-col items-center justify-center text-gray-500">
+        <div v-else-if="!loading" class="h-full flex-col-center text-gray-500">
           <div class="text-6xl mb-4 opacity-20">
             <EnvironmentOutlined/>
           </div>
@@ -308,8 +318,8 @@ const selectTask = (id?: number) => {
     </div>
 
     <!-- Chart Section -->
-    <div class="h-64 glass-card p-4 shrink-0" v-if="chartVisibility && selectedTaskId !== undefined">
-      <PriceLineChart :chartDataSource="pricesData" :loading="chartLoading"/>
+    <div v-if="chartVisibility && selectedTaskId !== undefined" class="h-64 glass-card p-4 shrink-0">
+      <PriceLineChart :chart-data-source="pricesData" :loading="chartLoading"/>
     </div>
   </div>
 </template>

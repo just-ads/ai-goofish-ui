@@ -66,7 +66,9 @@ const updateStep = (updates: Partial<EvaluationStep>) => {
 
 <template>
   <div class="space-y-4">
-    <h3 class="text-lg font-medium">商品评估器配置</h3>
+    <h3 class="text-lg font-medium">
+      商品评估器配置
+    </h3>
 
     <a-form layout="vertical" class="max-w-2xl">
       <a-form-item label="启用评估器">
@@ -84,21 +86,23 @@ const updateStep = (updates: Partial<EvaluationStep>) => {
         <a-form-item label="文本分析 AI">
           <a-select
             :value="systemConfig.evaluator.textAI || undefined"
+            class="w-full"
+            placeholder="选择用于文本分析的 AI"
+            allow-clear
             @change="(value) => {
               const newEvaluator = { ...systemConfig.evaluator, textAI: value as string || null };
               updateConfig({ evaluator: newEvaluator });
             }"
-            class="w-full"
-            placeholder="选择用于文本分析的 AI"
-            allow-clear
           >
             <a-select-option
-              v-for="config in aiConfigList"
-              :key="config.id"
-              :value="config.id"
+              v-for="it in aiConfigList"
+              :key="it.id"
+              :value="it.id"
             >
-              {{ config.name }}
-              <a-tag v-if="config.multimodal" color="success">多模态</a-tag>
+              {{ it.name }}
+              <a-tag v-if="it.multimodal" color="success">
+                多模态
+              </a-tag>
             </a-select-option>
           </a-select>
         </a-form-item>
@@ -106,66 +110,70 @@ const updateStep = (updates: Partial<EvaluationStep>) => {
         <a-form-item label="图像分析 AI" tooltip="支持多模态的模型">
           <a-select
             :value="systemConfig.evaluator.imageAI || undefined"
+            class="w-full"
+            placeholder="未启用"
+            allow-clear
             @change="(value) => {
               const newEvaluator = { ...systemConfig.evaluator, imageAI: value as string || null };
               updateConfig({ evaluator: newEvaluator });
             }"
-            class="w-full"
-            placeholder="未启用"
-            allow-clear
           >
             <a-select-option
-              v-for="config in aiConfigList"
-              :disabled="!config.multimodal"
-              :key="config.id"
-              :value="config.id"
+              v-for="it in aiConfigList"
+              :key="it.id"
+              :disabled="!it.multimodal"
+              :value="it.id"
             >
-              {{ config.name }}
-              <a-tag v-if="config.multimodal" color="success">多模态</a-tag>
+              {{ it.name }}
+              <a-tag v-if="it.multimodal" color="success">
+                多模态
+              </a-tag>
             </a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="AI 评估步骤">
-          <a-steps v-model:current="currentSteps">
-            <a-step title="标题过滤" description='使用标题过滤产品'>
+          <a-steps v-model:current="currentSteps" size="small">
+            <a-step title="标题过滤" description="使用标题过滤产品">
               <template #icon>
-                <FilterOutlined/>
+                <FilterOutlined />
               </template>
             </a-step>
-            <a-step title="商品详情评估" description='评估商品详细信息'>
+            <a-step title="商品详情评估" description="评估商品详细信息">
               <template #icon>
-                <FileProtectOutlined/>
+                <FileProtectOutlined />
               </template>
             </a-step>
-            <a-step title="卖家评估" description='评估卖家可信度'>
+            <a-step title="卖家评估" description="评估卖家可信度">
               <template #icon>
-                <VerifiedOutlined/>
+                <VerifiedOutlined />
               </template>
             </a-step>
-            <a-step title="图片评估" description='评估商品质量'>
+            <a-step title="图片评估" description="评估商品质量">
               <template #icon>
-                <PictureOutlined/>
+                <PictureOutlined />
               </template>
             </a-step>
           </a-steps>
-          <div class="mt-2.5 border border-solid rounded border-gray-300 p-2.5">
+          <div class="mt-2.5 border border-solid rounded border-gray-300/20 p-2.5">
             <a-form-item label="禁用此步骤">
               <a-switch
                 :checked="step?.disabled"
                 @change="checked => {
                   updateStep({disabled: !!checked})
-                }"/>
+                }"
+              />
             </a-form-item>
             <a-form-item label="触发下一步阈值" tooltip="AI 建议大于此值才会进入下一个步骤">
               <a-slider
-                class="w-72"
+                class="w-full sm:w-72"
                 :min="0"
                 :max="100"
                 :step="1"
                 :value="step?.threshold"
                 @change="value => {
                   updateStep({threshold: value as number})
-                }"/>
+                }"
+              />
             </a-form-item>
           </div>
         </a-form-item>

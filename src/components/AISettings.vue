@@ -181,77 +181,96 @@ const getText = (id: string) => {
 
 <template>
   <div class="flex-col h-full space-y-4">
-    <h3 class="text-lg font-medium">AI 配置</h3>
+    <h3 class="text-lg font-medium">
+      AI 配置
+    </h3>
 
     <!-- Agent列表 -->
     <div class="flex-col flex-1 h-0">
-      <div class="flex justify-between items-center mb-4">
-        <h4 class="font-medium">已配置的 AI</h4>
-        <a-button type="primary" @click="addConfig" :loading="loading">
+      <div class="flex-y-center justify-between mb-4">
+        <h4 class="font-medium">
+          已配置的 AI
+        </h4>
+        <a-button type="primary" :loading="loading" @click="addConfig">
           <PlusOutlined/>
           添加AI
         </a-button>
       </div>
 
-      <div v-if="configList && configList.length > 0" class="space-y-3 h-0 flex-1 overflow-auto">
+      <div v-if="configList && configList.length > 0" class="space-y-3 h-full flex-1 overflow-auto">
         <div
           v-for="config in configList"
           :key="config.id"
-          class="border border-gray-200 rounded p-4 bg-blueGray hover:border-blue-300 transition-colors"
+          class="border border-gray-200 rounded p-4 bg-blueGray hover:border-blue-400 transition-all"
         >
-          <div class="flex justify-between items-start">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-2">
-                <h5 class="font-medium text-gray-800">{{ config.name }}</h5>
-                <span class="text-xs px-2 py-1 rounded text-gray-600">
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-3">
+                <h5 class="font-medium text-gray-800 m-0">
+                  {{ config.name }}
+                </h5>
+                <span class="text-[11px] px-1.5 py-0.5 rounded bg-black/5 text-gray-600 border border-black/5">
                   {{ config.model }}
                 </span>
-                <a-tag v-if="config.multimodal" color="success">多模态</a-tag>
-                <a-tag :color="getColor(config.id)">{{ getText(config.id) }}</a-tag>
+                <div class="flex gap-1 items-center">
+                  <a-tag v-if="config.multimodal" color="success" class="m-0 text-[11px]">
+                    多模态
+                  </a-tag>
+                  <a-tag :color="getColor(config.id)" class="m-0 text-[11px]">
+                    {{ getText(config.id) }}
+                  </a-tag>
+                </div>
               </div>
 
-              <div class="text-sm text-gray-600 space-y-1">
-                <div class="flex items-center gap-2">
-                  <span class="font-medium">端点:</span>
-                  <code class="text-xs px-2 py-1 rounded truncate max-w-md">
+              <div class="grid grid-cols-1 gap-2 text-sm text-gray-600">
+                <div class="flex items-start gap-2">
+                  <span class="font-medium shrink-0">端点:</span>
+                  <code class="text-xs px-2 py-0.5 rounded bg-black/5 truncate break-all">
                     {{ config.endpoint }}
                   </code>
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="font-medium">API密钥:</span>
-                  <span class="text-xs">
-                    {{ config.api_key ? '••••••••' : '未设置' }}
+                  <span class="font-medium shrink-0">密钥:</span>
+                  <span class="text-xs font-mono">
+                    {{ config.api_key ? '••••••••••••' : '未设置' }}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div class="flex gap-2 ml-4">
+            <div class="flex items-center justify-end gap-2 shrink-0 border-t border-gray-100 pt-3 sm:border-t-0 sm:pt-0 sm:ml-4">
               <a-button
                 type="primary"
                 size="small"
-                @click="editConfig(config.id)"
                 :disabled="isTesting(config.id)"
+                @click="editConfig(config.id)"
+                class="flex-1 sm:flex-none"
               >
                 编辑
               </a-button>
               <a-button
                 type="default"
                 size="small"
-                @click="testConfig(config.id)"
                 :loading="isTesting(config.id)"
+                @click="testConfig(config.id)"
+                class="flex-1 sm:flex-none"
               >
-                <ThunderboltOutlined/>
+                <template #icon>
+                  <ThunderboltOutlined/>
+                </template>
                 测试
               </a-button>
               <a-button
                 type="text"
                 danger
                 size="small"
-                @click="deleteConfig(config.id)"
                 :disabled="isTesting(config.id)"
+                @click="deleteConfig(config.id)"
+                class="px-2"
               >
-                <DeleteOutlined/>
+                <template #icon>
+                  <DeleteOutlined/>
+                </template>
               </a-button>
             </div>
           </div>
@@ -259,7 +278,9 @@ const getText = (id: string) => {
       </div>
 
       <div v-else class="text-center py-8 border border-dashed border-gray-300 rounded">
-        <p class="text-gray-500 mb-4">尚未配置任何 AI</p>
+        <p class="text-gray-500 mb-4">
+          尚未配置任何 AI
+        </p>
         <a-button type="primary" @click="addConfig">
           <PlusOutlined/>
           添加第一个 AI

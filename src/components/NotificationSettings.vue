@@ -197,7 +197,9 @@ const getText = (id: string) => {
 
 <template>
   <div class="flex-col h-full space-y-4">
-    <h3 class="text-lg font-medium">通知配置</h3>
+    <h3 class="text-lg font-medium">
+      通知配置
+    </h3>
 
     <a-form layout="vertical" class="max-w-2xl">
       <a-form-item label="启用通知">
@@ -206,7 +208,8 @@ const getText = (id: string) => {
           @change="checked => {
             const newNotifyConfig = { ...systemConfig.notifications, enabled: !!checked };
             updateConfig({ notifications: newNotifyConfig });
-        }"/>
+          }"
+        />
         <span class="ml-2 text-gray-500">是否启用消息通知功能</span>
       </a-form-item>
       <a-form-item label="通知阈值" tooltip="大于指定值才会通知，设为 0 通知所有">
@@ -219,12 +222,15 @@ const getText = (id: string) => {
           @change="value => {
             const newNotifyConfig = { ...systemConfig.notifications, threshold: value as number };
             updateConfig({ notifications: newNotifyConfig });
-          }"/>
+          }"
+        />
       </a-form-item>
     </a-form>
     <div v-if="systemConfig.notifications.enabled" class="flex-col flex-1 h-0">
-      <div class="flex justify-between items-center mb-4">
-        <h4 class="text-md font-medium">已配置的通知</h4>
+      <div class="flex-y-center justify-between mb-4">
+        <h4 class="text-md font-medium">
+          已配置的通知
+        </h4>
         <a-button type="primary" @click="addNotifier">
           <PlusOutlined/>
           添加通知
@@ -236,46 +242,69 @@ const getText = (id: string) => {
           :key="notifier.id"
           class="border border-gray-200 rounded p-4 bg-blueGray  hover:border-blue-300 transition-colors"
         >
-          <div class="flex justify-between items-start">
-            <div class="flex gap-2.5">
-              <a-tag :color="getColor(notifier.id)">{{ getText(notifier.id) }}</a-tag>
-              <a-switch :checked="notifier.enable" @change="toggleNotifier(notifier.id)"/>
-              <div>{{ notifier.name }}</div>
-              <div>提供商: {{ notifier.type }}</div>
+          <div class="flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div class="flex items-start gap-3 w-full sm:w-auto">
+              <div class="flex-y-center h-6">
+                <a-switch :checked="notifier.enable" size="small" @change="toggleNotifier(notifier.id)"/>
+              </div>
+
+              <div class="flex-col gap-1 flex-1">
+                <div class="flex-y-center flex-wrap gap-2">
+                  <span class="text-base font-medium text-[rgba(0,0,0,0.85)]">{{ notifier.name }}</span>
+                  <a-tag :color="getColor(notifier.id)" class="m-0">
+                    {{ getText(notifier.id) }}
+                  </a-tag>
+                </div>
+                <div class="text-[rgba(0,0,0,0.45)] text-sm">
+                  提供商: <span class="text-[rgba(0,0,0,0.65)]">{{ notifier.type }}</span>
+                </div>
+              </div>
             </div>
-            <div class="flex gap-2 ml-4">
+
+            <div class="flex-y-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-3 sm:pt-0">
               <a-button
                 type="primary"
                 size="small"
-                @click="editNotifier(notifier.id)"
+                class="flex-1 sm:flex-none"
                 :disabled="isTesting(notifier.id)"
+                @click="editNotifier(notifier.id)"
               >
                 编辑
               </a-button>
+
               <a-button
                 type="default"
                 size="small"
-                @click="testNotifier(notifier.id)"
+                class="flex-1 sm:flex-none inline-flex items-center justify-center"
                 :loading="isTesting(notifier.id)"
+                @click="testNotifier(notifier.id)"
               >
-                <ThunderboltOutlined/>
+                <template #icon>
+                  <ThunderboltOutlined/>
+                </template>
                 测试
               </a-button>
+
               <a-button
                 type="text"
                 danger
                 size="small"
-                @click="removeNotifier(notifier.id)"
+                class="px-2"
                 :disabled="isTesting(notifier.id)"
+                @click="removeNotifier(notifier.id)"
               >
-                <DeleteOutlined/>
+                <template #icon>
+                  <DeleteOutlined/>
+                </template>
               </a-button>
             </div>
           </div>
         </div>
       </div>
       <div v-else class="text-center py-8 border border-dashed border-gray-300 rounded">
-        <p class="text-gray-500 mb-4">尚未配置任何通知</p>
+        <p class="text-gray-500 mb-4">
+          尚未配置任何通知
+        </p>
         <a-button type="primary" @click="addNotifier">
           <PlusOutlined/>
           添加第一个通知

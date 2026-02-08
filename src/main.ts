@@ -4,7 +4,6 @@ import {setupStore} from "@/store";
 
 import 'virtual:uno.css'
 import './styles/theme.css'
-import './styles/animations.css'
 
 
 import App from "./App.vue";

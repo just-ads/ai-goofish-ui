@@ -1,122 +1,95 @@
 <template>
   <div class="p-0 h-full flex-col">
-    <div class="glass-card flex-1 flex-col p-6 animate-fade-in-up">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold m-0 text-gray">任务管理</h2>
-        <a-button type="primary" @click="createTask" class="!bg-primary-600 hover:!bg-primary-500 border-none shadow-md shadow-primary-500/20">
+    <div class="glass-card flex-1 flex-col p-6 animate-fade-in-up animate-duration-400">
+      <div class="mb-6 flex gap-3 flex-col sm:flex-row sm:items-center sm:justify-between">
+        <h2 class="text-xl font-bold m-0 text-gray">
+          任务管理
+        </h2>
+        <a-button
+          type="primary"
+          class="w-full sm:w-auto !bg-primary-600 hover:!bg-primary-500 border-none shadow-md shadow-primary-500/20"
+          @click="createTask"
+        >
           <template #icon>
-            <PlusOutlined/>
+            <PlusOutlined />
           </template>
           新建任务
         </a-button>
       </div>
 
       <div class="flex-1 overflow-hidden rounded-lg border border-white/5">
-        <a-table
-          size="middle"
-          :data-source="taskStore.tasks"
-          :loading="loading"
-          row-key="task_id"
-          :pagination="false"
-          :scroll="{ y: 'calc(100vh - 250px)' }"
-          class="ant-table-glass"
-        >
-          <a-table-column title="启用" key="enabled" :width="50" align="center">
-            <template #default="{ record }">
-              <a-switch
-                :checked="record.enabled"
-                @change="() => toggleTaskEnabled(record)"
-                size="small"
-              />
-            </template>
-          </a-table-column>
+        <a-spin :spinning="loading" class="block h-full">
+          <div class="h-full overflow-y-auto p-3 space-y-3 block sm:hidden">
+            <div
+              v-for="record in taskStore.tasks"
+              :key="record.task_id"
+              class="rounded-xl border-solid border border-white/10 bg-slate-900/70 p-4 shadow-lg shadow-black/15"
+            >
+              <div class="mb-3 flex items-start justify-between gap-3">
+                <div>
+                  <div class="text-base font-semibold text-white">
+                    {{ record.task_name }}
+                  </div>
+                  <div class="mt-1 text-xs text-gray-400">
+                    关键词
+                    <a-tag color="blue" class="ml-1 !bg-blue-500/10 !border-blue-500/20 !text-blue-300">
+                      {{ record.keyword }}
+                    </a-tag>
+                  </div>
+                </div>
+                <a-switch :checked="record.enabled" size="small" @change="() => toggleTaskEnabled(record)" />
+              </div>
 
-          <a-table-column title="任务名称" dataIndex="task_name" key="task_name" align="center" :width="100">
-            <template #default="{ text }">
-              <span class="font-medium text-white">{{ text }}</span>
-            </template>
-          </a-table-column>
-
-          <a-table-column title="关键词" dataIndex="keyword" key="keyword" align="center" :width="100">
-            <template #default="{ text }">
-              <a-tag color="blue" class="!bg-blue-500/10 !border-blue-500/20 !text-blue-300">{{ text }}</a-tag>
-            </template>
-          </a-table-column>
-
-          <a-table-column title="配置" key="config" align="center" :width="80">
-            <template #default="{ record }">
-              <div class="flex-col text-xs space-y-1 text-gray-400">
-                <div class="flex items-center justify-center gap-1" v-if="record.max_pages">
-                  <FileTextOutlined/>
+              <div class="mb-3 space-y-1 text-xs text-gray-400">
+                <div v-if="record.max_pages" class="flex-y-center gap-1">
+                  <FileTextOutlined />
                   <span>{{ record.max_pages }} 页</span>
                 </div>
-                <div class="flex items-center justify-center gap-1" v-if="record.min_price || record.max_price">
-                  <PayCircleOutlined/>
+                <div v-if="record.min_price || record.max_price" class="flex-y-center gap-1">
+                  <PayCircleOutlined />
                   <span>{{ record.min_price || 0 }} - {{ record.max_price || '∞' }}</span>
                 </div>
-              </div>
-            </template>
-          </a-table-column>
-
-          <a-table-column title="选项" key="options" align="center" :width="80">
-            <template #default="{ record }">
-              <div class="flex items-center justify-center gap-2">
-                <a-tooltip title="仅个人闲置" v-if="record.personal_only">
-                  <UserOutlined class="text-green-400"/>
-                </a-tooltip>
-                <a-tooltip :title="`下次运行时间: ${record.next_run_time}`" v-if="record.cron">
-                  <ClockCircleOutlined class="text-purple-400"/>
-                </a-tooltip>
-              </div>
-            </template>
-          </a-table-column>
-
-          <a-table-column title="运行记录" dataIndex="run_record" key="run_record" align="center" :width="125">
-            <template #default="{ text }">
-              <div class="flex flex-col gap-1.5 py-1">
-                <div class="text-xs text-gray-400 flex items-center justify-center gap-1">
-                  <span>运行总数</span>
-                  <span class="font-medium text-gray-600">{{ text?.total_count || 0 }}</span>
-                </div>
-
-                <div class="flex flex-wrap justify-center gap-1">
-                  <a-tag :color="(text?.abnormal_count > 0) ? 'error' : 'default'" class="m-0 border-none px-1.5">
-                    <template #icon v-if="text?.abnormal_count > 0">
-                      <CloseCircleOutlined/>
-                    </template>
-                    异常 {{ text?.abnormal_count || 0 }}
-                  </a-tag>
-
-                  <a-tag :color="(text?.risk_count > 0) ? 'warning' : 'default'" class="m-0 border-none px-1.5">
-                    <template #icon v-if="text?.risk_count > 0">
-                      <WarningOutlined/>
-                    </template>
-                    风控 {{ text?.risk_count || 0 }}
-                  </a-tag>
+                <div class="flex-y-center gap-2">
+                  <a-tooltip v-if="record.personal_only" title="仅个人闲置">
+                    <UserOutlined class="text-green-400" />
+                  </a-tooltip>
+                  <a-tooltip v-if="record.cron" :title="`下次运行时间: ${record.next_run_time}`">
+                    <ClockCircleOutlined class="text-purple-400" />
+                  </a-tooltip>
+                  <div v-if="record.running" class="flex-y-center gap-1 text-success animate-pulse">
+                    <div class="h-1.5 w-1.5 rounded-full bg-success" />
+                    运行中
+                  </div>
+                  <div v-else class="text-gray-500">
+                    已停止
+                  </div>
                 </div>
               </div>
-            </template>
-          </a-table-column>
 
-          <a-table-column title="状态" key="status" :width="80" align="center">
-            <template #default="{ record }">
-              <div v-if="record.running" class="flex items-center justify-center gap-1 text-success text-xs animate-pulse">
-                <div class="w-1.5 h-1.5 rounded-full bg-success"></div>
-                运行中
+              <div class="mb-3 flex flex-wrap gap-1">
+                <a-tag class="m-0 border-none px-1.5">
+                  运行 {{ record.run_record?.normal_count || 0 }}
+                </a-tag>
+                <a-tag :color="((record.run_record?.abnormal_count ?? 0) > 0) ? 'error' : 'default'" class="m-0 border-none px-1.5">
+                  <template v-if="(record.run_record?.abnormal_count ?? 0) > 0" #icon>
+                    <CloseCircleOutlined />
+                  </template>
+                  异常 {{ record.run_record?.abnormal_count || 0 }}
+                </a-tag>
+                <a-tag :color="((record.run_record?.risk_count ?? 0) > 0) ? 'warning' : 'default'" class="m-0 border-none px-1.5">
+                  <template v-if="(record.run_record?.risk_count ?? 0) > 0" #icon>
+                    <WarningOutlined />
+                  </template>
+                  风控 {{ record.run_record?.risk_count || 0 }}
+                </a-tag>
               </div>
-              <div v-else class="text-gray-500 text-xs">已停止</div>
-            </template>
-          </a-table-column>
 
-          <a-table-column title="操作" key="action" align="center" :width="200">
-            <template #default="{ record }">
-              <div class="flex justify-center gap-2">
+              <div class="flex-y-center justify-end gap-2">
                 <a-button type="text" size="small" class="!text-blue-400 hover:!text-blue-300" @click="() => editTask(record)">
                   <template #icon>
-                    <EditOutlined/>
+                    <EditOutlined />
                   </template>
                 </a-button>
-
                 <a-button
                   v-if="record.running"
                   type="text"
@@ -125,7 +98,7 @@
                   @click="() => stopTask(record)"
                 >
                   <template #icon>
-                    <PauseCircleOutlined/>
+                    <PauseCircleOutlined />
                   </template>
                 </a-button>
                 <a-button
@@ -136,19 +109,160 @@
                   @click="() => runTask(record)"
                 >
                   <template #icon>
-                    <PlayCircleOutlined/>
+                    <PlayCircleOutlined />
                   </template>
                 </a-button>
-
                 <a-button type="text" size="small" class="!text-red-400 hover:!text-red-300" @click="() => deleteTask(record.task_id)">
                   <template #icon>
-                    <DeleteOutlined/>
+                    <DeleteOutlined />
                   </template>
                 </a-button>
               </div>
-            </template>
-          </a-table-column>
-        </a-table>
+            </div>
+
+            <a-empty v-if="!taskStore.tasks.length" description="暂无任务" />
+          </div>
+
+          <div class="hidden sm:block h-full">
+            <a-table
+              size="middle"
+              :data-source="taskStore.tasks"
+              :loading="loading"
+              row-key="task_id"
+              :pagination="false"
+              :scroll="{ y: 'calc(100vh - 250px)' }"
+              class="ant-table-glass"
+            >
+              <a-table-column key="enabled" title="启用" :width="50" align="center">
+                <template #default="{ record }">
+                  <a-switch
+                    :checked="record.enabled"
+                    size="small"
+                    @change="() => toggleTaskEnabled(record)"
+                  />
+                </template>
+              </a-table-column>
+
+              <a-table-column key="task_name" title="任务名称" data-index="task_name" align="center" :width="100">
+                <template #default="{ text }">
+                  <span class="font-medium text-white">{{ text }}</span>
+                </template>
+              </a-table-column>
+
+              <a-table-column key="keyword" title="关键词" data-index="keyword" align="center" :width="100">
+                <template #default="{ text }">
+                  <a-tag color="blue" class="!bg-blue-500/10 !border-blue-500/20 !text-blue-300">
+                    {{ text }}
+                  </a-tag>
+                </template>
+              </a-table-column>
+
+              <a-table-column key="config" title="配置" align="center" :width="80">
+                <template #default="{ record }">
+                  <div class="flex-col text-xs space-y-1 text-gray-400">
+                    <div v-if="record.max_pages" class="flex-center gap-1">
+                      <FileTextOutlined />
+                      <span>{{ record.max_pages }} 页</span>
+                    </div>
+                    <div v-if="record.min_price || record.max_price" class="flex-center gap-1">
+                      <PayCircleOutlined />
+                      <span>{{ record.min_price || 0 }} - {{ record.max_price || '∞' }}</span>
+                    </div>
+                  </div>
+                </template>
+              </a-table-column>
+
+              <a-table-column key="options" title="选项" align="center" :width="80">
+                <template #default="{ record }">
+                  <div class="flex-center gap-2">
+                    <a-tooltip v-if="record.personal_only" title="仅个人闲置">
+                      <UserOutlined class="text-green-400" />
+                    </a-tooltip>
+                    <a-tooltip v-if="record.cron" :title="`下次运行时间: ${record.next_run_time}`">
+                      <ClockCircleOutlined class="text-purple-400" />
+                    </a-tooltip>
+                  </div>
+                </template>
+              </a-table-column>
+
+              <a-table-column key="run_record" title="运行记录" data-index="run_record" align="center" :width="150">
+                <template #default="{ text }">
+                  <div class="flex-x-center gap-1">
+                    <a-tag class="m-0 border-none px-1.5">
+                      运行 {{ text?.normal_count || 0 }}
+                    </a-tag>
+                    <a-tag :color="(text?.abnormal_count > 0) ? 'error' : 'default'" class="m-0 border-none px-1.5">
+                      <template v-if="text?.abnormal_count > 0" #icon>
+                        <CloseCircleOutlined />
+                      </template>
+                      异常 {{ text?.abnormal_count || 0 }}
+                    </a-tag>
+
+                    <a-tag :color="(text?.risk_count > 0) ? 'warning' : 'default'" class="m-0 border-none px-1.5">
+                      <template v-if="text?.risk_count > 0" #icon>
+                        <WarningOutlined />
+                      </template>
+                      风控 {{ text?.risk_count || 0 }}
+                    </a-tag>
+                  </div>
+                </template>
+              </a-table-column>
+
+              <a-table-column key="status" title="状态" :width="80" align="center">
+                <template #default="{ record }">
+                  <div v-if="record.running" class="flex-center gap-1 text-success text-xs animate-pulse">
+                    <div class="w-1.5 h-1.5 rounded-full bg-success" />
+                    运行中
+                  </div>
+                  <div v-else class="text-gray-500 text-xs">
+                    已停止
+                  </div>
+                </template>
+              </a-table-column>
+
+              <a-table-column key="action" title="操作" align="center" :width="200">
+                <template #default="{ record }">
+                  <div class="flex-x-center gap-2">
+                    <a-button type="text" size="small" class="!text-blue-400 hover:!text-blue-300" @click="() => editTask(record)">
+                      <template #icon>
+                        <EditOutlined />
+                      </template>
+                    </a-button>
+
+                    <a-button
+                      v-if="record.running"
+                      type="text"
+                      size="small"
+                      class="!text-orange-400 hover:!text-orange-300"
+                      @click="() => stopTask(record)"
+                    >
+                      <template #icon>
+                        <PauseCircleOutlined />
+                      </template>
+                    </a-button>
+                    <a-button
+                      v-else
+                      type="text"
+                      size="small"
+                      class="!text-green-400 hover:!text-green-300"
+                      @click="() => runTask(record)"
+                    >
+                      <template #icon>
+                        <PlayCircleOutlined />
+                      </template>
+                    </a-button>
+
+                    <a-button type="text" size="small" class="!text-red-400 hover:!text-red-300" @click="() => deleteTask(record.task_id)">
+                      <template #icon>
+                        <DeleteOutlined />
+                      </template>
+                    </a-button>
+                  </div>
+                </template>
+              </a-table-column>
+            </a-table>
+          </div>
+        </a-spin>
       </div>
     </div>
   </div>

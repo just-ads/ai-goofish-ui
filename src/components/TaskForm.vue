@@ -26,18 +26,18 @@ watch(
       label="任务名称"
       :rules="[{ required: true, message: '请输入任务名称' }]"
     >
-      <a-input v-model:value="form.task_name"/>
+      <a-input v-model:value="form.task_name" />
     </a-form-item>
 
     <a-form-item
       label="关键词"
       :rules="[{ required: true, message: '请输入搜索关键词' }]"
     >
-      <a-input v-model:value="form.keyword"/>
+      <a-input v-model:value="form.keyword" />
     </a-form-item>
 
     <a-form-item label="最大页数">
-      <a-input-number v-model:value="form.max_pages" :min="1" style="width: 100%"/>
+      <a-input-number v-model:value="form.max_pages" :min="1" style="width: 100%" />
     </a-form-item>
 
     <a-form-item label="仅个人">
@@ -47,11 +47,11 @@ watch(
     </a-form-item>
 
     <a-form-item label="最小价格">
-      <a-input-number stringMode v-model:value="form.min_price" :min="0" style="width: 100%"/>
+      <a-input-number v-model:value="form.min_price" string-mode :min="0" style="width: 100%" />
     </a-form-item>
 
     <a-form-item label="最大价格">
-      <a-input-number stringMode v-model:value="form.max_price" :min="0" style="width: 100%"/>
+      <a-input-number v-model:value="form.max_price" string-mode :min="0" style="width: 100%" />
     </a-form-item>
 
     <a-form-item
@@ -60,7 +60,7 @@ watch(
     >
       <template #tooltip>
         <a-tooltip>
-          <QuestionCircleTwoTone/>
+          <QuestionCircleTwoTone />
           <template #title>
             <p>CRON表达式</p>
             <p>分 时 日 月 星期</p>
@@ -71,18 +71,18 @@ watch(
           </template>
         </a-tooltip>
       </template>
-      <a-input v-model:value="form.cron" placeholder="CRON表达式"/>
+      <a-input v-model:value="form.cron" placeholder="CRON表达式" />
     </a-form-item>
 
     <a-form-item
       label="详细需求"
       :rules="[{ required: true, message: '请输入商品的详细需求' }]"
     >
-      <a-textarea v-model:value="form.description" :rows="4"/>
+      <a-textarea v-model:value="form.description" :rows="4" />
     </a-form-item>
 
     <a-form-item label="启用">
-      <a-switch v-model:checked="form.enabled"/>
+      <a-switch v-model:checked="form.enabled" />
     </a-form-item>
   </a-form>
 </template>

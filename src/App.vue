@@ -33,7 +33,7 @@ const appTheme = {
 <template>
   <a-config-provider :locale="zhCN" :theme="appTheme">
     <a-app class="w-full h-full font-sans text-gray-100 bg-gray-950">
-      <router-view/>
+      <router-view />
     </a-app>
   </a-config-provider>
 </template>

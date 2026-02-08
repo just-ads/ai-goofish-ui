@@ -21,7 +21,9 @@ const updateConfig = (updates: Partial<SystemConfig>) => {
 
 <template>
   <div class="space-y-4">
-    <h3 class="text-lg font-medium">浏览器配置</h3>
+    <h3 class="text-lg font-medium">
+      浏览器配置
+    </h3>
     <div class="space-x-2 text-orange">
       <WarningOutlined />
       <span>docker 环境下将忽略以下设置</span>
@@ -34,7 +36,8 @@ const updateConfig = (updates: Partial<SystemConfig>) => {
           @change="(checked) => {
             const newConfig = { ...systemConfig.browser, headless: !!checked };
             updateConfig({ browser: newConfig });
-          }"/>
+          }"
+        />
         <span class="ml-2 text-gray-500">是否在后台运行浏览器</span>
       </a-form-item>
 
@@ -45,10 +48,17 @@ const updateConfig = (updates: Partial<SystemConfig>) => {
           @change="channel => {
             const newConfig = { ...systemConfig.browser, channel: channel as any };
             updateConfig({ browser: newConfig });
-          }">
-          <a-select-option value="chrome">Chrome</a-select-option>
-          <a-select-option value="firefox">Firefox</a-select-option>
-          <a-select-option value="webkit">WebKit</a-select-option>
+          }"
+        >
+          <a-select-option value="chrome">
+            Chrome
+          </a-select-option>
+          <a-select-option value="firefox">
+            Firefox
+          </a-select-option>
+          <a-select-option value="webkit">
+            WebKit
+          </a-select-option>
         </a-select>
       </a-form-item>
     </a-form>

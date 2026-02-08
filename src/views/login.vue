@@ -1,30 +1,34 @@
 <template>
-  <div class="flex items-center justify-center h-screen w-screen overflow-hidden relative">
+  <div class="relative flex-x-center items-start min-h-screen w-screen overflow-x-hidden overflow-y-auto p-4 sm:items-center sm:p-0">
     <!-- Background Animation -->
     <div class="absolute inset-0 bg-gray-900 overflow-hidden -z-10">
-      <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-900/20 blur-[100px]"></div>
-      <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-secondary-900/20 blur-[100px] delay-1000"></div>
+      <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-900/20 blur-[100px]"/>
+      <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-secondary-900/20 blur-[100px] delay-1000"/>
     </div>
 
-    <div class="relative z-10 p-8 glass-card w-[400px] animate-fade-in-up">
+    <div class="relative z-10 w-full max-w-[400px] p-5 sm:p-8 glass-card animate-fade-in-up animate-duration-400">
       <div class="text-center mb-8">
-        <div class="flex justify-center mb-4">
-          <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/40">
+        <div class="flex-x-center mb-4">
+          <div class="flex-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/40">
             <!-- Icon placeholder or SVG -->
             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
           </div>
         </div>
-        <h2 class="text-2xl font-bold text-white mb-2">欢迎回来</h2>
-        <p class="text-gray-400 text-sm">闲鱼监控机器人后台管理系统</p>
+        <h2 class="text-2xl font-bold text-white mb-2">
+          欢迎回来
+        </h2>
+        <p class="text-gray-400 text-sm">
+          闲鱼监控机器人后台管理系统
+        </p>
       </div>
 
       <a-form
         :model="form"
         layout="vertical"
-        @finish="onSubmit"
         class="space-y-4"
+        @finish="onSubmit"
       >
         <a-form-item
           name="username"
@@ -56,8 +60,10 @@
           >
             <template #prefix>
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                <path
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
               </svg>
             </template>
           </a-input-password>
