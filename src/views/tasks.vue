@@ -19,7 +19,7 @@
 
       <div class="flex-1 overflow-hidden rounded-lg border border-white/5">
         <a-spin :spinning="loading" class="block h-full">
-          <div class="h-full overflow-y-auto p-3 space-y-3 block sm:hidden">
+          <div class="h-full overflow-y-auto space-y-3 block sm:hidden">
             <div
               v-for="record in taskStore.tasks"
               :key="record.task_id"
