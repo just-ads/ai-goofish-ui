@@ -172,16 +172,16 @@ const selectTask = (id?: number) => {
               价格从低到高
             </a-select-option>
             <a-select-option value="publish_time_desc">
-              发布时间从晚到早
+              发布时间从新到旧
             </a-select-option>
             <a-select-option value="publish_time_asce">
-              发布时间从早到晚
+              发布时间从旧到新
             </a-select-option>
             <a-select-option value="crawl_time_desc">
-              抓取时间从晚到早
+              抓取时间从新到旧
             </a-select-option>
             <a-select-option value="crawl_time_asce">
-              抓取时间从早到晚
+              抓取时间从旧到新
             </a-select-option>
           </a-select>
         </div>
