@@ -142,6 +142,7 @@ const testConfig = async () => {
       endpoint: form.endpoint,
       api_key: form.api_key,
       model: form.model,
+      multimodal: form.multimodal,
       proxy: form.proxy || '',
       headers: form.headers,
       body: form.body

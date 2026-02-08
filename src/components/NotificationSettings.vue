@@ -212,7 +212,7 @@ const getText = (id: string) => {
         />
         <span class="ml-2 text-gray-500">是否启用消息通知功能</span>
       </a-form-item>
-      <a-form-item label="通知阈值" tooltip="大于指定值才会通知，设为 0 通知所有">
+      <a-form-item v-if="systemConfig.notifications.enabled" label="通知阈值" tooltip="大于指定值才会通知，设为 0 通知所有">
         <a-slider
           class="w-72"
           :min="0"
