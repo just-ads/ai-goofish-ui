@@ -129,7 +129,7 @@ const handleMenuClick = (e: any) => {
       <!-- 主体内容 -->
       <main class="flex-1 relative overflow-hidden bg-transparent">
         <!-- Decorative background elements -->
-        <div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden z-0">
+        <div class="absolute-lt wh-full pointer-events-none overflow-hidden z-0">
           <div class="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-primary-500/10 blur-[120px]" />
           <div class="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-secondary-500/10 blur-[100px]" />
         </div>
