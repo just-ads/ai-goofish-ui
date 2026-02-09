@@ -59,7 +59,7 @@ const handleSave = async () => {
     <div class="glass-card flex-1 flex-col p-6 animate-fade-in-up animate-duration-400 h-full">
       <!-- 页面标题 -->
       <div class="flex gap-3 flex-col sm:flex-row sm:items-center sm:justify-between mb-6 border-b border-white/5 pb-4">
-        <h2 class="text-xl font-bold text-gray m-0">
+        <h2 class="text-xl font-bold text-gray-100 m-0">
           系统设置
         </h2>
         <div class="flex gap-2 w-full sm:w-auto flex-col sm:flex-row sm:items-center sm:gap-4">

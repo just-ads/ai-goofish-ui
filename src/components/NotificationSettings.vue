@@ -43,7 +43,9 @@ const addNotifier = () => {
     width: 600,
     content: h(NotifierForm, {
       modelValue: notifierConfig.value,
-      'onUpdate:modelValue': (val: NotifierConfig) => notifierConfig.value = val,
+      'onUpdate:modelValue': (val: NotifierConfig) => {
+        notifierConfig.value = val
+      },
     }),
     async onOk() {
       try {
@@ -101,7 +103,9 @@ const editNotifier = (id: string) => {
     content: h(NotifierForm, {
       modelValue: notifierConfig.value,
       hideTemplate: true,
-      'onUpdate:modelValue': (val: NotifierConfig) => notifierConfig.value = val,
+      'onUpdate:modelValue': (val: NotifierConfig) => {
+        notifierConfig.value = val
+      },
     }),
     async onOk() {
       try {
@@ -240,7 +244,7 @@ const getText = (id: string) => {
         <div
           v-for="notifier in notifiers"
           :key="notifier.id"
-          class="border border-gray-200 rounded p-4 bg-blueGray  hover:border-blue-300 transition-colors"
+          class="glass-card rounded-xl p-4 hover:border-primary-500/25 transition-colors"
         >
           <div class="flex-col sm:flex-row justify-between items-start sm:items-center">
             <div class="flex items-start gap-3 w-full sm:w-auto">
@@ -250,18 +254,18 @@ const getText = (id: string) => {
 
               <div class="flex-col gap-1 flex-1">
                 <div class="flex-y-center flex-wrap gap-2">
-                  <span class="text-base font-medium text-[rgba(0,0,0,0.85)]">{{ notifier.name }}</span>
+                  <span class="text-base font-medium text-gray-100">{{ notifier.name }}</span>
                   <a-tag :color="getColor(notifier.id)" class="m-0">
                     {{ getText(notifier.id) }}
                   </a-tag>
                 </div>
-                <div class="text-[rgba(0,0,0,0.45)] text-sm">
-                  提供商: <span class="text-[rgba(0,0,0,0.65)]">{{ notifier.type }}</span>
+                <div class="text-gray-400 text-sm">
+                  提供商: <span class="text-gray-200">{{ notifier.type }}</span>
                 </div>
               </div>
             </div>
 
-            <div class="flex-y-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-3 sm:pt-0">
+            <div class="flex-y-center gap-2 w-full sm:w-auto justify-end border-t border-gray-100/10 sm:border-t-0 pt-3 sm:pt-0">
               <a-button
                 type="primary"
                 size="small"

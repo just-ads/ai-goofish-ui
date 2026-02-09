@@ -108,20 +108,20 @@ const getLevelColor = (level: string) => {
   <div class="flex-col h-full gap-4">
     <div class="glass-card flex-1 h-full flex-col p-4 animate-fade-in-up animate-duration-400">
       <div class="flex-y-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-gray m-0">
+        <h2 class="text-xl font-bold text-gray-100 m-0">
           任务日志
         </h2>
       </div>
 
-      <div class="flex-1 h-0 flex-col bg-black/40 rounded-lg border border-white/10 font-mono shadow-inner overflow-hidden">
+      <div class="flex-1 h-0 flex-col bg-gray-950/40 rounded-lg border border-gray-100/10 font-mono shadow-inner overflow-hidden">
         <!-- Toolbar -->
-        <div class="flex gap-3 flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 bg-white/5 border-b border-white/5 backdrop-blur-sm">
+        <div class="flex gap-3 flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 bg-gray-100/5 border-b border-gray-100/10 backdrop-blur-sm">
           <div class="flex gap-3 flex-col sm:flex-row sm:items-center sm:gap-4 sm:flex-wrap">
             <div class="w-full sm:w-56">
               <TaskSelect v-model:model-value="selectedTaskId" size="small" @change="selectTask"/>
             </div>
 
-            <div class="hidden sm:block h-4 w-px bg-white/10 mx-2"/>
+            <div class="hidden sm:block h-4 w-px bg-gray-100/10 mx-2"/>
 
             <div class="flex-y-center gap-2 text-sm text-gray-400 w-full sm:w-auto">
               <span class="text-xs shrink-0">级别:</span>
@@ -149,7 +149,7 @@ const getLevelColor = (level: string) => {
               </a-select>
             </div>
 
-            <div class="hidden sm:block h-4 w-px bg-white/10 mx-2"/>
+            <div class="hidden sm:block h-4 w-px bg-gray-100/10 mx-2"/>
 
             <div class="flex-y-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
               <a-button type="text" size="small" class="!text-gray-400 hover:!text-white" @click="fetchLogs()">
@@ -158,7 +158,7 @@ const getLevelColor = (level: string) => {
                 </template>
               </a-button>
 
-              <div class="flex-y-center gap-2 px-2 py-1 rounded bg-white/5 border border-white/5">
+              <div class="flex-y-center gap-2 px-2 py-1 rounded bg-gray-100/5 border border-gray-100/10">
                 <span class="text-xs text-gray-400">自动刷新</span>
                 <a-switch v-model:checked="autoRefresh" size="small" @change="toggleAutoRefresh"/>
               </div>
@@ -175,14 +175,14 @@ const getLevelColor = (level: string) => {
                 <span>↓ 新日志</span>
               </div>
             </transition>
-            <div class="text-[10px] text-gray-600 font-mono bg-black/30 px-2 py-1 rounded">
+            <div class="text-[10px] text-gray-600 font-mono bg-gray-950/30 px-2 py-1 rounded">
               BUFFER: {{ logs.length }}/{{ MAX_LOGS }}
             </div>
           </div>
         </div>
 
         <!-- Log Content -->
-        <div class="flex-1 h-0 overflow-hidden relative bg-black/20">
+        <div class="flex-1 h-0 overflow-hidden relative bg-gray-950/20">
           <DynamicScroller
             ref="scrollerRef"
             class="h-full px-4 py-2 custom-scrollbar"
@@ -198,17 +198,17 @@ const getLevelColor = (level: string) => {
                 :size-dependencies="[item.message]"
                 :data-index="index"
               >
-                <div class="sm:flex items-baseline py-1 hover:bg-white/5 px-2 rounded -mx-2 group">
+                <div class="sm:flex items-baseline py-1 hover:bg-gray-100/5 px-2 rounded -mx-2 group">
                   <div class="flex">
                     <span class="text-gray-600 text-sm mr-3 font-mono shrink-0 select-none">{{ item.timestamp }}</span>
                     <span
                       :style="{ color: getLevelColor(item.level) }"
-                      class="text-[11px] font-bold mr-3 w-10 shrink-0 uppercase tracking-wider select-none text-center bg-white/5 rounded px-1"
+                      class="text-[11px] font-bold mr-3 w-10 shrink-0 uppercase tracking-wider select-none text-center bg-gray-100/5 rounded px-1"
                     >
                       {{ item.level }}
                     </span>
                   </div>
-                  <div class="flex-1 text-gray-300 text-xs font-mono break-all leading-relaxed group-hover:text-white">
+                  <div class="flex-1 text-gray-300 text-xs font-mono break-all leading-relaxed group-hover:text-gray-50">
                     {{ item.message }}
                   </div>
                 </div>
@@ -217,7 +217,7 @@ const getLevelColor = (level: string) => {
           </DynamicScroller>
 
           <transition name="fade">
-            <div v-if="logsLoading && logs.length === 0" class="absolute inset-0 flex-col-center bg-black/40 backdrop-blur-sm z-10">
+            <div v-if="logsLoading && logs.length === 0" class="absolute inset-0 flex-col-center bg-gray-950/60 backdrop-blur-sm z-10">
               <a-spin size="large"/>
               <div class="mt-4 text-gray-400 text-sm">
                 正在加载日志...

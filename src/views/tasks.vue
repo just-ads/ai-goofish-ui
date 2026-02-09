@@ -2,7 +2,7 @@
   <div class="p-0 h-full flex-col">
     <div class="glass-card flex-1 flex-col p-6 animate-fade-in-up animate-duration-400">
       <div class="mb-6 flex gap-3 flex-col sm:flex-row sm:items-center sm:justify-between">
-        <h2 class="text-xl font-bold m-0 text-gray">
+        <h2 class="text-xl font-bold m-0 text-gray-100">
           任务管理
         </h2>
         <a-button
@@ -17,17 +17,17 @@
         </a-button>
       </div>
 
-      <div class="flex-1 overflow-hidden rounded-lg border border-white/5">
+      <div class="flex-1 overflow-hidden rounded-lg border border-gray-100/10">
         <a-spin :spinning="loading" class="block h-full">
           <div class="h-full overflow-y-auto space-y-3 block sm:hidden">
             <div
               v-for="record in taskStore.tasks"
               :key="record.task_id"
-              class="rounded-xl border-solid border border-white/10 bg-slate-900/70 p-4 shadow-lg shadow-black/15"
+              class="rounded-xl border-solid border border-gray-100/10 bg-gray-900/50 p-4 shadow-lg shadow-black/15"
             >
               <div class="mb-3 flex items-start justify-between gap-3">
                 <div>
-                  <div class="text-base font-semibold text-white">
+                  <div class="text-base font-semibold text-gray-100">
                     {{ record.task_name }}
                   </div>
                   <div class="mt-1 text-xs text-gray-400">
@@ -145,7 +145,7 @@
 
               <a-table-column key="task_name" title="任务名称" data-index="task_name" align="center" :width="100">
                 <template #default="{ text }">
-                  <span class="font-medium text-white">{{ text }}</span>
+                  <span class="font-medium text-gray-100">{{ text }}</span>
                 </template>
               </a-table-column>
 
@@ -337,7 +337,9 @@ const createTask = () => {
       TaskForm,
       {
         modelValue: task.value,
-        'onUpdate:modelValue': (val) => (task.value = val),
+        'onUpdate:modelValue': (val) => {
+          task.value = val
+        },
       }
     ),
     async onOk() {
@@ -358,7 +360,12 @@ const editTask = (task: Task) => {
 
   Modal.confirm({
     title: '编辑任务',
-    content: h(TaskForm, {modelValue: editedTask.value, 'onUpdate:modelValue': (val) => (editedTask.value = val)}),
+    content: h(TaskForm, {
+      modelValue: editedTask.value,
+      'onUpdate:modelValue': (val) => {
+        editedTask.value = val
+      },
+    }),
     async onOk() {
       await updateTask(editedTask.value)
     }

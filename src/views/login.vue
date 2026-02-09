@@ -16,7 +16,7 @@
             </svg>
           </div>
         </div>
-        <h2 class="text-2xl font-bold text-white mb-2">
+        <h2 class="text-2xl font-bold text-gray-100 mb-2">
           欢迎回来
         </h2>
         <p class="text-gray-400 text-sm">

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Header from '@/components/Header.vue'
+import {useUiThemeStore} from '@/store'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -9,6 +10,9 @@ import {
   FieldTimeOutlined
 } from '@ant-design/icons-vue';
 import {h} from "vue";
+
+const uiTheme = useUiThemeStore()
+const menuTheme = computed(() => (uiTheme.theme.mode === 'dark' ? 'dark' : 'light'))
 
 const router = useRouter()
 const route = useRoute()
@@ -57,14 +61,14 @@ const handleMenuClick = (e: any) => {
     <div class="flex flex-1 h-0 overflow-hidden relative">
       <!-- 左侧菜单 -->
       <div
-        class="hidden sm:flex flex-col h-full transition-all duration-300 ease-out border-r border-white/5 bg-black/20 backdrop-blur-md z-10"
+        class="hidden sm:flex flex-col h-full transition-all duration-300 ease-out border-r border-gray-100/10 bg-gray-950/40 backdrop-blur-md z-10"
         :class="collapsed ? 'w-20' : 'w-64'"
       >
         <div class="flex-1 overflow-y-auto overflow-x-hidden py-2">
           <a-menu
             class="!bg-transparent !border-r-0"
             mode="inline"
-            theme="dark"
+            :theme="menuTheme"
             :inline-collapsed="collapsed"
             :selected-keys="[selectedKey]"
             @click="handleMenuClick"
@@ -86,7 +90,7 @@ const handleMenuClick = (e: any) => {
 
         <!-- Collapse Trigger -->
         <div
-          class="h-12 flex-center cursor-pointer hover:bg-white/5 border-t border-white/5 text-gray-400 hover:text-white transition-colors"
+          class="h-12 flex-center cursor-pointer hover:bg-gray-100/5 border-t border-gray-100/10 text-gray-400 hover:text-gray-100 transition-colors"
           @click="toggleCollapse"
         >
           <MenuUnfoldOutlined v-if="collapsed" class="text-lg" />
@@ -101,13 +105,13 @@ const handleMenuClick = (e: any) => {
         width="260"
         :closable="false"
         :mask-closable="true"
-        :body-style="{ padding: '8px 0', background: 'rgba(7, 10, 24, 0.98)' }"
+        :body-style="{ padding: '8px 0', background: 'rgb(var(--gray-950) / 0.98)' }"
         @close="closeDrawer"
       >
         <a-menu
           class="!bg-transparent !border-r-0"
           mode="inline"
-          theme="dark"
+          :theme="menuTheme"
           :selected-keys="[selectedKey]"
           @click="handleMenuClick"
         >

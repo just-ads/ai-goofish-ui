@@ -37,7 +37,9 @@ const addConfig = () => {
     width: 600,
     content: h(AIForm, {
       modelValue: config.value,
-      'onUpdate:modelValue': (val: AIConfig) => config.value = val
+      'onUpdate:modelValue': (val: AIConfig) => {
+        config.value = val
+      }
     }),
     async onOk() {
       try {
@@ -103,7 +105,9 @@ const editConfig = (id: string) => {
     content: h(AIForm, {
       modelValue: editingConfig.value,
       hideTemplate: true,
-      'onUpdate:modelValue': (val: AIConfig) => editingConfig.value = val
+      'onUpdate:modelValue': (val: AIConfig) => {
+        editingConfig.value = val
+      }
     }),
     async onOk() {
       try {
@@ -201,15 +205,15 @@ const getText = (id: string) => {
         <div
           v-for="config in configList"
           :key="config.id"
-          class="border border-gray-200 rounded p-4 bg-blueGray hover:border-blue-400 transition-all"
+          class="glass-card rounded-xl p-4 hover:border-primary-500/25 transition-all"
         >
           <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
             <div class="flex-1 min-w-0">
               <div class="flex flex-wrap items-center gap-2 mb-3">
-                <h5 class="font-medium text-gray-800 m-0">
+                <h5 class="font-medium text-gray-100 m-0">
                   {{ config.name }}
                 </h5>
-                <span class="text-[11px] px-1.5 py-0.5 rounded bg-black/5 text-gray-600 border border-black/5">
+                <span class="text-[11px] px-1.5 py-0.5 rounded bg-gray-100/5 text-gray-400 border border-gray-100/10">
                   {{ config.model }}
                 </span>
                 <div class="flex gap-1 items-center">
@@ -222,10 +226,10 @@ const getText = (id: string) => {
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 gap-2 text-sm text-gray-600">
+              <div class="grid grid-cols-1 gap-2 text-sm text-gray-400">
                 <div class="flex items-start gap-2">
                   <span class="font-medium shrink-0">端点:</span>
-                  <code class="text-xs px-2 py-0.5 rounded bg-black/5 truncate break-all">
+                  <code class="text-xs px-2 py-0.5 rounded bg-gray-100/5 truncate break-all">
                     {{ config.endpoint }}
                   </code>
                 </div>
@@ -238,7 +242,7 @@ const getText = (id: string) => {
               </div>
             </div>
 
-            <div class="flex items-center justify-end gap-2 shrink-0 border-t border-gray-100 pt-3 sm:border-t-0 sm:pt-0 sm:ml-4">
+            <div class="flex items-center justify-end gap-2 shrink-0 border-t border-gray-100/10 pt-3 sm:border-t-0 sm:pt-0 sm:ml-4">
               <a-button
                 type="primary"
                 size="small"
@@ -277,7 +281,7 @@ const getText = (id: string) => {
         </div>
       </div>
 
-      <div v-else class="text-center py-8 border border-dashed border-gray-300 rounded">
+      <div v-else class="text-center py-8 border border-dashed border-gray-100/15 rounded-xl">
         <p class="text-gray-500 mb-4">
           尚未配置任何 AI
         </p>

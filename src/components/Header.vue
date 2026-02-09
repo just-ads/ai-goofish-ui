@@ -1,7 +1,18 @@
 <script setup lang="ts">
 import {useApi} from "@/api/fetch";
 import {message} from "ant-design-vue";
-import {UserOutlined, CloudSyncOutlined, DeleteOutlined, RobotOutlined, ExclamationCircleOutlined, MenuOutlined} from '@ant-design/icons-vue';
+import {
+  UserOutlined,
+  CloudSyncOutlined,
+  DeleteOutlined,
+  RobotOutlined,
+  ExclamationCircleOutlined,
+  MenuOutlined,
+  BgColorsOutlined,
+  CheckOutlined,
+  BulbOutlined,
+} from '@ant-design/icons-vue';
+import {useUiThemeStore} from '@/store';
 
 withDefaults(defineProps<{
   showMenuTrigger?: boolean
@@ -12,6 +23,8 @@ withDefaults(defineProps<{
 const emit = defineEmits<{
   (e: 'menu-trigger'): void
 }>()
+
+const uiTheme = useUiThemeStore()
 
 const open = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
@@ -50,7 +63,7 @@ const remove = async () => {
 </script>
 
 <template>
-  <header class="flex-y-center justify-between h-[64px] px-6 border-b border-white/10 bg-black/20 backdrop-blur-md">
+  <header class="flex-y-center justify-between h-[64px] px-6 border-b border-gray-100/10 bg-gray-950/40 backdrop-blur-md">
     <div class="flex-y-center gap-3">
       <button
         v-if="showMenuTrigger"
@@ -69,7 +82,48 @@ const remove = async () => {
       </h2>
     </div>
 
-    <div class="flex-y-center">
+    <div class="flex-y-center gap-3">
+      <button
+        class="flex-center w-9 h-9 rounded-lg border border-gray-100/15 bg-gray-950/30 text-gray-400 hover:text-gray-100 hover:bg-gray-100/5 transition-colors"
+        type="button"
+        aria-label="切换浅色/深色"
+        @click="uiTheme.toggleMode"
+      >
+        <BulbOutlined class="text-lg" :class="uiTheme.theme.mode === 'light' ? 'text-warning' : ''" />
+      </button>
+
+      <a-dropdown placement="bottomRight" trigger="click">
+        <button
+          class="flex-center w-9 h-9 rounded-lg border border-gray-100/15 bg-gray-950/30 text-gray-400 hover:text-gray-100 hover:bg-gray-100/5 transition-colors"
+          type="button"
+          aria-label="切换主题强调色"
+        >
+          <BgColorsOutlined class="text-lg" />
+        </button>
+        <template #overlay>
+          <a-menu class="!bg-gray-800 !border !border-gray-700 !shadow-xl !rounded-lg overflow-hidden">
+            <a-menu-item class="!text-gray-200 hover:!bg-gray-700" @click="uiTheme.setAccent('blue')">
+              <template #icon>
+                <CheckOutlined v-if="uiTheme.theme.accent === 'blue'" />
+              </template>
+              科技蓝
+            </a-menu-item>
+            <a-menu-item class="!text-gray-200 hover:!bg-gray-700" @click="uiTheme.setAccent('teal')">
+              <template #icon>
+                <CheckOutlined v-if="uiTheme.theme.accent === 'teal'" />
+              </template>
+              青绿色
+            </a-menu-item>
+            <a-menu-item class="!text-gray-200 hover:!bg-gray-700" @click="uiTheme.setAccent('indigo')">
+              <template #icon>
+                <CheckOutlined v-if="uiTheme.theme.accent === 'indigo'" />
+              </template>
+              靛蓝色
+            </a-menu-item>
+          </a-menu>
+        </template>
+      </a-dropdown>
+
       <a-dropdown v-if="isLogin">
         <div
           class="flex-y-center gap-2 px-3 py-1.5 rounded-full bg-success/10 border border-success/20 cursor-pointer hover:bg-success/20 transition-colors group"
