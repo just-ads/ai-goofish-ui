@@ -110,7 +110,7 @@ const saveBody = () => {
 }
 
 const cancelEditBody = () => {
-  bodyText.value = safeStringify(form.body || {});
+  bodyText.value = safeStringify(form.body || {}, null, 2);
   editingBody.value = false;
 }
 
@@ -298,7 +298,6 @@ defineExpose({
                 v-model:value="bodyText"
                 :rows="8"
                 placeholder="输入JSON格式的请求体模板，例如：{&quot;model&quot;: &quot;{model}&quot;, &quot;messages&quot;: {messages}, &quot;temperature&quot;: 0.2}"
-                有好感
               />
               <div class="flex gap-2">
                 <a-button type="primary" @click="saveBody">
@@ -311,7 +310,7 @@ defineExpose({
             </div>
             <div v-else>
               <div class="mb-2">
-                <pre class="bg-gray-50 text-black p-3 rounded text-sm overflow-auto max-h-40">{{ bodyText }}</pre>
+                <pre class="bg-gray-50 text-gray-900 p-3 rounded text-sm overflow-auto max-h-40">{{ bodyText }}</pre>
               </div>
               <div class="flex gap-2">
                 <a-button @click="editBody">
