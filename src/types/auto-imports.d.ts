@@ -54,6 +54,7 @@ declare global {
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
+  const getDeviceType: typeof import('../utils/utils').getDeviceType
   const getGlobalFileExport: typeof import('../utils/common/globalFile')['getGlobalFileExport']
   const getUserToken: typeof import('../utils/user').getUserToken
   const h: typeof import('vue').h

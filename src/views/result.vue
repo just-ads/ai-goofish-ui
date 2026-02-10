@@ -3,7 +3,7 @@ import {useApi} from "@/api/fetch";
 import PriceLineChart from "@/components/PriceLineChart.vue";
 import TaskSelect from "@/components/TaskSelect.vue";
 import {TaskResultRequest, TaskResultResponse} from "@/types/task";
-import {copyToClipboard} from "@/utils/utils";
+import {copyToClipboard, getDeviceType} from "@/utils/utils";
 import {message, Modal} from "ant-design-vue";
 import {
   ClockCircleOutlined,
@@ -76,11 +76,12 @@ const reload = () => {
 }
 
 const copyUrl = (id: string) => {
-  const mobileUrl = `https://pages.goofish.com/sharexy?loadingVisible=false&bft=item&bfs=idlepc.item&spm=a21ybx.item.0.0&bfp=%7B%22id%22%3A${id}%7D`
-  copyToClipboard(mobileUrl).then(() => {
+  const deviceType = getDeviceType();
+  const url = deviceType === 'PC' ? `https://www.goofish.com/item?id=${id}` : `https://h5.m.goofish.com/item?id=${id}`;
+  copyToClipboard(url).then(() => {
     message.success('复制成功')
   }).catch(() => {
-    message.success('复制失败: 无权限')
+    message.error('复制失败: 无权限')
   });
 }
 
@@ -125,6 +126,20 @@ const selectTask = (id?: number) => {
   if (id !== undefined) {
     fetchTaskResults(id, taskResultRequest);
     fetchPricesData(id);
+  }
+}
+
+const gotoDetail = (id: string) => {
+  const deviceType = getDeviceType();
+  if (deviceType === "IOS" || deviceType === "Android") {
+    const startTime = Date.now();
+    window.location.href = `fleamarket://item?id=${id}`
+    setTimeout(() => {
+      if (Date.now() - startTime > 1500) return;
+      window.open(`https://h5.m.goofish.com/item?id=${id}`, '_blank')
+    }, 1000);
+  } else {
+    window.open(`https://www.goofish.com/item?id=${id}`, '_blank')
   }
 }
 
@@ -295,13 +310,14 @@ const selectTask = (id?: number) => {
                         <CopyOutlined/>
                       </template>
                     </a-button>
-                    <a
-                      :href="result['商品信息']['商品链接']"
-                      target="_blank"
+                    <a-button
+                      type="text"
+                      size="small"
                       class="flex-center !text-blue-400 hover:!text-blue-300"
+                      @click="gotoDetail(result['商品信息']['商品ID'])"
                     >
                       <LinkOutlined/>
-                    </a>
+                    </a-button>
                   </div>
                 </div>
               </div>
