@@ -7,6 +7,10 @@ export interface NotifierConfig {
 }
 
 
+export interface NotifierSelectOption {
+  label: string
+  value: string
+}
 export interface NotifierTemplateField {
   name: string
   type: string
@@ -14,6 +18,15 @@ export interface NotifierTemplateField {
   placeholder?: string
   editable?: boolean
   default?: any
+  options?: NotifierSelectOption[]
+  multiple?: boolean
+  // switch
+  checkedValue?: any
+  uncheckedValue?: any
+  checkedLabel?: string
+  uncheckedLabel?: string
+  // textarea
+  rows?: number
 }
 
 export interface NotifierTemplate {

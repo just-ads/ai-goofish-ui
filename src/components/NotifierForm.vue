@@ -174,6 +174,62 @@ defineExpose({
               style="width: 100%"
             />
           </template>
+          <template v-else-if="fieldDef.type === 'select'">
+            <a-select
+              v-model:value="form[fieldName]"
+              :placeholder="fieldDef.placeholder || `选择${fieldDef.name}`"
+              :mode="fieldDef.multiple ? 'multiple' : undefined"
+              allow-clear
+              style="width: 100%"
+            >
+              <a-select-option
+                v-for="opt in fieldDef.options"
+                :key="opt.value"
+                :value="opt.value"
+              >
+                {{ opt.label }}
+              </a-select-option>
+            </a-select>
+          </template>
+          <template v-else-if="fieldDef.type === 'switch'">
+            <a-switch
+              :checked="form[fieldName]"
+              :checked-value="fieldDef.checkedValue ?? true"
+              :un-checked-value="fieldDef.uncheckedValue ?? false"
+              :checked-children="fieldDef.checkedLabel"
+              :un-checked-children="fieldDef.uncheckedLabel"
+              @change="(val: any) => form[fieldName] = val"
+            />
+          </template>
+          <template v-else-if="fieldDef.type === 'radio'">
+            <a-radio-group
+              v-model:value="form[fieldName]"
+            >
+              <a-radio
+                v-for="opt in fieldDef.options"
+                :key="opt.value"
+                :value="opt.value"
+              >
+                {{ opt.label }}
+              </a-radio>
+            </a-radio-group>
+          </template>
+          <template v-else-if="fieldDef.type === 'checkbox'">
+            <a-checkbox
+              :checked="form[fieldName]"
+              @change="(e: any) => form[fieldName] = e.target.checked"
+            >
+              {{ fieldDef.placeholder }}
+            </a-checkbox>
+          </template>
+          <template v-else-if="fieldDef.type === 'textarea'">
+            <a-textarea
+              v-model:value="form[fieldName]"
+              :placeholder="fieldDef.placeholder || `输入${fieldDef.name}`"
+              :readonly="fieldDef.editable === false"
+              :rows="fieldDef.rows ?? 3"
+            />
+          </template>
           <template v-else>
             <a-input
               v-model:value="form[fieldName]"
