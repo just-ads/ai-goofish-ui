@@ -126,7 +126,7 @@ defineExpose({
       :wrapper-col="{ span: 18 }"
     >
       <a-form-item label="通知名称" name="name" required>
-        <a-input v-model:value="form.name" placeholder="输入通知名称" />
+        <a-input v-model:value="form.name" placeholder="输入通知名称"/>
       </a-form-item>
 
       <a-form-item label="通知类型" name="type" required>
@@ -227,8 +227,11 @@ defineExpose({
               v-model:value="form[fieldName]"
               :placeholder="fieldDef.placeholder || `输入${fieldDef.name}`"
               :readonly="fieldDef.editable === false"
-              :rows="fieldDef.rows ?? 3"
+              :rows="fieldDef.rows ?? 6"
             />
+            <div v-if="fieldDef.help" class="whitespace-pre-wrap text-gray-500 text-xs">
+              {{ fieldDef.help }}
+            </div>
           </template>
           <template v-else>
             <a-input
@@ -251,7 +254,7 @@ defineExpose({
               :disabled="!form.name || !form.type"
               @click="testNotifier"
             >
-              <ThunderboltOutlined />
+              <ThunderboltOutlined/>
               测试连接
             </a-button>
 
@@ -266,7 +269,7 @@ defineExpose({
                   </div>
                 </div>
               </template>
-              <InfoCircleOutlined class="text-gray-400" />
+              <InfoCircleOutlined class="text-gray-400"/>
             </a-tooltip>
           </div>
 

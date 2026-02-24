@@ -27,6 +27,7 @@ export interface NotifierTemplateField {
   uncheckedLabel?: string
   // textarea
   rows?: number
+  help?: string
 }
 
 export interface NotifierTemplate {
