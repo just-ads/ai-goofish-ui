@@ -18,6 +18,13 @@ const systemConfig = computed(() => props.config);
 const currentSteps = ref<number>(0)
 const steps = computed(() => systemConfig.value.evaluator.steps || {})
 
+const defaultPrompts: Record<number, string> = {
+  0: '根据商品标题判断是否为需求商品。规则：\n1）标题明确不属于需求商品（如型号、品牌明显不同），建议度直接为0；\n2）标题包含需求商品关键信息但部分规格未明确（如未标明容量、版本），视为相关，给予中等偏上建议度；\n3）标题越接近需求商品完整描述，建议度越高',
+  1: '综合商品描述、发布时间等信息评估与需求的符合度。规则：\n1）详情中明确不符合需求（如型号、规格矛盾），建议度直接为0；\n2）其他情况按信息完整性打分，信息越接近需求商品建议度越高；\n3）注意：商品原价可能为0，这属于正常情况，不应视为风险降低建议度。\n建议度低于 {threshold} 将跳过后续评估',
+  2: '分析卖家注册时长、历史评价、芝麻信用等信息，评估卖家可信度与交易风险',
+  3: '分析商品图片，评估与描述的一致性。规则：\n1）区分商品官方图（渲染图/宣传图）和卖家实拍图，官方图占比大则风险更高；\n2）实拍图中可能包含其他物品，这属于正常情况，除非图片中完全不包含描述中的商品，否则不应降低建议度；\n3）综合图片信息评估商品真实性与可信度',
+}
+
 const step = computed<EvaluationStep | null>(() => {
   switch (currentSteps.value) {
     case 0:
@@ -172,6 +179,16 @@ const updateStep = (updates: Partial<EvaluationStep>) => {
                 :value="step?.threshold"
                 @change="value => {
                   updateStep({threshold: value as number})
+                }"
+              />
+            </a-form-item>
+            <a-form-item label="自定义 Prompt" tooltip="自定义该步骤的 AI 任务提示词，支持 {threshold} 变量。留空使用默认提示词">
+              <a-textarea
+                :value="step?.prompt"
+                :placeholder="defaultPrompts[currentSteps]"
+                :rows="8"
+                @change="(e: Event) => {
+                  updateStep({prompt: (e.target as HTMLTextAreaElement).value || undefined})
                 }"
               />
             </a-form-item>

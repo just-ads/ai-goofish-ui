@@ -12,8 +12,8 @@ export interface NotificationConfig {
 export interface EvaluationStep {
   disabled: boolean
   threshold: number
+  prompt?: string
 }
-
 export interface EvaluationSteps {
   step1?: EvaluationStep
   step2?: EvaluationStep
