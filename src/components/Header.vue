@@ -28,7 +28,7 @@ const uiTheme = useUiThemeStore()
 
 const open = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
-const {data: isLogin} = useApi<boolean>('/api/goofish/status').json();
+const {data: loginStatus} = useApi<boolean>('/api/goofish/status').json();
 const jsonInput = ref<string>('');
 
 const showModal = () => {
@@ -43,7 +43,7 @@ const closeModal = () => {
 const handleOk = async () => {
   const {error} = await useApi('/api/goofish/state/save').post({content: jsonInput.value});
   if (!error.value) {
-    isLogin.value = true;
+    loginStatus.value = 1;
     message.success('状态保存成功');
     closeModal();
   }
@@ -56,7 +56,7 @@ const update = () => {
 const remove = async () => {
   const {error} = await useApi('/api/goofish/state/delete').delete();
   if (!error.value) {
-    isLogin.value = false;
+    loginStatus.value = 0;
     message.success('删除成功');
   }
 }
@@ -89,7 +89,7 @@ const remove = async () => {
         aria-label="切换浅色/深色"
         @click="uiTheme.toggleMode"
       >
-        <BulbOutlined class="text-lg" :class="uiTheme.theme.mode === 'light' ? 'text-warning' : ''" />
+        <BulbOutlined class="text-lg" :class="uiTheme.theme.mode === 'light' ? 'text-warning' : ''"/>
       </button>
 
       <a-dropdown placement="bottomRight" trigger="click">
@@ -98,25 +98,25 @@ const remove = async () => {
           type="button"
           aria-label="切换主题强调色"
         >
-          <BgColorsOutlined class="text-lg" />
+          <BgColorsOutlined class="text-lg"/>
         </button>
         <template #overlay>
           <a-menu class="!bg-gray-800 !border !border-gray-700 !shadow-xl !rounded-lg overflow-hidden">
             <a-menu-item class="!text-gray-200 hover:!bg-gray-700" @click="uiTheme.setAccent('blue')">
               <template #icon>
-                <CheckOutlined v-if="uiTheme.theme.accent === 'blue'" />
+                <CheckOutlined v-if="uiTheme.theme.accent === 'blue'"/>
               </template>
               科技蓝
             </a-menu-item>
             <a-menu-item class="!text-gray-200 hover:!bg-gray-700" @click="uiTheme.setAccent('teal')">
               <template #icon>
-                <CheckOutlined v-if="uiTheme.theme.accent === 'teal'" />
+                <CheckOutlined v-if="uiTheme.theme.accent === 'teal'"/>
               </template>
               青绿色
             </a-menu-item>
             <a-menu-item class="!text-gray-200 hover:!bg-gray-700" @click="uiTheme.setAccent('indigo')">
               <template #icon>
-                <CheckOutlined v-if="uiTheme.theme.accent === 'indigo'" />
+                <CheckOutlined v-if="uiTheme.theme.accent === 'indigo'"/>
               </template>
               靛蓝色
             </a-menu-item>
@@ -124,7 +124,7 @@ const remove = async () => {
         </template>
       </a-dropdown>
 
-      <a-dropdown v-if="isLogin">
+      <a-dropdown v-if="loginStatus === 1">
         <div
           class="flex-y-center gap-2 px-3 py-1.5 rounded-full bg-success/10 border border-success/20 cursor-pointer hover:bg-success/20 transition-colors group"
         >
@@ -151,12 +151,16 @@ const remove = async () => {
       </a-dropdown>
 
       <div
-        v-else class="flex-y-center gap-2 px-3 py-1.5 rounded-full bg-error/10 border border-error/20 cursor-pointer hover:bg-error/20 transition-colors group"
+        v-else
+        class="flex-y-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer transition-colors group"
+        :class="loginStatus === 0 ? 'bg-error/10 border-error/20 hover:bg-error/20' : 'bg-warning/10 border-warning/20 hover:bg-warning/20'"
         @click="showModal"
       >
-        <div class="w-2 h-2 rounded-full bg-error"/>
-        <span class="text-error font-medium text-sm group-hover:text-error/90">未登录 (点击设置)</span>
-        <ExclamationCircleOutlined class="text-error ml-1"/>
+        <div class="w-2 h-2 rounded-full" :class="loginStatus === 0 ? 'bg-error' : 'bg-warning'"/>
+        <span class="font-medium text-sm" :class="loginStatus === 0 ? 'text-error group-hover:text-error/90' : 'text-warning group-hover:text-warning/90'">
+          {{ loginStatus === 0 ? '未登录(点击设置)' : '登录失效(点击更新)' }}
+        </span>
+        <ExclamationCircleOutlined class="ml-1" :class="loginStatus === 0 ? 'text-error' : 'text-warning'"/>
       </div>
     </div>
 
