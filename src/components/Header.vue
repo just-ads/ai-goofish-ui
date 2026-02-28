@@ -3,7 +3,6 @@ import {useApi} from "@/api/fetch";
 import {message} from "ant-design-vue";
 import {
   UserOutlined,
-  CloudSyncOutlined,
   DeleteOutlined,
   RobotOutlined,
   ExclamationCircleOutlined,
@@ -13,6 +12,7 @@ import {
   BulbOutlined,
 } from '@ant-design/icons-vue';
 import {useUiThemeStore} from '@/store';
+import GoofishLoginModal from '@/components/GoofishLoginModal.vue';
 
 withDefaults(defineProps<{
   showMenuTrigger?: boolean
@@ -25,32 +25,15 @@ const emit = defineEmits<{
 }>()
 
 const uiTheme = useUiThemeStore()
+const loginModalOpen = ref(false)
+const {data: loginStatus, execute: refreshLoginStatus} = useApi<number>('/api/goofish/status').json<number>();
 
-const open = ref<boolean>(false);
-const confirmLoading = ref<boolean>(false);
-const {data: loginStatus} = useApi<boolean>('/api/goofish/status').json();
-const jsonInput = ref<string>('');
-
-const showModal = () => {
-  open.value = true;
-};
-
-const closeModal = () => {
-  open.value = false
-  jsonInput.value = ''
+const openLoginModal = () => {
+  loginModalOpen.value = true
 }
 
-const handleOk = async () => {
-  const {error} = await useApi('/api/goofish/state/save').post({content: jsonInput.value});
-  if (!error.value) {
-    loginStatus.value = 1;
-    message.success('状态保存成功');
-    closeModal();
-  }
-}
-
-const update = () => {
-  showModal();
+const handleLoginSuccess = async () => {
+  await refreshLoginStatus()
 }
 
 const remove = async () => {
@@ -134,11 +117,8 @@ const remove = async () => {
         </div>
         <template #overlay>
           <a-menu class="!bg-gray-800 !border !border-gray-700 !shadow-xl !rounded-lg overflow-hidden">
-            <a-menu-item class="!text-gray-200 hover:!bg-gray-700" @click="update">
-              <template #icon>
-                <CloudSyncOutlined/>
-              </template>
-              更新 Cookie
+            <a-menu-item class="!text-gray-200 hover:!bg-gray-700" @click="openLoginModal">
+              重新登录咸鱼
             </a-menu-item>
             <a-menu-item class="!text-red-400 hover:!bg-red-900/20" @click="remove">
               <template #icon>
@@ -152,37 +132,15 @@ const remove = async () => {
 
       <div
         v-else
-        class="flex-y-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer transition-colors group"
-        :class="loginStatus === 0 ? 'bg-error/10 border-error/20 hover:bg-error/20' : 'bg-warning/10 border-warning/20 hover:bg-warning/20'"
-        @click="showModal"
+        class="flex-y-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer transition-colors group bg-error/10 border-error/20 hover:bg-error/20"
+        @click="openLoginModal"
       >
-        <div class="w-2 h-2 rounded-full" :class="loginStatus === 0 ? 'bg-error' : 'bg-warning'"/>
-        <span class="font-medium text-sm" :class="loginStatus === 0 ? 'text-error group-hover:text-error/90' : 'text-warning group-hover:text-warning/90'">
-          {{ loginStatus === 0 ? '未登录(点击设置)' : '登录失效(点击更新)' }}
-        </span>
-        <ExclamationCircleOutlined class="ml-1" :class="loginStatus === 0 ? 'text-error' : 'text-warning'"/>
+        <div class="w-2 h-2 rounded-full bg-error"/>
+        <span class="font-medium text-sm text-error group-hover:text-error/90">未登录(点击登录咸鱼)</span>
+        <ExclamationCircleOutlined class="ml-1 text-error"/>
       </div>
     </div>
 
-    <a-modal
-      v-model:open="open"
-      title="更新 Cookie"
-      :confirm-loading="confirmLoading"
-      :mask-style="{ backdropFilter: 'blur(4px)', background: 'rgba(0,0,0,0.6)' }"
-      wrap-class-name="dark-modal"
-      @ok="handleOk"
-    >
-      <div class="py-4">
-        <div class="mb-2 text-gray-400 text-sm">
-          请粘贴最新的 JSON 格式 Cookie 数据：
-        </div>
-        <a-textarea
-          v-model:value="jsonInput"
-          :rows="8"
-          placeholder="{&quot;cookie&quot;: &quot;...&quot;}"
-          class="!bg-black/30 !border-gray-700 !text-gray-200 focus:!border-primary-500 !rounded-lg font-mono text-xs"
-        />
-      </div>
-    </a-modal>
+    <GoofishLoginModal v-model:open="loginModalOpen" @success="handleLoginSuccess" />
   </header>
 </template>
