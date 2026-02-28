@@ -54,7 +54,7 @@ export const useTaskStore = defineStore('task-store', () => {
       }
       return tasks
     },
-    get onReady() {
+    onReady() {
       if (!initialized) {
         initState()
       }
