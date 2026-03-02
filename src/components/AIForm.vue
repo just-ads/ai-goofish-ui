@@ -34,7 +34,7 @@ watch(
 )
 
 watch(() => form.headers, (newHeaders) => {
-  headersText.value = safeStringify(newHeaders || {});
+  headersText.value = safeStringify(newHeaders || {}, null, 2);
 }, {immediate: true})
 
 watch(() => form.body, (newBody) => {
@@ -66,13 +66,13 @@ const addHeader = () => {
   if (value === null) return;
 
   form.headers[key] = value;
-  headersText.value = safeStringify(form.headers);
+  headersText.value = safeStringify(form.headers, null, 2);
 }
 
 const removeHeader = (key: string) => {
   if (form.headers && form.headers[key]) {
     delete form.headers[key];
-    headersText.value = safeStringify(form.headers);
+    headersText.value = safeStringify(form.headers, null, 2);
   }
 }
 
@@ -91,7 +91,7 @@ const saveHeaders = () => {
 }
 
 const cancelEditHeaders = () => {
-  headersText.value = safeStringify(form.headers || {});
+  headersText.value = safeStringify(form.headers || {}, null, 2);
   editingHeaders.value = false;
 }
 
@@ -254,7 +254,7 @@ defineExpose({
           <div class="flex-col gap-2">
             <div v-if="form.headers && Object.keys(form.headers).length > 0" class="mb-2">
               <div v-for="(value, key) in form.headers" :key="key" class="flex-y-center justify-between py-1 px-2 bg-gray-50 rounded mb-1">
-                <span class="font-mono text-sm">
+                <span class="font-mono text-sm text-gray-500">
                   <span class="text-blue-600">{{ key }}</span>: <span class="text-green-600">{{ value }}</span>
                 </span>
                 <a-button type="text" danger size="small" @click="removeHeader(key)">
